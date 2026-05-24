@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 51, 102; /* ocean primary */
+  --background-start-rgb: 248, 250, 252;
+  --background-end-rgb: 245, 222, 179;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: var(--background-start-rgb);
+  min-height: 100vh;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Disable faux italic slant for Arabic/RTL to keep text clean and readable */
+[dir="rtl"] .italic,
+[dir="rtl"] italic,
+html[lang="ar"] .italic,
+html[lang="ar"] italic {
+  font-style: normal !important;
+}

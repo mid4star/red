@@ -1,0 +1,327 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  MONITOR
+  RESEARCHER
+}
+
+enum ViolationSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRIMINAL
+}
+
+enum SurveyType {
+  CORAL
+  FISH
+  PLANT
+  TURTLE
+  WATER
+}
+
+model User {
+  id              String   @id @default(cuid())
+  employeeId      String   @unique
+  passwordHash    String
+  name            String
+  nameAr          String   @default("")
+  role            String   @default("MONITOR") // ADMIN, MONITOR, RESEARCHER, RANGER, MANAGER
+  reserveId       String   @default("")
+  reserve         String?
+  reserveAr       String?
+  status          String   @default("ACTIVE")
+  certifications  String?  // Comma-separated or JSON
+  allowedSections String?  // JSON
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  patrolsParticipated Patrol[] @relation("PatrolMembers")
+  violationsReported  Violation[]
+  surveysConducted    Survey[]
+}
+
+model Patrol {
+  id                String   @id @default(cuid())
+  code              String?
+  zone              String?
+  zoneAr            String?
+  date              DateTime @default(now())
+  vesselId          String?
+  areaCovered       Float?
+  duration          Float?
+  weather           String?
+  observations      String?
+  status            String   @default("DRAFT")
+  startTime         DateTime @default(now())
+  endTime           DateTime?
+  routeCoordinates  String?  // JSON string
+  incidentsReported Int      @default(0)
+  
+  members           User[]   @relation("PatrolMembers")
+  violations        Violation[]
+  vessel            Vessel?  @relation(fields: [vesselId], references: [id])
+}
+
+model Vessel {
+  id              String   @id @default(cuid())
+  code            String?
+  name            String
+  nameAr          String?
+  regNumber       String   @unique
+  type            String?
+  status          String   @default("ACTIVE")
+  fuelLevel       Float    @default(100)
+  healthScore     Float    @default(100)
+  engineHours     Float    @default(0)
+  lastService     DateTime?
+  
+  patrols         Patrol[]
+}
+
+model Violation {
+  id            String   @id @default(cuid())
+  code          String?
+  date          DateTime @default(now())
+  officerId     String
+  locationLat   Float
+  locationLng   Float
+  types         String?
+  typeAr        String?
+  severity      String   @default("LOW") // LOW, MEDIUM, HIGH
+  violatorName  String?
+  vesselName    String?
+  actionTaken   String?
+  fineAmount    Float?
+  status        String   @default("NEW")
+  location      String?
+  locationAr    String?
+  description   String?
+
+  officer       User     @relation(fields: [officerId], references: [id])
+  patrolId      String?
+  patrol        Patrol?  @relation(fields: [patrolId], references: [id])
+}
+
+model Survey {
+  id          String   @id @default(cuid())
+  date        DateTime @default(now())
+  observerId  String
+  type        SurveyType
+  depthRange  String?
+  visibility  Float?
+  waterTemp   Float?
+  ph          Float?
+  salinity    Float?
+  healthScore Float?
+
+  observer    User     @relation(fields: [observerId], references: [id])
+}
+
+model EiaCost {
+  id              String        @id @default(cuid())
+  subject         String
+  details         String
+  date            DateTime
+  status          String        @default("UNANSWERED") // UNANSWERED, ANSWERED
+  createdBy       String        @default("مصطفى لايق")
+  updatedBy       String?
+  isDeletePending Boolean       @default(false)
+  deleteReason    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  files           EiaCostFile[]
+}
+
+model EiaCostFile {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  costId    String
+  cost      EiaCost  @relation(fields: [costId], references: [id], onDelete: Cascade)
+}
+
+model EiaInspection {
+  id              String   @id @default(cuid())
+  locationName    String
+  latitude        Float
+  longitude       Float
+  date            DateTime
+  inspectorName   String
+  studyFileUrl    String?
+  reportFileUrl   String?
+  createdBy       String   @default("مصطفى لايق")
+  updatedBy       String?
+  isDeletePending Boolean  @default(false)
+  deleteReason    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model EiaViolation {
+  id              String             @id @default(cuid())
+  type            String             // Beach encroachment, Scaffolding, Construction
+  date            DateTime
+  locationName    String
+  latitude        Float
+  longitude       Float
+  entityType      String             // PROJECT or PERSON
+  entityName      String
+  createdBy       String             @default("مصطفى لايق")
+  updatedBy       String?
+  isDeletePending Boolean            @default(false)
+  deleteReason    String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  files           EiaViolationFile[]
+}
+
+model EiaViolationFile {
+  id          String       @id @default(cuid())
+  name        String
+  url         String
+  violationId String
+  violation   EiaViolation @relation(fields: [violationId], references: [id], onDelete: Cascade)
+}
+
+model EiaAccident {
+  id              String   @id @default(cuid())
+  type            String   // Grounding, Oil Pollution, Fires
+  locationName    String
+  latitude        Float
+  longitude       Float
+  date            DateTime
+  description     String
+  reportFileUrl   String?
+  createdBy       String   @default("مصطفى لايق")
+  updatedBy       String?
+  isDeletePending Boolean  @default(false)
+  deleteReason    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model NewsArticle {
+  id         String   @id @default(cuid())
+  title      String
+  titleAr    String
+  content    String
+  contentAr  String
+  category   String   // NEWS, EVENT, REPORT, REGULATION
+  date       DateTime @default(now())
+  authorId   String
+  authorName String
+  imageUrl   String?
+  status     String   @default("DRAFT")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ReserveProfile {
+  id              String   @id @default(cuid())
+  name            String
+  nameAr          String
+  description     String
+  descriptionAr   String
+  location        String
+  locationAr      String
+  area            Float
+  establishedYear Int
+  imageUrl        String?
+  status          String   @default("OPEN")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model OpenDataDocument {
+  id         String   @id @default(cuid())
+  title      String
+  titleAr    String
+  type       String   // ACADEMIC, REPORT, DATASET, GUIDELINE
+  fileUrl    String
+  fileSize   Int
+  uploadDate DateTime @default(now())
+  uploaderId String
+  status     String   @default("PUBLIC")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model VisitorGuideSection {
+  id        String   @id @default(cuid())
+  title     String
+  titleAr   String
+  content   String
+  contentAr String
+  order     Int
+  links     String?  // JSON string
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomepageSettings {
+  id             String   @id @default("home-config")
+  heroTitle      String
+  heroTitleAr    String
+  heroSubtitle   String
+  heroSubtitleAr String
+  announcements  String   // JSON string
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Observation {
+  id           String   @id @default(cuid())
+  code         String
+  type         String   // CORAL, FAUNA, THREAT, WEATHER
+  location     String
+  locationAr   String
+  observerId   String
+  observerName String
+  date         DateTime @default(now())
+  status       String   @default("PENDING")
+  score        Float
+  indicators   String   // JSON string
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MarineSpecies {
+  id            String   @id @default(cuid())
+  name          String
+  nameAr        String
+  type          String
+  typeAr        String?  @default("")
+  imageUrl      String?
+  status        String
+  statusAr      String?  @default("")
+  description   String?  @default("")
+  descriptionAr String?  @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MapLocation {
+  id            String   @id @default(cuid())
+  name          String
+  nameAr        String
+  latitude      Float
+  longitude     Float
+  type          String   // e.g. DIVE_SITE, PROTECTED_ZONE, etc.
+  typeAr        String?  @default("")
+  status        String   @default("ACTIVE")
+  statusAr      String?  @default("")
+  description   String?  @default("")
+  descriptionAr String?  @default("")
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
