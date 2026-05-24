@@ -53,6 +53,11 @@ const SPECIES_DIST = [
 
 export default function StatisticsClient({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="bg-[#0a1628] text-white min-h-screen" dir={isAr ? 'rtl' : 'ltr'}>
@@ -110,36 +115,38 @@ export default function StatisticsClient({ lang }: { lang: string }) {
                </div>
 
                <div className="h-80 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                     <AreaChart data={HEALTH_DATA}>
-                        <defs>
-                           <linearGradient id="colorHealth" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#2dd4bf" stopOpacity={0.3}/>
-                              <stop offset="95%" stopColor="#2dd4bf" stopOpacity={0}/>
-                           </linearGradient>
-                           <linearGradient id="colorCov" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
-                              <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
-                           </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                        <XAxis 
-                           dataKey="month" 
-                           stroke="#475569" 
-                           fontSize={10} 
-                           tickLine={false} 
-                           axisLine={false}
-                           tickFormatter={(v) => v.toUpperCase()}
-                        />
-                        <YAxis hide />
-                        <Tooltip 
-                           contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '10px' }}
-                           itemStyle={{ color: '#2dd4bf', fontWeight: 'bold' }}
-                        />
-                        <Area type="monotone" dataKey="health" stroke="#2dd4bf" strokeWidth={4} fillOpacity={1} fill="url(#colorHealth)" />
-                        <Area type="monotone" dataKey="coverage" stroke="#0ea5e9" strokeWidth={4} fillOpacity={1} fill="url(#colorCov)" />
-                     </AreaChart>
-                  </ResponsiveContainer>
+                  {mounted && (
+                     <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={HEALTH_DATA}>
+                           <defs>
+                              <linearGradient id="colorHealth" x1="0" y1="0" x2="0" y2="1">
+                                 <stop offset="5%" stopColor="#2dd4bf" stopOpacity={0.3}/>
+                                 <stop offset="95%" stopColor="#2dd4bf" stopOpacity={0}/>
+                              </linearGradient>
+                              <linearGradient id="colorCov" x1="0" y1="0" x2="0" y2="1">
+                                 <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
+                                 <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                              </linearGradient>
+                           </defs>
+                           <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                           <XAxis 
+                              dataKey="month" 
+                              stroke="#475569" 
+                              fontSize={10} 
+                              tickLine={false} 
+                              axisLine={false}
+                              tickFormatter={(v) => v.toUpperCase()}
+                           />
+                           <YAxis hide />
+                           <Tooltip 
+                              contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '10px' }}
+                              itemStyle={{ color: '#2dd4bf', fontWeight: 'bold' }}
+                           />
+                           <Area type="monotone" dataKey="health" stroke="#2dd4bf" strokeWidth={4} fillOpacity={1} fill="url(#colorHealth)" />
+                           <Area type="monotone" dataKey="coverage" stroke="#0ea5e9" strokeWidth={4} fillOpacity={1} fill="url(#colorCov)" />
+                        </AreaChart>
+                     </ResponsiveContainer>
+                  )}
                </div>
             </div>
 
@@ -150,24 +157,26 @@ export default function StatisticsClient({ lang }: { lang: string }) {
                </div>
                
                <div className="h-64 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                     <PieChart>
-                        <Pie
-                           data={SPECIES_DIST}
-                           cx="50%"
-                           cy="50%"
-                           innerRadius={60}
-                           outerRadius={80}
-                           paddingAngle={8}
-                           dataKey="value"
-                        >
-                           {SPECIES_DIST.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
-                           ))}
-                        </Pie>
-                        <Tooltip />
-                     </PieChart>
-                  </ResponsiveContainer>
+                  {mounted && (
+                     <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                           <Pie
+                              data={SPECIES_DIST}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={60}
+                              outerRadius={80}
+                              paddingAngle={8}
+                              dataKey="value"
+                           >
+                              {SPECIES_DIST.map((entry, index) => (
+                                 <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                              ))}
+                           </Pie>
+                           <Tooltip />
+                        </PieChart>
+                     </ResponsiveContainer>
+                  )}
                </div>
 
                <div className="w-full space-y-3">

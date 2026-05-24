@@ -106,6 +106,11 @@ function ActivityItem({ activity, isAr }: { activity: any, isAr: boolean }) {
 
 export default function DashboardPage({ params }: { params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8" dir={isArabic ? 'rtl' : 'ltr'}>
@@ -258,53 +263,55 @@ export default function DashboardPage({ params }: { params: { lang: string } }) 
              </div>
              
              <div className="flex-1 w-full -ml-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={CHART_DATA}>
-                    <defs>
-                      <linearGradient id="colorPatrol" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorViol" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                    <XAxis 
-                      dataKey="name" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 600}} 
-                      dy={10}
-                    />
-                    <YAxis 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 600}} 
-                    />
-                    <Tooltip 
-                      contentStyle={{borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(15, 23, 42, 0.9)', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)', padding: '12px'}} 
-                      itemStyle={{fontSize: '12px', fontWeight: 700}}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="patrols" 
-                      stroke="#6366f1" 
-                      strokeWidth={3}
-                      fillOpacity={1} 
-                      fill="url(#colorPatrol)" 
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="violations" 
-                      stroke="#f43f5e" 
-                      strokeWidth={3}
-                      fillOpacity={1} 
-                      fill="url(#colorViol)" 
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                {mounted && (
+                   <ResponsiveContainer width="100%" height="100%">
+                     <AreaChart data={CHART_DATA}>
+                       <defs>
+                         <linearGradient id="colorPatrol" x1="0" y1="0" x2="0" y2="1">
+                           <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
+                           <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                         </linearGradient>
+                         <linearGradient id="colorViol" x1="0" y1="0" x2="0" y2="1">
+                           <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1}/>
+                           <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                         </linearGradient>
+                       </defs>
+                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                       <XAxis 
+                         dataKey="name" 
+                         axisLine={false} 
+                         tickLine={false} 
+                         tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 600}} 
+                         dy={10}
+                       />
+                       <YAxis 
+                         axisLine={false} 
+                         tickLine={false} 
+                         tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 600}} 
+                       />
+                       <Tooltip 
+                         contentStyle={{borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(15, 23, 42, 0.9)', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)', padding: '12px'}} 
+                         itemStyle={{fontSize: '12px', fontWeight: 700}}
+                       />
+                       <Area 
+                         type="monotone" 
+                         dataKey="patrols" 
+                         stroke="#6366f1" 
+                         strokeWidth={3}
+                         fillOpacity={1} 
+                         fill="url(#colorPatrol)" 
+                       />
+                       <Area 
+                         type="monotone" 
+                         dataKey="violations" 
+                         stroke="#f43f5e" 
+                         strokeWidth={3}
+                         fillOpacity={1} 
+                         fill="url(#colorViol)" 
+                       />
+                     </AreaChart>
+                   </ResponsiveContainer>
+                )}
              </div>
           </Card>
         </div>

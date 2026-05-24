@@ -90,8 +90,13 @@ const MetricCard = ({ icon: Icon, label, value, unit, trend, color }: any) => (
 
 export default function MonitoringClient({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending'>('all');
   const [observations, setObservations] = useState<Observation[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Form State
   const [newLocation, setNewLocation] = useState('');
@@ -242,53 +247,55 @@ export default function MonitoringClient({ lang }: { lang: string }) {
             </div>
             
             <div className="flex-1 w-full min-h-0" dir="ltr">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={TREND_DATA}>
-                  <defs>
-                    <linearGradient id="colorTemp" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                  <XAxis 
-                    dataKey="time" 
-                    fontSize={10} 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{ fill: '#64748b', fontWeight: 'bold' }}
-                    padding={{ left: 10, right: 10 }}
-                  />
-                  <YAxis 
-                    fontSize={10} 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{ fill: '#64748b', fontWeight: 'bold' }}
-                    domain={['dataMin - 1', 'dataMax + 1']}
-                    orientation={isAr ? 'right' : 'left'}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      border: '1px solid rgba(255,255,255,0.1)', 
-                      borderRadius: '16px',
-                      boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
-                    }}
-                    labelStyle={{ color: '#94a3b8', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-                    itemStyle={{ fontSize: '12px', fontWeight: '800' }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="temp" 
-                    name={isAr ? 'الحرارة' : 'Temp'}
-                    stroke="#14b8a6" 
-                    strokeWidth={3} 
-                    fillOpacity={1} 
-                    fill="url(#colorTemp)" 
-                    animationDuration={2000}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {mounted && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={TREND_DATA}>
+                    <defs>
+                      <linearGradient id="colorTemp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                    <XAxis 
+                      dataKey="time" 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      tick={{ fill: '#64748b', fontWeight: 'bold' }}
+                      padding={{ left: 10, right: 10 }}
+                    />
+                    <YAxis 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      tick={{ fill: '#64748b', fontWeight: 'bold' }}
+                      domain={['dataMin - 1', 'dataMax + 1']}
+                      orientation={isAr ? 'right' : 'left'}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#0f172a', 
+                        border: '1px solid rgba(255,255,255,0.1)', 
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+                      }}
+                      labelStyle={{ color: '#94a3b8', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                      itemStyle={{ fontSize: '12px', fontWeight: '800' }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="temp" 
+                      name={isAr ? 'الحرارة' : 'Temp'}
+                      stroke="#14b8a6" 
+                      strokeWidth={3} 
+                      fillOpacity={1} 
+                      fill="url(#colorTemp)" 
+                      animationDuration={2000}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </Card>
 
