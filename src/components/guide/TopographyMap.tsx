@@ -1,12 +1,43 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Shield, Compass, Navigation, X, Activity } from 'lucide-react';
+import { MapPin, Shield, Compass, Navigation, X, Activity, Globe, Eye, Map } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { MapLocation } from '@/lib/firebase/schema';
+
+const mapStyles = [
+  {
+    id: 'satellite' as const,
+    name: 'Satellite',
+    nameAr: 'قمر صناعي',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  },
+  {
+    id: 'dark' as const,
+    name: 'Dark Tech',
+    nameAr: 'تقني مظلم',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  },
+  {
+    id: 'streets' as const,
+    name: 'Streets',
+    nameAr: 'شوارع وتفاصيل',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  },
+  {
+    id: 'voyager' as const,
+    name: 'Voyager',
+    nameAr: 'تضاريس وملاحة',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }
+];
 
 const isClient = typeof window !== 'undefined';
 
@@ -70,8 +101,39 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
   const mapCenter: [number, number] = [26.5, 34.8]; // Centered on Red Sea
   const defaultZoom = 6;
 
+  const [currentStyle, setCurrentStyle] = useState<'satellite' | 'dark' | 'streets' | 'voyager'>('satellite');
+
   return (
     <div className="w-full h-full relative rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-white/10 shadow-2xl">
+      {isClient && (
+        <div 
+          className="absolute top-6 right-6 z-[1000] flex gap-1.5 bg-[#0a1628]/90 backdrop-blur-xl border border-white/10 p-1.5 rounded-2xl shadow-2xl pointer-events-auto"
+          dir={isAr ? 'rtl' : 'ltr'}
+        >
+          {mapStyles.map((style) => {
+            const isActive = currentStyle === style.id;
+            return (
+              <button
+                key={style.id}
+                onClick={() => setCurrentStyle(style.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black uppercase transition-all duration-300 ${
+                  isActive 
+                    ? 'bg-teal-500 text-[#001529] shadow-lg scale-105' 
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+                title={isAr ? style.nameAr : style.name}
+              >
+                {style.id === 'satellite' && <Globe size={14} />}
+                {style.id === 'dark' && <Eye size={14} />}
+                {style.id === 'streets' && <Map size={14} />}
+                {style.id === 'voyager' && <Compass size={14} />}
+                <span className="hidden md:inline">{isAr ? style.nameAr : style.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {isClient && (
         <MapContainer
           center={mapCenter}
@@ -80,10 +142,11 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
           style={{ width: '100%', height: '100%', background: '#070f1e' }}
           className="z-10"
         >
-          {/* CartoDB Dark Matter Tiles for tactical map aesthetic */}
+          {/* Dynamic Tile Layer based on selected style */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            key={currentStyle}
+            attribution={mapStyles.find(s => s.id === currentStyle)?.attribution}
+            url={mapStyles.find(s => s.id === currentStyle)?.url || ''}
           />
 
           <MapController selectedLocation={selectedLocation} />
