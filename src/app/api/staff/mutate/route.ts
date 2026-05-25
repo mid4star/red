@@ -53,7 +53,7 @@ function convertTimestampsToDates(obj: any): any {
 }
 
 // Convert client-side model data to SQLite/Prisma-compatible data
-function mapClientToSql(collectionName: string, clientData: any): any {
+function mapClientToSql(collectionName: string, clientData: any, action?: string): any {
   if (!clientData) return {};
   
   // First, convert dates
@@ -80,6 +80,18 @@ function mapClientToSql(collectionName: string, clientData: any): any {
   } else if (collectionName === 'patrols') {
     if (mapped.routeCoordinates) {
       mapped.routeCoordinates = JSON.stringify(mapped.routeCoordinates);
+    }
+    if (mapped.officerId) {
+      if (action === 'ADD') {
+        mapped.members = {
+          connect: [{ id: mapped.officerId }]
+        };
+      } else {
+        mapped.members = {
+          set: [{ id: mapped.officerId }]
+        };
+      }
+      delete mapped.officerId;
     }
   } else if (collectionName === 'observations') {
     if (mapped.indicators) {
@@ -115,7 +127,7 @@ export async function POST(request: Request) {
     console.log(`Processing database write operation. Collection: ${collectionName}, Action: ${action}`);
 
     if (action === 'ADD') {
-      const sqlInput = mapClientToSql(collectionName, data);
+      const sqlInput = mapClientToSql(collectionName, data, action);
       if (id) {
         sqlInput.id = id;
       }
@@ -129,7 +141,7 @@ export async function POST(request: Request) {
       if (!id) {
         return NextResponse.json({ error: 'id is required for UPDATE action' }, { status: 400 });
       }
-      const sqlInput = mapClientToSql(collectionName, data);
+      const sqlInput = mapClientToSql(collectionName, data, action);
       const result = await dbDelegate.update({
         where: { id },
         data: sqlInput

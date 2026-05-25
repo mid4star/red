@@ -23,11 +23,12 @@ import {
   CheckCircle2,
   Trash2,
   MoreVertical,
-  Zap
+  Zap,
+  X,
+  Loader2,
+  Edit3
 } from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   AreaChart,
   Area,
   XAxis, 
@@ -60,8 +61,6 @@ const DATA_ZONES = [
   { id: 'Z-04', name: 'Gebel Elba Sector', nameAr: 'قطاع جبل علبة', status: 'ACTIVE', reportCount: 201, lastEntry: 'Today 11:45', lastEntryAr: 'اليوم 11:45', quality: 'HIGH', type: 'BIODIVERSITY', typeAr: 'التنوع البيولوجي' },
 ];
 
-// The initial observations mock is removed. Instead, data is fetched from Firebase.
-
 const MetricCard = ({ icon: Icon, label, value, unit, trend, color }: any) => (
   <Card className="p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
     <div className="flex items-center gap-4">
@@ -90,16 +89,35 @@ export default function MonitoringClient({ lang }: { lang: string }) {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending'>('all');
   const [observations, setObservations] = useState<Observation[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Form / Modal States
+  const [showModal, setShowModal] = useState(false);
+  const [editingObservation, setEditingObservation] = useState<Observation | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Form Fields
+  const [code, setCode] = useState('');
+  const [type, setType] = useState<'CORAL' | 'FAUNA' | 'THREAT' | 'WEATHER'>('CORAL');
+  const [location, setLocation] = useState('');
+  const [locationAr, setLocationAr] = useState('');
+  const [observerId, setObserverId] = useState('');
+  const [status, setStatus] = useState<'VERIFIED' | 'PENDING' | 'REJECTED'>('PENDING');
+  const [score, setScore] = useState('5.0');
+
+  // Vulnerability Indicators
+  const [bleaching, setBleaching] = useState('23');
+  const [invasive, setInvasive] = useState('68');
+  const [sedimentation, setSedimentation] = useState('42');
+
+  // Quick Add Sidebar Fields
+  const [newLocation, setNewLocation] = useState('');
+  const [newCategory, setNewCategory] = useState<'CORAL' | 'FAUNA' | 'THREAT' | 'WEATHER'>('CORAL');
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  
-  // Form State
-  const [newLocation, setNewLocation] = useState('');
-  const [newCategory, setNewCategory] = useState<'CORAL' | 'FAUNA' | 'THREAT' | 'WEATHER'>('CORAL');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchObservations = async () => {
     try {
@@ -115,46 +133,192 @@ export default function MonitoringClient({ lang }: { lang: string }) {
     }
   };
 
-  useEffect(() => {
-    fetchObservations();
-  }, []);
-
-  const formatObsDate = (ts: any) => {
-    if (!ts) return 'N/A';
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleString(isAr ? 'ar-EG' : 'en-US');
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=users');
+      const json = await res.json();
+      if (json.success) {
+        setUsers(json.data);
+        
+        // Default to active session if available
+        const raw = localStorage.getItem('active_user_session');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.employeeId) {
+            const found = json.data.find((u: any) => u.employeeId === parsed.employeeId || u.id === parsed.employeeId);
+            if (found) {
+              setObserverId(found.id);
+              return;
+            }
+          }
+        }
+        if (json.data.length > 0 && !observerId) {
+          setObserverId(json.data[0].id);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  useEffect(() => {
+    fetchObservations();
+    fetchUsers();
+  }, []);
 
-  const filteredObservations = observations.filter(obs => {
-    if (activeTab === 'all') return true;
-    if (activeTab === 'verified') return obs.status === 'VERIFIED';
-    if (activeTab === 'pending') return obs.status === 'PENDING';
-    return true;
-  });
+  const resetFormFields = () => {
+    setCode('');
+    setType('CORAL');
+    setLocation('');
+    setLocationAr('');
+    setStatus('PENDING');
+    setScore('5.0');
+    setBleaching('23');
+    setInvasive('68');
+    setSedimentation('42');
+    setEditingObservation(null);
+
+    const raw = localStorage.getItem('active_user_session');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        const found = users.find(u => u.employeeId === parsed.employeeId || u.id === parsed.employeeId);
+        if (found) {
+          setObserverId(found.id);
+          return;
+        }
+      } catch (e) {}
+    }
+    if (users.length > 0) {
+      setObserverId(users[0].id);
+    }
+  };
+
+  const startEditing = (obs: Observation) => {
+    setEditingObservation(obs);
+    setCode(obs.code || '');
+    setType(obs.type || 'CORAL');
+    setLocation(obs.location || '');
+    setLocationAr(obs.locationAr || '');
+    setObserverId(obs.observerId || '');
+    setStatus(obs.status || 'PENDING');
+    setScore(String(obs.score || 5.0));
+
+    // Parse indicators if they are present
+    const indicatorsList = obs.indicators || [];
+    const bInd = indicatorsList.find((i: any) => i.name && i.name.includes('Bleaching'));
+    const iInd = indicatorsList.find((i: any) => i.name && i.name.includes('Invasive'));
+    const sInd = indicatorsList.find((i: any) => i.name && i.name.includes('Sedimentation'));
+
+    setBleaching(String(bInd ? bInd.value : 23));
+    setInvasive(String(iInd ? iInd.value : 68));
+    setSedimentation(String(sInd ? sInd.value : 42));
+    
+    setShowModal(true);
+  };
+
+  const handleModalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!location || !observerId) return;
+
+    setIsSubmitting(true);
+    try {
+      const selectedUser = users.find(u => u.id === observerId || u.employeeId === observerId);
+      const observerName = selectedUser ? (isAr ? selectedUser.nameAr || selectedUser.name : selectedUser.name) : 'Staff Researcher';
+
+      const indicatorsArray = [
+        { name: 'Bleaching Probability', nameAr: 'احتمالية التبييض', value: parseInt(bleaching) || 0 },
+        { name: 'Invasive Species detected', nameAr: 'رصد فصائل غازية', value: parseInt(invasive) || 0 },
+        { name: 'Sedimentation Impact', nameAr: 'تأثير الترسبات', value: parseInt(sedimentation) || 0 }
+      ];
+
+      const obsData = {
+        code: code || `OBS-26-${Math.floor(1000 + Math.random() * 9000)}`,
+        type,
+        location,
+        locationAr: locationAr || location,
+        observerId,
+        observerName,
+        date: editingObservation?.date || new Date().toISOString(),
+        status,
+        score: parseFloat(score) || 5.0,
+        indicators: indicatorsArray
+      };
+
+      if (editingObservation?.id) {
+        const response = await fetch('/api/staff/mutate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collectionName: 'observations',
+            action: 'UPDATE',
+            id: editingObservation.id,
+            data: obsData
+          })
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to update observation');
+        }
+      } else {
+        const response = await fetch('/api/staff/mutate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collectionName: 'observations',
+            action: 'ADD',
+            data: obsData
+          })
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to add observation');
+        }
+      }
+
+      resetFormFields();
+      setShowModal(false);
+      await fetchObservations();
+    } catch (err: any) {
+      console.error('Error saving observation:', err);
+      alert(isAr ? `خطأ أثناء الحفظ: ${err.message}` : `Error saving observation: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleCommit = async () => {
     if (!newLocation) return;
     setIsSubmitting(true);
     try {
-      const newObs: Omit<Observation, 'id'> = {
-        code: `OBS-24-${Math.floor(Math.random() * 10000)}`,
+      let observerName = 'Staff Member';
+      let currentObserverId = 'user-123';
+      const raw = localStorage.getItem('active_user_session');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.employeeId) {
+          currentObserverId = parsed.employeeId;
+          observerName = isAr ? parsed.nameAr || parsed.name : parsed.name;
+        }
+      }
+
+      const indicatorsArray = [
+        { name: 'Bleaching Probability', nameAr: 'احتمالية التبييض', value: parseInt(bleaching) || 0 },
+        { name: 'Invasive Species detected', nameAr: 'رصد فصائل غازية', value: parseInt(invasive) || 0 },
+        { name: 'Sedimentation Impact', nameAr: 'تأثير الترسبات', value: parseInt(sedimentation) || 0 }
+      ];
+
+      const newObs = {
+        code: `OBS-26-${Math.floor(1000 + Math.random() * 9000)}`,
         type: newCategory,
         location: newLocation,
-        locationAr: newLocation, // Fallback to same string if no translation service
-        observerId: 'user-123', // Hardcoded for now
-        observerName: 'Current User',
-        date: new Date().toISOString() as any, // Send as ISO string
+        locationAr: newLocation,
+        observerId: currentObserverId,
+        observerName,
+        date: new Date().toISOString(),
         status: 'PENDING',
         score: parseFloat((Math.random() * 10).toFixed(1)),
-        indicators: [] // Optional
+        indicators: indicatorsArray
       };
       
       const response = await fetch('/api/staff/mutate', {
@@ -177,8 +341,62 @@ export default function MonitoringClient({ lang }: { lang: string }) {
     }
   };
 
+  const handleDelete = async (obs: Observation) => {
+    if (!obs.id) return;
+    const confirmMsg = isAr
+      ? `هل أنت متأكد من حذف هذا التقرير البيئي "${obs.code}"؟`
+      : `Are you sure you want to permanently delete observation "${obs.code}"?`;
+    
+    if (confirm(confirmMsg)) {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/staff/mutate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collectionName: 'observations',
+            action: 'DELETE',
+            id: obs.id
+          })
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to delete observation');
+        }
+        await fetchObservations();
+      } catch (err: any) {
+        console.error('Error deleting observation:', err);
+        alert(isAr ? `خطأ أثناء الحذف: ${err.message}` : `Error deleting observation: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const formatObsDate = (ts: any) => {
+    if (!ts) return 'N/A';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleString(isAr ? 'ar-EG' : 'en-US');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const filteredObservations = observations.filter(obs => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'verified') return obs.status === 'VERIFIED';
+    if (activeTab === 'pending') return obs.status === 'PENDING';
+    return true;
+  });
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
+      
       {/* ── Header Area ────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
         <div className="space-y-1.5">
@@ -187,14 +405,14 @@ export default function MonitoringClient({ lang }: { lang: string }) {
                 <Microscope size={18} />
              </div>
              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500">
-               {isAr ? 'الاستخبارات الاستراتيجية' : 'Strategic Intelligence'}
+               {isAr ? 'الاستخبارات البيئية' : 'Environmental Intelligence'}
              </span>
           </div>
           <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">
             {isAr ? 'الرصد البيئي المتطور' : 'Environmental Monitoring'}
           </h1>
           <p className="text-slate-400 text-sm font-medium tracking-wide">
-            {isAr ? 'إدخال وتحليل البيانات الميدانية والملاحظات المسجلة يدوياً' : 'Manual data entry and analysis of field observations'}
+            {isAr ? 'إدخال وتحليل البيانات البيئية الميدانية والملاحظات المسجلة' : 'Manual data entry and analysis of field observations'}
           </p>
         </div>
         
@@ -203,7 +421,10 @@ export default function MonitoringClient({ lang }: { lang: string }) {
             <Download size={18} className="text-slate-400 group-hover:text-white transition-colors" />
             {isAr ? 'تصدير التقارير' : 'Export Intelligence'}
           </button>
-          <button className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-teal-500 text-[#001529] font-black text-sm tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
+          <button 
+            onClick={() => { resetFormFields(); setShowModal(true); }}
+            className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-teal-500 text-[#001529] font-black text-sm tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]"
+          >
             <Plus size={18} strokeWidth={3} />
             {isAr ? 'إضافة رصد جديد' : 'New Observation'}
           </button>
@@ -212,10 +433,10 @@ export default function MonitoringClient({ lang }: { lang: string }) {
 
       {/* ── Summary Row ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <MetricCard icon={Activity} label={isAr ? 'الملاحظات الشهرية' : "Monthly Observations"} value="1,245" unit={isAr ? 'تقرير' : "Rpts"} trend={12.4} color="emerald" />
-        <MetricCard icon={CheckCircle2} label={isAr ? 'تقارير معتمدة' : "Verified Reports"} value="982" unit={isAr ? 'تقرير' : "Rpts"} trend={5.2} color="teal" />
-        <MetricCard icon={Microscope} label={isAr ? 'قيد المراجعة' : "Pending Review"} value="64" unit={isAr ? 'تقرير' : "Rpts"} trend={-1.4} color="orange" />
-        <MetricCard icon={ShieldCheck} label={isAr ? 'باحثين نشطين' : "Active Researchers"} value="128" unit={isAr ? 'مستخدم' : "Users"} trend={2.1} color="blue" />
+        <MetricCard icon={Activity} label={isAr ? 'الملاحظات الميدانية' : "Total Observations"} value={observations.length} unit={isAr ? 'تقرير' : "Rpts"} trend={12.4} color="emerald" />
+        <MetricCard icon={CheckCircle2} label={isAr ? 'تقارير معتمدة' : "Verified Reports"} value={observations.filter(o => o.status === 'VERIFIED').length} unit={isAr ? 'تقرير' : "Rpts"} trend={5.2} color="teal" />
+        <MetricCard icon={Microscope} label={isAr ? 'قيد المراجعة' : "Pending Review"} value={observations.filter(o => o.status === 'PENDING').length} unit={isAr ? 'تقرير' : "Rpts"} trend={-1.4} color="orange" />
+        <MetricCard icon={ShieldCheck} label={isAr ? 'باحثين مسجلين' : "Registered Researchers"} value={users.length} unit={isAr ? 'مستخدم' : "Users"} trend={2.1} color="blue" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -224,7 +445,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
           <Card className="border-none bg-slate-900/40 backdrop-blur-xl p-6 h-full">
              <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white italic">{isAr ? 'مناطق إدخال البيانات' : 'Data Entry Zones'}</h2>
-                <Badge color="teal" size="sm">{isAr ? 'يدوي' : 'MANUAL'}</Badge>
+                <Badge color="teal" size="sm">{isAr ? 'نشط' : 'ACTIVE'}</Badge>
              </div>
              
              <div className="space-y-4">
@@ -350,30 +571,53 @@ export default function MonitoringClient({ lang }: { lang: string }) {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       key={obs.id} 
-                      className="flex items-center gap-5 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all cursor-pointer"
+                      className="flex items-center gap-5 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all cursor-pointer justify-between"
                     >
-                      <div className={`p-2.5 rounded-xl ${obs.type === 'THREAT' ? 'bg-red-500/10 text-red-500' : 'bg-teal-500/10 text-teal-400'}`}>
-                         {obs.type === 'THREAT' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+                      <div className="flex items-center gap-4 min-w-0 flex-1">
+                        <div className={`p-2.5 rounded-xl shrink-0 ${obs.type === 'THREAT' ? 'bg-red-500/10 text-red-500' : 'bg-teal-500/10 text-teal-400'}`}>
+                           {obs.type === 'THREAT' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                              <h4 className="text-sm font-bold text-white tracking-tight uppercase italic truncate">{obs.code}: {isAr ? obs.locationAr : obs.location}</h4>
+                              <span className="text-[9px] font-black text-slate-500 px-1.5 py-0.5 bg-white/5 rounded italic tracking-tighter">
+                                {isAr ? 'بواسطة' : 'BY'} {obs.observerName}
+                              </span>
+                           </div>
+                           <div className="flex items-center gap-4">
+                              <span className="text-[11px] font-bold text-slate-400">{formatObsDate(obs.date)}</span>
+                              <span className={`text-[10px] font-black tracking-widest uppercase ${obs.status === 'VERIFIED' ? 'text-emerald-500' : obs.status === 'REJECTED' ? 'text-red-500' : 'text-amber-500'}`}>
+                                 {isAr ? (obs.status === 'VERIFIED' ? 'معتمد' : obs.status === 'REJECTED' ? 'مرفوض' : 'معلق') : obs.status}
+                              </span>
+                           </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                         <div className="flex items-center gap-3 mb-0.5">
-                            <h4 className="text-sm font-bold text-white tracking-tight uppercase italic">{obs.code}: {isAr ? obs.locationAr : obs.location}</h4>
-                            <span className="text-[10px] font-black text-slate-500 px-2 py-0.5 bg-white/5 rounded italic tracking-tighter">
-                              {isAr ? 'بواسطة' : 'BY'} {obs.observerName}
-                            </span>
-                         </div>
-                         <div className="flex items-center gap-4">
-                            <span className="text-[11px] font-bold text-slate-400">{formatObsDate(obs.date)}</span>
-                            <span className={`text-[10px] font-black tracking-widest uppercase ${obs.status === 'VERIFIED' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                               {isAr ? (obs.status === 'VERIFIED' ? 'معتمد' : 'معلق') : obs.status}
-                            </span>
-                         </div>
+
+                      <div className="flex items-center gap-4 shrink-0">
+                        <div className="text-right">
+                           <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-0.5">{isAr ? 'التقييم' : 'SCORE'}</p>
+                           <div className={`text-lg font-black font-mono tracking-tighter ${obs.score > 8 ? 'text-emerald-500' : obs.score > 5 ? 'text-amber-500' : 'text-orange-500'}`}>{obs.score}</div>
+                        </div>
+                        
+                        <div className="flex gap-1.5">
+                          <Button 
+                            size="sm" 
+                            intent="ghost" 
+                            onClick={() => startEditing(obs)}
+                            className="text-slate-400 hover:text-white h-8 px-2.5 text-[10px] font-bold uppercase tracking-widest bg-white/5 hover:bg-white/10 border-transparent rounded-xl"
+                          >
+                            <Edit3 size={12} />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            intent="ghost" 
+                            onClick={() => handleDelete(obs)}
+                            className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 h-8 px-2.5 text-[10px] font-bold uppercase tracking-widest bg-white/5 border-transparent rounded-xl"
+                          >
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="text-center md:text-right">
-                         <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{isAr ? 'التقييم' : 'SCORE'}</p>
-                         <div className={`text-xl font-black font-mono tracking-tighter ${obs.score > 8 ? 'text-emerald-500' : 'text-amber-500'}`}>{obs.score}</div>
-                      </div>
-                      <ChevronRight size={16} className={`text-white/10 ${isAr ? 'rotate-180' : ''}`} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -393,7 +637,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
                 <div className="w-8 h-8 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400">
                    <Plus size={18} strokeWidth={3} />
                 </div>
-                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white italic">{isAr ? 'سجل الرصد' : 'Observation Log'}</h2>
+                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white italic">{isAr ? 'تسجيل رصد سريع' : 'Quick Obs Log'}</h2>
              </div>
              
              <div className="space-y-6">
@@ -426,6 +670,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
                         <button 
                           key={cat.id} 
                           onClick={() => setNewCategory(cat.id as any)}
+                          type="button"
                           className={`p-3 rounded-2xl border text-[10px] font-black tracking-widest transition-all ${newCategory === cat.id ? 'bg-teal-500/20 border-teal-500 text-teal-400' : 'bg-white/5 border-white/5 text-[#94a3b8] hover:border-teal-500/50 hover:text-white'}`}
                         >
                            {isAr ? cat.ar : cat.en}
@@ -436,26 +681,27 @@ export default function MonitoringClient({ lang }: { lang: string }) {
 
                 <div>
                    <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 block mb-2.5 mx-1 italic">
-                     {isAr ? 'مؤشرات الهشاشة' : 'Vulnerability Indicators'}
+                     {isAr ? 'مؤشرات الهشاشة (نسبة مئوية)' : 'Vulnerability Indicators (%)'}
                    </label>
                    <div className="space-y-3">
                       {[
-                        { name: 'Bleaching Probability', nameAr: 'احتمالية التبييض', score: 23, color: 'emerald' },
-                        { name: 'Invasive Species detected', nameAr: 'رصد فصائل غازية', score: 68, color: 'red' },
-                        { name: 'Sedimentation Impact', nameAr: 'تأثير الترسبات', score: 42, color: 'amber' },
+                        { name: 'Bleaching Probability', nameAr: 'احتمالية التبييض', value: bleaching, setValue: setBleaching, color: 'emerald' },
+                        { name: 'Invasive Species detected', nameAr: 'رصد فصائل غازية', value: invasive, setValue: setInvasive, color: 'red' },
+                        { name: 'Sedimentation Impact', nameAr: 'تأثير الترسبات', value: sedimentation, setValue: setSedimentation, color: 'amber' },
                       ].map((item, i) => (
                         <div key={i} className="p-3.5 rounded-2xl bg-[#0f172a]/40 border border-white/5">
                            <div className="flex items-center justify-between mb-2">
                               <span className="text-[10px] font-bold text-slate-300">{isAr ? item.nameAr : item.name}</span>
-                              <span className={`text-[10px] font-black text-${item.color}-400`} dir="ltr">{item.score}%</span>
+                              <span className={`text-[10px] font-black text-${item.color}-400`} dir="ltr">{item.value}%</span>
                            </div>
-                           <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden" dir="ltr">
-                              <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${item.score}%` }}
-                                className={`h-full bg-${item.color}-500`}
-                              />
-                           </div>
+                           <input 
+                             type="range"
+                             min="0"
+                             max="100"
+                             value={item.value}
+                             onChange={(e) => item.setValue(e.target.value)}
+                             className="w-full accent-teal-500 bg-white/5 h-1 rounded-lg cursor-pointer"
+                           />
                         </div>
                       ))}
                    </div>
@@ -471,7 +717,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
                          <div className="w-5 h-5 border-2 border-[#001529]/30 border-t-[#001529] rounded-full animate-spin" />
                       ) : (
                         <>
-                          {isAr ? 'تأكيد الرصد' : 'Commit Observation'}
+                          {isAr ? 'تأكيد الرصد السريع' : 'Commit Quick Obs'}
                           <ArrowRight size={18} strokeWidth={3} className={isAr ? 'rotate-180' : ''} />
                         </>
                       )}
@@ -484,6 +730,202 @@ export default function MonitoringClient({ lang }: { lang: string }) {
           </Card>
         </div>
       </div>
+
+      {/* Glassmorphic Add/Edit Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[999] flex items-center justify-center p-4 overflow-y-auto">
+          <Card className="w-full max-w-[700px] p-8 border border-white/10 bg-[#0c1628]/95 rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <h2 className="text-2xl font-black text-white tracking-tight mb-6 flex items-center gap-2 pb-3 border-b border-white/5">
+              <Microscope className="text-teal-400" size={24} />
+              {editingObservation 
+                ? (isAr ? 'تعديل تقرير الرصد البيئي' : 'Edit Observation Report')
+                : (isAr ? 'تسجيل تقرير رصد جديد' : 'Record New Observation')
+              }
+            </h2>
+
+            <form onSubmit={handleModalSubmit} className="space-y-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'رقم التقرير' : 'Observation Code'}
+                  </label>
+                  <Input 
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder="e.g. OBS-26-4829"
+                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'الباحث المسؤول *' : 'Observer/Researcher *'}
+                  </label>
+                  {users.length > 0 ? (
+                    <select
+                      value={observerId}
+                      onChange={(e) => setObserverId(e.target.value)}
+                      className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                      required
+                    >
+                      <option value="">{isAr ? 'اختر الباحث...' : 'Select Observer...'}</option>
+                      {users.map(u => (
+                        <option key={u.id} value={u.id}>
+                          {isAr ? u.nameAr || u.name : u.name} ({u.employeeId})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <Input 
+                      value={observerId}
+                      onChange={(e) => setObserverId(e.target.value)}
+                      placeholder="e.g. user-123"
+                      className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                      required
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'الموقع بالإنجليزية *' : 'Location (EN) *'}
+                  </label>
+                  <Input 
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g. Northern Reefs Bed A"
+                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'الموقع بالعربية *' : 'Location (AR) *'}
+                  </label>
+                  <Input 
+                    value={locationAr}
+                    onChange={(e) => setLocationAr(e.target.value)}
+                    placeholder="مثال: قطاع الشعاب الشمالية أ"
+                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'فئة الرصد البيئي' : 'Observation Category'}
+                  </label>
+                  <select 
+                    value={type}
+                    onChange={(e) => setType(e.target.value as any)}
+                    className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                  >
+                    <option value="CORAL">{isAr ? 'بيئة الشعاب المرجانية (CORAL)' : 'Coral Reef Bed'}</option>
+                    <option value="FAUNA">{isAr ? 'الحياة البحرية والحيوانية (FAUNA)' : 'Marine Fauna'}</option>
+                    <option value="THREAT">{isAr ? 'التهديدات والمخاطر البيئية (THREAT)' : 'Threat / Risk'}</option>
+                    <option value="WEATHER">{isAr ? 'أرصاد وحالة طقس (WEATHER)' : 'Weather & Climate'}</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'حالة الاعتماد' : 'Verification Status'}
+                  </label>
+                  <select 
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as any)}
+                    className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                  >
+                    <option value="PENDING">{isAr ? 'معلق / تحت المراجعة (PENDING)' : 'Pending Review'}</option>
+                    <option value="VERIFIED">{isAr ? 'معتمد ومؤكد (VERIFIED)' : 'Verified'}</option>
+                    <option value="REJECTED">{isAr ? 'مرفوض (REJECTED)' : 'Rejected'}</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {isAr ? 'التقييم العام للموقع (0.0 - 10.0)' : 'Overall Quality Score (0.0 - 10.0)'}
+                  </label>
+                  <Input 
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    value={score}
+                    onChange={(e) => setScore(e.target.value)}
+                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                  />
+                </div>
+
+              </div>
+
+              {/* Dynamic Vulnerability Indicators sliders inside modal */}
+              <div className="space-y-3 pt-4 border-t border-white/5">
+                <h3 className="text-sm font-bold text-white">
+                  {isAr ? 'مؤشرات التقييم الهيكلي' : 'Structural Assessment Indicators'}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { name: 'Bleaching Probability', nameAr: 'احتمالية التبييض', value: bleaching, setValue: setBleaching, color: 'emerald' },
+                    { name: 'Invasive Species detected', nameAr: 'رصد فصائل غازية', value: invasive, setValue: setInvasive, color: 'red' },
+                    { name: 'Sedimentation Impact', nameAr: 'تأثير الترسبات', value: sedimentation, setValue: setSedimentation, color: 'amber' },
+                  ].map((item, i) => (
+                    <div key={i} className="p-4 rounded-2xl bg-[#050b14]/80 border border-white/5">
+                       <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-bold text-slate-300">{isAr ? item.nameAr : item.name}</span>
+                          <span className={`text-[10px] font-black text-teal-400`} dir="ltr">{item.value}%</span>
+                       </div>
+                       <input 
+                         type="range"
+                         min="0"
+                         max="100"
+                         value={item.value}
+                         onChange={(e) => item.setValue(e.target.value)}
+                         className="w-full accent-teal-500 bg-white/5 h-1 rounded-lg cursor-pointer"
+                       />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions buttons */}
+              <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
+                <button 
+                  type="button" 
+                  onClick={() => setShowModal(false)}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors"
+                  disabled={isSubmitting}
+                >
+                  {isAr ? 'إلغاء' : 'Cancel'}
+                </button>
+                
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="bg-teal-600 hover:bg-teal-500 text-[#0c1628] font-black rounded-xl py-2.5 px-6"
+                >
+                  {isSubmitting 
+                    ? <Loader2 className="animate-spin" size={16} /> 
+                    : (editingObservation ? (isAr ? 'تحديث الرصد' : 'Update Observation') : (isAr ? 'حفظ الرصد' : 'Submit Observation'))
+                  }
+                </Button>
+              </div>
+
+            </form>
+          </Card>
+        </div>
+      )}
+
     </div>
   );
 }

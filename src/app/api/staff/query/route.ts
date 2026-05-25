@@ -29,14 +29,35 @@ export async function GET(request: Request) {
         data = await prisma.vessel.findMany({ orderBy: { name: 'asc' } });
         break;
       case 'patrols':
-        data = await prisma.patrol.findMany({ orderBy: { date: 'desc' } });
+        data = await prisma.patrol.findMany({ 
+          orderBy: { date: 'desc' },
+          include: {
+            vessel: true,
+            members: true,
+          }
+        });
         data = data.map((p: any) => ({
           ...p,
           routeCoordinates: p.routeCoordinates ? safeJsonParse(p.routeCoordinates, []) : [],
+          vessel: p.vessel ? p.vessel.name : 'No Vessel',
+          vesselAr: p.vessel ? (p.vessel.nameAr || p.vessel.name) : 'بدون مركبة',
+          officer: p.members && p.members.length > 0 ? p.members[0].name : 'No Officer',
+          officerAr: p.members && p.members.length > 0 ? (p.members[0].nameAr || p.members[0].name) : 'بدون ضابط',
         }));
         break;
       case 'violations':
-        data = await prisma.violation.findMany({ orderBy: { date: 'desc' } });
+        data = await prisma.violation.findMany({ 
+          orderBy: { date: 'desc' },
+          include: {
+            officer: true,
+            patrol: true
+          }
+        });
+        data = data.map((v: any) => ({
+          ...v,
+          officerName: v.officer ? v.officer.name : 'Unknown',
+          officerNameAr: v.officer ? (v.officer.nameAr || v.officer.name) : 'غير معروف',
+        }));
         break;
       case 'observations':
         data = await (prisma as any).observation.findMany({ orderBy: { date: 'desc' } });
