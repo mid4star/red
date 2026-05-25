@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { 
@@ -23,7 +23,8 @@ import {
   Skull,
   Layers,
   MapPin,
-  ExternalLink
+  ExternalLink,
+  Upload
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -55,6 +56,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Database Collections State
   const [ecoPrograms, setEcoPrograms] = useState<any[]>([]);
@@ -214,9 +216,12 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
   };
 
   // Map Click coordinate capture
-  const handleMapClick = (latitude: number, longitude: number) => {
+  const handleMapClick = useCallback((latitude: number, longitude: number) => {
     const latStr = latitude.toFixed(6);
     const lngStr = longitude.toFixed(6);
+
+    // Switch to Form mode automatically on map click coordinate capture
+    setSubMode('form');
 
     if (activeTab === 'eco_programs') {
       setEpForm(prev => ({ ...prev, latitude: latStr, longitude: lngStr }));
@@ -226,6 +231,44 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
       setSForm(prev => ({ ...prev, latitude: latStr, longitude: lngStr }));
     } else if (activeTab === 'beach_surveys') {
       setBsForm(prev => ({ ...prev, latitude: latStr, longitude: lngStr }));
+    }
+  }, [activeTab]);
+
+  // Handle report files upload
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    callback: (url: string) => void
+  ) => {
+    const filesList = e.target.files;
+    if (!filesList || filesList.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const file = filesList[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await res.json();
+      if (data.success && data.url) {
+        callback(data.url);
+        alert(isAr ? 'تم رفع الملف بنجاح' : 'File uploaded successfully.');
+      } else {
+        alert(isAr ? 'فشل رفع الملف' : 'File upload failed.');
+      }
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      alert(isAr ? 'حدث خطأ أثناء الرفع' : 'Error occurred during upload.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -810,14 +853,28 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
 
                       <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
-                          {isAr ? 'ملف التقرير المرفق (URL)' : 'Report File URL'}
+                          {isAr ? 'ملف التقرير المرفق' : 'Report File / Attachment'}
                         </label>
-                        <Input 
-                          value={epForm.attachedFileUrl}
-                          onChange={(e) => setEpForm(prev => ({ ...prev, attachedFileUrl: e.target.value }))}
-                          placeholder="/uploads/mangrove_report.pdf"
-                          className="bg-[#050b14]/75 border-white/10 text-white rounded-xl text-xs h-11"
-                        />
+                        <div className="relative">
+                          <Input 
+                            value={epForm.attachedFileUrl}
+                            onChange={(e) => setEpForm(prev => ({ ...prev, attachedFileUrl: e.target.value }))}
+                            placeholder={isAr ? 'رابط الملف المرفق أو المسار...' : '/uploads/mangrove_report.pdf'}
+                            className={`bg-[#050b14]/75 border-white/10 text-white rounded-xl text-xs h-11 ${isAr ? 'pl-28' : 'pr-28'}`}
+                          />
+                          <div className={`absolute ${isAr ? 'left-1.5' : 'right-1.5'} top-1.5`}>
+                            <label className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 text-[10px] font-black uppercase tracking-wider cursor-pointer border border-teal-500/20 transition-all">
+                              {isUploading ? <Loader2 className="animate-spin text-teal-400" size={12} /> : <Upload size={12} />}
+                              {isAr ? 'رفع ملف' : 'Upload'}
+                              <input
+                                type="file"
+                                className="hidden"
+                                disabled={isUploading}
+                                onChange={(e) => handleFileUpload(e, (url) => setEpForm(prev => ({ ...prev, attachedFileUrl: url })))}
+                              />
+                            </label>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-1">
@@ -974,14 +1031,28 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
 
                       <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
-                          {isAr ? 'صورة أو وثيقة مرفقة (URL)' : 'Media or Case File URL'}
+                          {isAr ? 'صورة أو وثيقة مرفقة' : 'Attached Media / Case File'}
                         </label>
-                        <Input 
-                          value={scForm.attachedFileUrl}
-                          onChange={(e) => setScForm(prev => ({ ...prev, attachedFileUrl: e.target.value }))}
-                          placeholder="/uploads/turtle_rescue.jpg"
-                          className="bg-[#050b14]/75 border-white/10 text-white rounded-xl text-xs h-11"
-                        />
+                        <div className="relative">
+                          <Input 
+                            value={scForm.attachedFileUrl}
+                            onChange={(e) => setScForm(prev => ({ ...prev, attachedFileUrl: e.target.value }))}
+                            placeholder={isAr ? 'رابط الملف أو الصورة المرفقة...' : '/uploads/turtle_rescue.jpg'}
+                            className={`bg-[#050b14]/75 border-white/10 text-white rounded-xl text-xs h-11 ${isAr ? 'pl-28' : 'pr-28'}`}
+                          />
+                          <div className={`absolute ${isAr ? 'left-1.5' : 'right-1.5'} top-1.5`}>
+                            <label className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 text-[10px] font-black uppercase tracking-wider cursor-pointer border border-teal-500/20 transition-all">
+                              {isUploading ? <Loader2 className="animate-spin text-teal-400" size={12} /> : <Upload size={12} />}
+                              {isAr ? 'رفع ملف' : 'Upload'}
+                              <input
+                                type="file"
+                                className="hidden"
+                                disabled={isUploading}
+                                onChange={(e) => handleFileUpload(e, (url) => setScForm(prev => ({ ...prev, attachedFileUrl: url })))}
+                              />
+                            </label>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-1">
@@ -1262,14 +1333,28 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
 
                       <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
-                          {isAr ? 'وثيقة مسح النفايات/التقرير (URL)' : 'Trash Survey Report URL'}
+                          {isAr ? 'وثيقة مسح النفايات/التقرير المرفق' : 'Attached Report / Survey Document'}
                         </label>
-                        <Input 
-                          value={bsForm.attachedFileUrl}
-                          onChange={(e) => setBsForm(prev => ({ ...prev, attachedFileUrl: e.target.value }))}
-                          placeholder="/uploads/beach_debris_survey.pdf"
-                          className="bg-[#050b14]/75 border-white/10 text-white rounded-xl text-xs h-11"
-                        />
+                        <div className="relative">
+                          <Input 
+                            value={bsForm.attachedFileUrl}
+                            onChange={(e) => setBsForm(prev => ({ ...prev, attachedFileUrl: e.target.value }))}
+                            placeholder={isAr ? 'رابط الملف أو الصورة المرفقة...' : '/uploads/beach_debris_survey.pdf'}
+                            className={`bg-[#050b14]/75 border-white/10 text-white rounded-xl text-xs h-11 ${isAr ? 'pl-28' : 'pr-28'}`}
+                          />
+                          <div className={`absolute ${isAr ? 'left-1.5' : 'right-1.5'} top-1.5`}>
+                            <label className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 text-[10px] font-black uppercase tracking-wider cursor-pointer border border-teal-500/20 transition-all">
+                              {isUploading ? <Loader2 className="animate-spin text-teal-400" size={12} /> : <Upload size={12} />}
+                              {isAr ? 'رفع ملف' : 'Upload'}
+                              <input
+                                type="file"
+                                className="hidden"
+                                disabled={isUploading}
+                                onChange={(e) => handleFileUpload(e, (url) => setBsForm(prev => ({ ...prev, attachedFileUrl: url })))}
+                              />
+                            </label>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-1">
