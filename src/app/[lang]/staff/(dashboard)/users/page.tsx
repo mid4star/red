@@ -5,12 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { 
-  subscribeToCollection
-} from '@/lib/firebase/db';
 import { User, UserRole } from '@/lib/firebase/schema';
-import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import { 
   Users, 
   ShieldAlert, 
@@ -95,16 +90,26 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const [certificationsText, setCertificationsText] = useState('');
   const [allowedSections, setAllowedSections] = useState<string[]>(['patrols', 'monitoring']);
 
-  // Fetch Firestore users list
-  useEffect(() => {
+  // Fetch users from API (reads from Turso/SQLite)
+  const fetchUsers = async () => {
     setLoading(true);
-    const q = query(collection(db, 'users'), orderBy('name', 'asc'));
-    const unsub = subscribeToCollection<User>('users', (data) => {
-      setUsersList(data);
+    try {
+      const res = await fetch('/api/staff/query?collection=users');
+      if (res.ok) {
+        const json = await res.json();
+        setUsersList(json.data || []);
+      } else {
+        console.error('Failed to fetch users from API');
+      }
+    } catch (err) {
+      console.error('Error fetching users:', err);
+    } finally {
       setLoading(false);
-    }, q);
+    }
+  };
 
-    return () => unsub();
+  useEffect(() => {
+    fetchUsers();
   }, []);
 
   // Form Resets
@@ -166,7 +171,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         status: userStatus,
         certifications: certificationsArray,
         allowedSections,
-        updatedAt: Timestamp.now()
+        updatedAt: new Date().toISOString()
       };
 
       if (editingUser?.id) {
@@ -187,7 +192,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         }
       } else {
         // Add User
-        userData.createdAt = Timestamp.now();
+        userData.createdAt = new Date().toISOString();
         const response = await fetch('/api/staff/mutate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -206,11 +211,19 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
       resetFormFields();
       setShowAddForm(false);
+      // Refresh users list from database
+      fetchUsers();
     } catch (err: any) {
       console.error('Error saving user:', err);
+      const errMsg = err.message || String(err);
+      const isUniqueError = errMsg.includes('UNIQUE constraint') || errMsg.includes('employeeId');
       alert(isArabic 
-        ? `حدث خطأ أثناء حفظ البيانات: ${err.message || err}` 
-        : `Error saving user data: ${err.message || err}`
+        ? isUniqueError 
+          ? `الرقم الوظيفي "${employeeId}" مستخدم بالفعل. يرجى استخدام رقم وظيفي مختلف.`
+          : `حدث خطأ أثناء حفظ البيانات: ${errMsg}` 
+        : isUniqueError
+          ? `Employee ID "${employeeId}" already exists. Please use a different ID.`
+          : `Error saving user data: ${errMsg}`
       );
     } finally {
       setSubmitting(false);
@@ -240,6 +253,8 @@ export default function UserManagementPage({ params }: { params: { lang: string 
           const errData = await response.json();
           throw new Error(errData.error || 'Failed to delete user');
         }
+        // Refresh users list from database
+        fetchUsers();
       } catch (err) {
         console.error('Error deleting user:', err);
       } finally {

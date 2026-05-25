@@ -9,10 +9,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { OpenDataDocument } from '@/lib/firebase/schema';
-import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 
 const TYPE_LABELS: Record<string, { en: string; ar: string; color: string }> = {
   ACADEMIC: { en: 'Academic', ar: 'أكاديمي', color: 'bg-indigo-500/10 text-indigo-400' },
@@ -49,9 +46,18 @@ export default function OpenDataCMSPage({ params }: { params: { lang: string } }
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const fetchDocs = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=opendata');
+      if (res.ok) {
+        const json = await res.json();
+        setDocs(json.data || []);
+      }
+    } catch (err) { console.error('Error fetching opendata:', err); }
+  };
+
   useEffect(() => {
-    const q = query(collection(db, 'opendata'), orderBy('uploadDate', 'desc'));
-    return subscribeToCollection<OpenDataDocument>('opendata', setDocs, q);
+    fetchDocs();
   }, []);
 
   const filtered = filter === 'ALL' ? docs : docs.filter(d => d.type === filter);
@@ -62,7 +68,7 @@ export default function OpenDataCMSPage({ params }: { params: { lang: string } }
   const handleSave = async () => {
     setSaving(true);
     try {
-      const payload = { ...form, uploadDate: Timestamp.now() };
+      const payload = { ...form, uploadDate: new Date().toISOString() };
       if (editingId) {
         const { id, ...rest } = payload as any;
         const response = await fetch('/api/staff/mutate', {
@@ -89,6 +95,7 @@ export default function OpenDataCMSPage({ params }: { params: { lang: string } }
         if (!response.ok) throw new Error('Failed to add document');
       }
       setShowEditor(false);
+      fetchDocs();
     } catch (e) { console.error(e); }
     setSaving(false);
   };
@@ -107,6 +114,7 @@ export default function OpenDataCMSPage({ params }: { params: { lang: string } }
         });
         if (!response.ok) throw new Error('Failed to delete document');
         setShowEditor(false);
+        fetchDocs();
       } catch (e) { console.error(e); }
     }
   };

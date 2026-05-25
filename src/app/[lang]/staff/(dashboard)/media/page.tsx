@@ -9,13 +9,10 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { subscribeToCollection } from '@/lib/firebase/db';
-import { collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 
 const MODULES = [
   { 
-    key: 'homepage', collection: 'homepage_settings',
+    key: 'homepage', collection: 'homepage',
     name: 'Homepage Settings', nameAr: 'إعدادات الصفحة الرئيسية',
     desc: 'Control hero text, banners and featured content', descAr: 'تحكم في نصوص الواجهة والإعلانات والمحتوى المميز',
     icon: Home, color: 'blue', href: 'media/homepage',
@@ -56,14 +53,18 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
   const [counts, setCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    const unsubs: (() => void)[] = [];
-    MODULES.forEach(m => {
-      const unsub = subscribeToCollection(m.collection, (data: any[]) => {
-        setCounts(prev => ({ ...prev, [m.key]: data.length }));
-      });
-      unsubs.push(unsub);
-    });
-    return () => unsubs.forEach(u => u());
+    const fetchCounts = async () => {
+      for (const m of MODULES) {
+        try {
+          const res = await fetch(`/api/staff/query?collection=${m.collection}`);
+          if (res.ok) {
+            const json = await res.json();
+            setCounts(prev => ({ ...prev, [m.key]: (json.data || []).length }));
+          }
+        } catch (err) { console.error('Error fetching count for', m.key, err); }
+      }
+    };
+    fetchCounts();
   }, []);
 
   return (

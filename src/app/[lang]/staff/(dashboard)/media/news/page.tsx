@@ -9,10 +9,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { NewsArticle } from '@/lib/firebase/schema';
-import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 
 const CATEGORIES = [
@@ -47,9 +44,18 @@ export default function NewsCMSPage({ params }: { params: { lang: string } }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const fetchArticles = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=news');
+      if (res.ok) {
+        const json = await res.json();
+        setArticles(json.data || []);
+      }
+    } catch (err) { console.error('Error fetching news:', err); }
+  };
+
   useEffect(() => {
-    const q = query(collection(db, 'news'), orderBy('date', 'desc'));
-    return subscribeToCollection<NewsArticle>('news', setArticles, q);
+    fetchArticles();
   }, []);
 
   const filtered = filter === 'ALL' ? articles : articles.filter(a => a.category === filter);
@@ -60,7 +66,7 @@ export default function NewsCMSPage({ params }: { params: { lang: string } }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const payload = { ...form, date: Timestamp.now() };
+      const payload = { ...form, date: new Date().toISOString() };
       if (editingId) {
         const { id, ...rest } = payload as any;
         const response = await fetch('/api/staff/mutate', {
@@ -87,6 +93,7 @@ export default function NewsCMSPage({ params }: { params: { lang: string } }) {
         if (!response.ok) throw new Error('Failed to add news');
       }
       setShowEditor(false);
+      fetchArticles();
     } catch (e) { console.error(e); }
     setSaving(false);
   };
@@ -105,6 +112,7 @@ export default function NewsCMSPage({ params }: { params: { lang: string } }) {
         });
         if (!response.ok) throw new Error('Failed to delete news');
         setShowEditor(false);
+        fetchArticles();
       } catch (e) { console.error(e); }
     }
   };
@@ -124,8 +132,9 @@ export default function NewsCMSPage({ params }: { params: { lang: string } }) {
   };
 
   const formatDate = (ts: any) => {
-    if (!ts?.toDate) return '—';
-    return ts.toDate().toLocaleDateString(isAr ? 'ar-SA' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    if (!ts) return '—';
+    const d = ts?.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString(isAr ? 'ar-SA' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   return (

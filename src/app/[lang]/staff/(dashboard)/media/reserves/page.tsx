@@ -9,10 +9,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { ReserveProfile } from '@/lib/firebase/schema';
-import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -37,9 +34,18 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const fetchReserves = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=reserves');
+      if (res.ok) {
+        const json = await res.json();
+        setReserves(json.data || []);
+      }
+    } catch (err) { console.error('Error fetching reserves:', err); }
+  };
+
   useEffect(() => {
-    const q = query(collection(db, 'reserves'), orderBy('name', 'asc'));
-    return subscribeToCollection<ReserveProfile>('reserves', setReserves, q);
+    fetchReserves();
   }, []);
 
   const openNew = () => { setForm(emptyReserve()); setEditingId(null); setShowEditor(true); };
@@ -75,6 +81,7 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
         if (!response.ok) throw new Error('Failed to add reserve');
       }
       setShowEditor(false);
+      fetchReserves();
     } catch (e) { console.error(e); }
     setSaving(false);
   };
@@ -93,6 +100,7 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
         });
         if (!response.ok) throw new Error('Failed to delete reserve');
         setShowEditor(false);
+        fetchReserves();
       } catch (e) { console.error(e); }
     }
   };
