@@ -8,8 +8,6 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import { HomepageSettings } from '@/lib/firebase/schema';
 
 const DOC_ID = 'home-config';
@@ -25,6 +23,7 @@ const defaultSettings: HomepageSettings = {
 export default function HomepageCMSPage({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
   const [settings, setSettings] = useState<HomepageSettings>(defaultSettings);
+  const [settingsId, setSettingsId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -32,10 +31,18 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
   useEffect(() => {
     const load = async () => {
       try {
-        const docRef = doc(db, 'homepage_settings', DOC_ID);
-        const snap = await getDoc(docRef);
-        if (snap.exists()) {
-          setSettings(snap.data() as HomepageSettings);
+        const res = await fetch('/api/staff/query?collection=homepage');
+        const json = await res.json();
+        if (json.success && json.data && json.data.length > 0) {
+          const record = json.data[0];
+          setSettings({
+            heroTitle: record.heroTitle,
+            heroTitleAr: record.heroTitleAr,
+            heroSubtitle: record.heroSubtitle,
+            heroSubtitleAr: record.heroSubtitleAr,
+            announcements: record.announcements || [],
+          });
+          setSettingsId(record.id);
         }
       } catch (e) { console.error(e); }
       setLoading(false);
@@ -46,10 +53,23 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
   const handleSave = async () => {
     setSaving(true);
     try {
-      const docRef = doc(db, 'homepage_settings', DOC_ID);
-      await setDoc(docRef, settings);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      const response = await fetch('/api/staff/mutate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          collectionName: 'homepage',
+          action: settingsId ? 'UPDATE' : 'ADD',
+          id: settingsId || DOC_ID,
+          data: settings
+        })
+      });
+      if (!response.ok) throw new Error('Failed to save settings');
+      const json = await response.json();
+      if (json.success) {
+        setSettingsId(json.id);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
     } catch (e) { console.error(e); }
     setSaving(false);
   };

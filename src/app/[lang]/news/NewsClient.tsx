@@ -15,10 +15,7 @@ import {
 } from 'lucide-react';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { PublicFooter } from '@/components/layout/PublicFooter';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { NewsArticle } from '@/lib/firebase/schema';
-import { collection, query, where, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 
 const NEWS_CATEGORIES = [
   { id: 'all', name: 'Intelligence Feed', nameAr: 'تلقيم البيانات الاستراتيجي' },
@@ -36,19 +33,22 @@ export default function NewsClient({ lang }: { lang: string }) {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
   useEffect(() => {
-    const newsCollRef = collection(db, 'news');
-    const newsQuery = query(
-      newsCollRef,
-      where('status', '==', 'PUBLISHED'),
-      orderBy('date', 'desc')
-    );
-
-    const unsub = subscribeToCollection<NewsArticle>('news', (data) => {
-      setNews(data);
-      setLoading(false);
-    }, newsQuery);
-
-    return () => unsub();
+    const fetchNews = async () => {
+      try {
+        const res = await fetch('/api/staff/query?collection=news');
+        const json = await res.json();
+        if (json.success) {
+          const allNews = json.data as NewsArticle[];
+          const published = allNews.filter((item: any) => item.status === 'PUBLISHED');
+          setNews(published);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNews();
   }, []);
 
   const formatDate = (timestamp: any) => {

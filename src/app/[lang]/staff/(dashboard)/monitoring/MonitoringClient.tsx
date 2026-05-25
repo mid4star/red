@@ -2,10 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { Observation } from '@/lib/firebase/schema';
-import { Timestamp, query, orderBy, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import { 
   Activity, 
   Thermometer, 
@@ -93,6 +90,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending'>('all');
   const [observations, setObservations] = useState<Observation[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -103,15 +101,37 @@ export default function MonitoringClient({ lang }: { lang: string }) {
   const [newCategory, setNewCategory] = useState<'CORAL' | 'FAUNA' | 'THREAT' | 'WEATHER'>('CORAL');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const fetchObservations = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=observations');
+      const json = await res.json();
+      if (json.success) {
+        setObservations(json.data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Subscribe to Firebase real-time updates for observations
-    const q = query(collection(db, 'observations'), orderBy('date', 'desc'));
-    const unsubscribe = subscribeToCollection<Observation>('observations', (data) => {
-      setObservations(data);
-    }, q);
-    
-    return () => unsubscribe();
+    fetchObservations();
   }, []);
+
+  const formatObsDate = (ts: any) => {
+    if (!ts) return 'N/A';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleString(isAr ? 'ar-EG' : 'en-US');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const filteredObservations = observations.filter(obs => {
     if (activeTab === 'all') return true;
@@ -149,6 +169,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
       if (!response.ok) throw new Error('Failed to save observation');
       
       setNewLocation('');
+      await fetchObservations();
     } catch (error) {
       console.error("Error committing observation: ", error);
     } finally {
@@ -342,7 +363,7 @@ export default function MonitoringClient({ lang }: { lang: string }) {
                             </span>
                          </div>
                          <div className="flex items-center gap-4">
-                            <span className="text-[11px] font-bold text-slate-400">{obs.date?.toDate ? obs.date.toDate().toLocaleString(isAr ? 'ar-EG' : 'en-US') : 'N/A'}</span>
+                            <span className="text-[11px] font-bold text-slate-400">{formatObsDate(obs.date)}</span>
                             <span className={`text-[10px] font-black tracking-widest uppercase ${obs.status === 'VERIFIED' ? 'text-emerald-500' : 'text-amber-500'}`}>
                                {isAr ? (obs.status === 'VERIFIED' ? 'معتمد' : 'معلق') : obs.status}
                             </span>

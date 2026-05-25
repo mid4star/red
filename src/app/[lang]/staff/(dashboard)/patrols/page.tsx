@@ -2,10 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { Patrol } from '@/lib/firebase/schema';
-import { query, where, collection, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import { 
   Shield, 
   Map as MapIcon, 
@@ -120,21 +117,43 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
   
   const [activePatrols, setActivePatrols] = useState<Patrol[]>([]);
   const [recentMissions, setRecentMissions] = useState<Patrol[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPatrols = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=patrols');
+      const json = await res.json();
+      if (json.success) {
+        const allPatrols = json.data as Patrol[];
+        const active = allPatrols.filter(p => ['ACTIVE', 'STANDBY', 'EMERGENCY'].includes(p.status));
+        const completed = allPatrols.filter(p => p.status === 'COMPLETED');
+        setActivePatrols(active);
+        setRecentMissions(completed);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Sub to active patrols
-    const qActive = query(collection(db, 'patrols'), where('status', 'in', ['ACTIVE', 'STANDBY', 'EMERGENCY']));
-    const unsubActive = subscribeToCollection<Patrol>('patrols', setActivePatrols, qActive);
-    
-    // Sub to completed patrols
-    const qCompleted = query(collection(db, 'patrols'), where('status', '==', 'COMPLETED'), orderBy('startTime', 'desc'));
-    const unsubCompleted = subscribeToCollection<Patrol>('patrols', setRecentMissions, qCompleted);
-
-    return () => {
-      unsubActive();
-      unsubCompleted();
-    };
+    fetchPatrols();
   }, []);
+
+  const formatMissionDate = (startTime: any) => {
+    if (!startTime) return '';
+    const d = startTime.toDate ? startTime.toDate() : new Date(startTime);
+    return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-[1500px] mx-auto space-y-8" dir={isArabic ? 'rtl' : 'ltr'}>
@@ -300,7 +319,7 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
                           <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-teal-400 transition-colors">#{mission.code}</span>
                        </td>
                        <td className="py-4 px-6 font-bold text-white">{mission.vessel}</td>
-                       <td className="py-4 px-6 text-slate-400">{mission.startTime?.toDate ? mission.startTime.toDate().toLocaleDateString() : ''}</td>
+                       <td className="py-4 px-6 text-slate-400">{formatMissionDate(mission.startTime)}</td>
                        <td className="py-4 px-6 font-mono font-bold text-slate-500 italic">4.5h</td>
                        <td className="py-4 px-6 font-mono font-bold text-teal-400 tracking-tighter">24km</td>
                        <td className="py-4 px-6">

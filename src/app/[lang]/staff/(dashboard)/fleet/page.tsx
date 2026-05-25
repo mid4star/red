@@ -2,10 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { FleetVessel } from '@/lib/firebase/schema';
-import { collection, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import { 
   Ship, 
   Search, 
@@ -171,12 +168,33 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
   const [filter, setFilter] = useState('ALL');
   const [fleetData, setFleetData] = useState<FleetVessel[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchFleet = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=fleet');
+      const json = await res.json();
+      if (json.success) {
+        setFleetData(json.data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const q = query(collection(db, 'fleet'), orderBy('code', 'asc'));
-    const unsub = subscribeToCollection<FleetVessel>('fleet', setFleetData, q);
-    return () => unsub();
+    fetchFleet();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const filteredData = filter === 'ALL' ? fleetData : fleetData.filter(v => v.status === filter);
 

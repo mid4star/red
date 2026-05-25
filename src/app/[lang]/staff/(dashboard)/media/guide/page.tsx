@@ -11,10 +11,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { VisitorGuideSection, MarineSpecies, MapLocation } from '@/lib/firebase/schema';
-import { collection, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 
 const emptyGuide = (): Partial<VisitorGuideSection> => ({
@@ -82,22 +79,52 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
     onConfirm: () => {},
   });
 
-  // Database subscriptions
+  const [loading, setLoading] = useState(true);
+
+  const fetchSections = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=visitor_guide');
+      const json = await res.json();
+      if (json.success) {
+        setSections(json.data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const fetchSpecies = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=marine_species');
+      const json = await res.json();
+      if (json.success) {
+        setSpecies(json.data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=map_locations');
+      const json = await res.json();
+      if (json.success) {
+        setLocations(json.data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Database subscriptions replaced with API queries
   useEffect(() => {
-    const qGuide = query(collection(db, 'visitor_guide'), orderBy('order', 'asc'));
-    const unsubGuide = subscribeToCollection<VisitorGuideSection>('visitor_guide', setSections, qGuide);
-
-    const qSpecies = query(collection(db, 'marine_species'), orderBy('name', 'asc'));
-    const unsubSpecies = subscribeToCollection<MarineSpecies>('marine_species', setSpecies, qSpecies);
-
-    const qTerrain = query(collection(db, 'map_locations'), orderBy('name', 'asc'));
-    const unsubTerrain = subscribeToCollection<MapLocation>('map_locations', setLocations, qTerrain);
-
-    return () => {
-      unsubGuide();
-      unsubSpecies();
-      unsubTerrain();
+    const loadAll = async () => {
+      setLoading(true);
+      await Promise.all([fetchSections(), fetchSpecies(), fetchLocations()]);
+      setLoading(false);
     };
+    loadAll();
   }, []);
 
   // Generic image uploader
@@ -166,6 +193,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         });
         if (!response.ok) throw new Error('Failed to add guide');
       }
+      await fetchSections();
       setShowGuideEditor(false);
     } catch (e) {
       console.error(e);
@@ -190,6 +218,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             })
           });
           if (!response.ok) throw new Error('Failed to delete guide');
+          await fetchSections();
         } catch (e) {
           console.error(e);
         }
@@ -223,6 +252,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
           data: { order: section.order }
         })
       });
+      await fetchSections();
     } catch (e) {
       console.error(e);
     }
@@ -270,6 +300,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         });
         if (!response.ok) throw new Error('Failed to add marine species');
       }
+      await fetchSpecies();
       setShowSpeciesEditor(false);
     } catch (e) {
       console.error(e);
@@ -294,6 +325,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             })
           });
           if (!response.ok) throw new Error('Failed to delete marine species');
+          await fetchSpecies();
         } catch (e) {
           console.error(e);
         }
@@ -347,6 +379,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         });
         if (!response.ok) throw new Error('Failed to add map location');
       }
+      await fetchLocations();
       setShowTerrainEditor(false);
     } catch (e) {
       console.error(e);
@@ -371,6 +404,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             })
           });
           if (!response.ok) throw new Error('Failed to delete map location');
+          await fetchLocations();
         } catch (e) {
           console.error(e);
         }
@@ -383,6 +417,14 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
     if (tmp) { tmp.innerHTML = html; return tmp.textContent || tmp.innerText || ''; }
     return html.replace(/<[^>]*>/g, '');
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-8" dir={isAr ? 'rtl' : 'ltr'}>

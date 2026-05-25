@@ -27,7 +27,6 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { PublicFooter } from '@/components/layout/PublicFooter';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { VisitorGuideSection, MarineSpecies, MapLocation } from '@/lib/firebase/schema';
 
 // Dynamically import TopographyMap to bypass Next.js SSR leaflet errors
@@ -57,29 +56,31 @@ export default function GuideClient({ lang }: { lang: string }) {
   const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
 
   useEffect(() => {
-    // Subscribe to visitor_guide
-    const unsubGuide = subscribeToCollection<VisitorGuideSection>('visitor_guide', (data) => {
-      const sorted = [...data].sort((a, b) => (a.order || 0) - (b.order || 0));
-      setGuideSections(sorted);
-    });
+    const loadAll = async () => {
+      try {
+        const [resGuide, resSpecies, resLocations] = await Promise.all([
+          fetch('/api/staff/query?collection=visitor_guide').then(r => r.json()),
+          fetch('/api/staff/query?collection=marine_species').then(r => r.json()),
+          fetch('/api/staff/query?collection=map_locations').then(r => r.json())
+        ]);
 
-    // Subscribe to marine_species
-    const unsubSpecies = subscribeToCollection<MarineSpecies>('marine_species', (data) => {
-      setSpecies(data);
-    });
-
-    // Subscribe to map_locations
-    const unsubLocations = subscribeToCollection<MapLocation>('map_locations', (data) => {
-      setLocations(data);
-    });
-
-    setLoading(false);
-
-    return () => {
-      unsubGuide();
-      unsubSpecies();
-      unsubLocations();
+        if (resGuide.success) {
+          const sorted = [...resGuide.data].sort((a, b) => (a.order || 0) - (b.order || 0));
+          setGuideSections(sorted);
+        }
+        if (resSpecies.success) {
+          setSpecies(resSpecies.data);
+        }
+        if (resLocations.success) {
+          setLocations(resLocations.data);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     };
+    loadAll();
   }, []);
 
   return (

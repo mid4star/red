@@ -4,22 +4,40 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { subscribeToCollection } from '@/lib/firebase/db';
 import { Violation } from '@/lib/firebase/schema';
-import { collection, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import { AlertTriangle, Plus, CheckCircle2, Clock } from 'lucide-react';
 
 export default function ViolationsPage({ params }: { params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
   
   const [violations, setViolations] = useState<Violation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchViolations = async () => {
+    try {
+      const res = await fetch('/api/staff/query?collection=violations');
+      const json = await res.json();
+      if (json.success) {
+        setViolations(json.data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const q = query(collection(db, 'violations'), orderBy('date', 'desc'));
-    const unsub = subscribeToCollection<Violation>('violations', setViolations, q);
-    return () => unsub();
+    fetchViolations();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const columns = [
     { title: isArabic ? 'جديد' : 'New', status: 'OPEN', icon: AlertTriangle, color: 'text-rose-400' },
