@@ -24,7 +24,9 @@ import {
   Layers,
   MapPin,
   ExternalLink,
-  Upload
+  Upload,
+  Map,
+  Database
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -38,7 +40,7 @@ import type { EcoMapItem } from '@/components/monitoring/EcoMap';
 const EcoMap = dynamic(() => import('@/components/monitoring/EcoMap'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950/40 border border-white/5 rounded-2xl min-h-[500px]">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950/40 border border-white/5 rounded-2xl min-h-[250px] md:min-h-[500px]">
       <Loader2 className="animate-spin text-teal-400 mb-2" size={32} />
       <span className="text-teal-400 text-xs font-semibold tracking-widest uppercase">
         Loading GIS interactive map...
@@ -57,6 +59,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Database Collections State
   const [ecoPrograms, setEcoPrograms] = useState<any[]>([]);
@@ -67,6 +70,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
   // UX Navigation States
   const [activeTab, setActiveTab] = useState<'eco_programs' | 'stranding_cases' | 'sightings' | 'beach_surveys'>('eco_programs');
   const [subMode, setSubMode] = useState<'form' | 'list'>('form');
+  const [mobilePanel, setMobilePanel] = useState<'map' | 'data'>('data');
   const [activeItem, setActiveItem] = useState<EcoMapItem | null>(null);
 
   // Forms State definitions
@@ -123,10 +127,19 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
     description: '',
   });
 
+  // Screen size detection for responsive adjustments
+  const updateIsMobile = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   useEffect(() => {
     setMounted(true);
     fetchAllData();
-  }, []);
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+    return () => window.removeEventListener('resize', updateIsMobile);
+  }, [updateIsMobile]);
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -542,85 +555,113 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
     activeTab === 'sightings' ? sightings : beachSurveys;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="space-y-4 md:space-y-8 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
       
       {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
-        <div className="space-y-1.5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 pb-1 md:pb-2">
+        <div className="space-y-1 md:space-y-1.5">
           <div className="flex items-center gap-2">
-             <div className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400">
-                <Compass size={18} />
+             <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400">
+                <Compass size={16} />
              </div>
-             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500">
+             <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-teal-500">
                {isAr ? 'البيئة والاستدامة' : 'Ecology & Sustainability'}
              </span>
           </div>
-          <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">
+          <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-white uppercase italic">
             {isAr ? 'رصد البيئة البحرية والبرية' : 'Environmental Monitoring'}
           </h1>
-          <p className="text-slate-400 text-sm font-medium tracking-wide">
+          <p className="text-slate-400 text-xs md:text-sm font-medium tracking-wide hidden md:block">
             {isAr ? 'إدارة برامج الرصد البيئي، حالات الجنوح، مشاهدات الكائنات النادرة، ومسح الشواطئ' : 'Manage ecological programs, stranding incidents, wildlife sightings, and beach surveys'}
           </p>
         </div>
       </div>
 
       {/* Statistics Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <Card className="p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-teal-500/10 text-teal-400">
-              <Activity size={24} />
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-5">
+        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+          <div className="flex items-center gap-2.5 md:gap-4">
+            <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-teal-500/10 text-teal-400">
+              <Activity size={isMobile ? 18 : 24} />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">{isAr ? 'برامج الرصد' : 'Eco Programs'}</p>
-              <span className="text-2xl font-black text-white font-mono">{ecoPrograms.length}</span>
+              <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-slate-500 mb-0.5 md:mb-1">{isAr ? 'برامج الرصد' : 'Programs'}</p>
+              <span className="text-lg md:text-2xl font-black text-white font-mono">{ecoPrograms.length}</span>
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-400">
-              <AlertCircle size={24} />
+        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+          <div className="flex items-center gap-2.5 md:gap-4">
+            <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-rose-500/10 text-rose-400">
+              <AlertCircle size={isMobile ? 18 : 24} />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">{isAr ? 'حالات الجنوح' : 'Strandings'}</p>
-              <span className="text-2xl font-black text-white font-mono">{strandingCases.length}</span>
+              <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-slate-500 mb-0.5 md:mb-1">{isAr ? 'حالات الجنوح' : 'Strandings'}</p>
+              <span className="text-lg md:text-2xl font-black text-white font-mono">{strandingCases.length}</span>
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400">
-              <Navigation size={24} />
+        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+          <div className="flex items-center gap-2.5 md:gap-4">
+            <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-indigo-500/10 text-indigo-400">
+              <Navigation size={isMobile ? 18 : 24} />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">{isAr ? 'مشاهدات الكائنات' : 'Sightings'}</p>
-              <span className="text-2xl font-black text-white font-mono">{sightings.length}</span>
+              <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-slate-500 mb-0.5 md:mb-1">{isAr ? 'مشاهدات' : 'Sightings'}</p>
+              <span className="text-lg md:text-2xl font-black text-white font-mono">{sightings.length}</span>
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400">
-              <Waves size={24} />
+        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+          <div className="flex items-center gap-2.5 md:gap-4">
+            <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-amber-500/10 text-amber-400">
+              <Waves size={isMobile ? 18 : 24} />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">{isAr ? 'مسوحات الشواطئ' : 'Beach Surveys'}</p>
-              <span className="text-2xl font-black text-white font-mono">{beachSurveys.length}</span>
+              <p className="text-[8px] md:text-[10px] uppercase font-black tracking-widest text-slate-500 mb-0.5 md:mb-1">{isAr ? 'مسوحات' : 'Surveys'}</p>
+              <span className="text-lg md:text-2xl font-black text-white font-mono">{beachSurveys.length}</span>
             </div>
           </div>
         </Card>
       </div>
 
+      {/* Mobile View Toggle: Map vs Data */}
+      {isMobile && (
+        <div className="flex gap-1 p-1 bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-xl">
+          <button
+            onClick={() => setMobilePanel('map')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+              mobilePanel === 'map'
+                ? 'bg-teal-500 text-[#001529] shadow-lg'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Map size={14} />
+            {isAr ? 'الخريطة' : 'Map View'}
+          </button>
+          <button
+            onClick={() => setMobilePanel('data')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+              mobilePanel === 'data'
+                ? 'bg-teal-500 text-[#001529] shadow-lg'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Database size={14} />
+            {isAr ? 'البيانات' : 'Data Entry'}
+          </button>
+        </div>
+      )}
+
       {/* Main Content Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
         
-        {/* Left Column: GIS Map (7 Cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="h-[550px] relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        {/* Left Column: GIS Map (7 Cols) — hidden on mobile when mobilePanel !== 'map' */}
+        <div className={`lg:col-span-7 space-y-3 md:space-y-4 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''}`}>
+          <div className="h-[260px] md:h-[400px] lg:h-[550px] relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
             <EcoMap 
               items={allMapItems}
               activeItem={activeItem}
@@ -630,26 +671,26 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
             />
           </div>
 
-          <Card className="p-4 bg-slate-950/60 border border-white/5 rounded-2xl flex items-start gap-3">
-            <MapPin className="text-teal-400 shrink-0 mt-0.5" size={16} />
+          <Card className="p-3 md:p-4 bg-slate-950/60 border border-white/5 rounded-2xl flex items-start gap-2.5 md:gap-3">
+            <MapPin className="text-teal-400 shrink-0 mt-0.5" size={14} />
             <div>
-              <h4 className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-1">
-                {isAr ? 'تفاعل الالتقاط الجغرافي' : 'GIS Auto-Capture System'}
+              <h4 className="text-[10px] md:text-xs font-bold text-teal-400 uppercase tracking-widest mb-0.5 md:mb-1">
+                {isAr ? 'التقاط الإحداثيات' : 'GIS Auto-Capture'}
               </h4>
-              <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              <p className="text-[10px] md:text-xs text-slate-400 leading-relaxed font-medium">
                 {isAr 
-                  ? 'انقر على أي نقطة في الخريطة لاستخراج إحداثيات خطوط الطول والعرض وتعبئتها تلقائياً في حقول الاستمارة الحالية.' 
-                  : 'Click anywhere on the map to capture coordinates. They will immediately auto-populate in the current registration form fields.'}
+                  ? 'انقر على أي نقطة في الخريطة لاستخراج الإحداثيات وتعبئتها تلقائياً في الاستمارة.' 
+                  : 'Tap on the map to capture coordinates. They auto-populate in the form fields.'}
               </p>
             </div>
           </Card>
         </div>
 
         {/* Right Column: Tabbed Forms and Views (5 Cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className={`lg:col-span-5 space-y-4 md:space-y-6 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`}>
           
           {/* Main Tabs Navigation */}
-          <div className="grid grid-cols-4 gap-1 p-1 bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-2xl">
+          <div className="grid grid-cols-4 gap-1 p-1 bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-xl md:rounded-2xl">
             {[
               { id: 'eco_programs', label: isAr ? 'برامج' : 'Programs', icon: Activity },
               { id: 'stranding_cases', label: isAr ? 'جنوح' : 'Stranding', icon: AlertCircle },
@@ -664,13 +705,13 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                     setActiveTab(tab.id as any);
                     setActiveItem(null);
                   }}
-                  className={`flex flex-col items-center justify-center py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 gap-1.5 ${
+                  className={`flex flex-col items-center justify-center py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-wider transition-all duration-300 gap-1 md:gap-1.5 ${
                     activeTab === tab.id 
                       ? 'bg-teal-500 text-[#001529] shadow-lg' 
                       : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <Icon size={14} />
+                  <Icon size={isMobile ? 13 : 14} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -678,19 +719,19 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
           </div>
 
           {/* Form / List Mode Sub-Tabs */}
-          <div className="flex items-center justify-between border-b border-white/5 pb-3">
-            <h3 className="text-sm font-black text-white uppercase italic tracking-wider flex items-center gap-2">
-              <Layers size={16} className="text-teal-400" />
-              {activeTab === 'eco_programs' && (isAr ? 'البرامج البيئية' : 'Ecological Programs')}
-              {activeTab === 'stranding_cases' && (isAr ? 'حالات الجنوح' : 'Stranding Records')}
-              {activeTab === 'sightings' && (isAr ? 'مشاهدات الكائنات' : 'Wildlife Sightings')}
+          <div className="flex items-center justify-between border-b border-white/5 pb-2 md:pb-3">
+            <h3 className="text-xs md:text-sm font-black text-white uppercase italic tracking-wider flex items-center gap-1.5 md:gap-2">
+              <Layers size={isMobile ? 13 : 16} className="text-teal-400" />
+              {activeTab === 'eco_programs' && (isAr ? 'البرامج البيئية' : 'Eco Programs')}
+              {activeTab === 'stranding_cases' && (isAr ? 'حالات الجنوح' : 'Strandings')}
+              {activeTab === 'sightings' && (isAr ? 'مشاهدات الكائنات' : 'Sightings')}
               {activeTab === 'beach_surveys' && (isAr ? 'مسح الشواطئ' : 'Beach Surveys')}
             </h3>
 
-            <div className="flex gap-2 p-0.5 bg-slate-950/60 rounded-xl border border-white/5">
+            <div className="flex gap-1 md:gap-2 p-0.5 bg-slate-950/60 rounded-lg md:rounded-xl border border-white/5">
               <button
                 onClick={() => setSubMode('form')}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+                className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md md:rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-wider transition-all ${
                   subMode === 'form' 
                     ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' 
                     : 'text-slate-500 hover:text-slate-300'
@@ -700,13 +741,13 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
               </button>
               <button
                 onClick={() => setSubMode('list')}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+                className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md md:rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-wider transition-all ${
                   subMode === 'list' 
                     ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' 
                     : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
-                {isAr ? `السجلات (${currentRecordsList.length})` : `Database (${currentRecordsList.length})`}
+                {isAr ? `السجلات (${currentRecordsList.length})` : `DB (${currentRecordsList.length})`}
               </button>
             </div>
           </div>
@@ -721,12 +762,12 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="p-6 border-none bg-slate-900/40 backdrop-blur-xl space-y-6">
+                <Card className="p-4 md:p-6 border-none bg-slate-900/40 backdrop-blur-xl space-y-4 md:space-y-6">
                   
                   {/* Eco Programs Registration Form */}
                   {activeTab === 'eco_programs' && (
                     <form onSubmit={(e) => handleMutateSubmit(e, 'eco_programs')} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'البرنامج *' : 'Program Category *'}
@@ -764,7 +805,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'التاريخ *' : 'Survey Date *'}
@@ -792,7 +833,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الموقع (EN) *' : 'Location (EN) *'}
@@ -819,7 +860,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'خط العرض *' : 'Latitude *'}
@@ -914,7 +955,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                   {/* Stranding Cases Form */}
                   {activeTab === 'stranding_cases' && (
                     <form onSubmit={(e) => handleMutateSubmit(e, 'stranding_cases')} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الفصيلة بالإنجليزية *' : 'Species Name (EN) *'}
@@ -941,7 +982,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الحالة *' : 'Status *'}
@@ -970,7 +1011,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الموقع (EN) *' : 'Location (EN) *'}
@@ -997,7 +1038,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'خط العرض *' : 'Latitude *'}
@@ -1092,7 +1133,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                   {/* Species Sightings Form */}
                   {activeTab === 'sightings' && (
                     <form onSubmit={(e) => handleMutateSubmit(e, 'sightings')} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الكائن بالإنجليزية *' : 'Species (EN) *'}
@@ -1119,7 +1160,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'العدد المرصود *' : 'Number Observed *'}
@@ -1148,7 +1189,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الموقع (EN) *' : 'Location (EN) *'}
@@ -1175,7 +1216,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'خط العرض *' : 'Latitude *'}
@@ -1257,7 +1298,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                   {/* Beach Surveys Form */}
                   {activeTab === 'beach_surveys' && (
                     <form onSubmit={(e) => handleMutateSubmit(e, 'beach_surveys')} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'الموقع (EN) *' : 'Location (EN) *'}
@@ -1284,7 +1325,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'خط العرض *' : 'Latitude *'}
@@ -1316,7 +1357,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div className="space-y-1 col-span-2">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                             {isAr ? 'تاريخ المسح *' : 'Survey Date *'}
