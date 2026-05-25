@@ -95,6 +95,18 @@ export async function GET(request: Request) {
       case 'map_locations':
         data = await (prisma as any).mapLocation.findMany({ orderBy: { name: 'asc' } });
         break;
+      case 'eco_programs':
+        data = await (prisma as any).ecoProgramReport.findMany({ orderBy: { date: 'desc' } });
+        break;
+      case 'stranding_cases':
+        data = await (prisma as any).strandingCase.findMany({ orderBy: { date: 'desc' } });
+        break;
+      case 'sightings':
+        data = await (prisma as any).sighting.findMany({ orderBy: { date: 'desc' } });
+        break;
+      case 'beach_surveys':
+        data = await (prisma as any).beachSurvey.findMany({ orderBy: { date: 'desc' } });
+        break;
       default:
         return NextResponse.json({ error: `Unknown collection: ${collectionName}` }, { status: 400 });
     }

@@ -325,3 +325,64 @@ model MapLocation {
   updatedAt     DateTime @updatedAt
 }
 
+model EcoProgramReport {
+  id              String   @id @default(cuid())
+  program         String   // MANGROVE, MARINE_CREATURES, CORAL_REEFS, BIRDS
+  subType         String?  // DOLPHIN, TURTLE, DUGONG, SHARK, FISH, MARINE_BIRD, MIGRATORY_BIRD
+  date            DateTime @default(now())
+  location        String
+  locationAr      String?
+  latitude        Float
+  longitude       Float
+  observerName    String
+  details         String?
+  attachedFileUrl String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StrandingCase {
+  id              String   @id @default(cuid())
+  date            DateTime @default(now())
+  location        String
+  locationAr      String?
+  latitude        Float
+  longitude       Float
+  status          String   // ALIVE, DEAD (حي / نافق)
+  species         String?
+  speciesAr       String?
+  attachedFileUrl String?
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Sighting {
+  id              String   @id @default(cuid())
+  date            DateTime @default(now())
+  location        String
+  locationAr      String?
+  latitude        Float
+  longitude       Float
+  species         String
+  speciesAr       String?
+  count           Int      @default(1)
+  notes           String?
+  observerName    String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BeachSurvey {
+  id              String   @id @default(cuid())
+  date            DateTime @default(now())
+  location        String
+  locationAr      String?
+  latitude        Float
+  longitude       Float
+  attachedFileUrl String?
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+

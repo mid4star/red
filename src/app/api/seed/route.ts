@@ -40,6 +40,10 @@ export async function GET() {
     await prisma.user.deleteMany({});
     await (prisma as any).marineSpecies.deleteMany({});
     await (prisma as any).mapLocation.deleteMany({});
+    await (prisma as any).ecoProgramReport.deleteMany({});
+    await (prisma as any).strandingCase.deleteMany({});
+    await (prisma as any).sighting.deleteMany({});
+    await (prisma as any).beachSurvey.deleteMany({});
     console.log("Cleared Prisma SQLite database.");
 
     // 2. Clear Firebase Firestore collections
@@ -47,7 +51,8 @@ export async function GET() {
       const collectionsToClear = [
         'users', 'fleet', 'patrols', 'violations', 'observations',
         'news', 'reserves', 'opendata', 'visitor_guide', 'homepage',
-        'marine_species', 'map_locations'
+        'marine_species', 'map_locations',
+        'eco_programs', 'stranding_cases', 'sightings', 'beach_surveys'
       ];
       for (const coll of collectionsToClear) {
         await clearCollection(coll);
@@ -504,6 +509,116 @@ export async function GET() {
       }
     ];
 
+    const ecoProgramsData = [
+      {
+        id: "eco_program_01",
+        program: "MANGROVE",
+        subType: null,
+        date: now,
+        location: "Wadi El Gemal Mangroves",
+        locationAr: "شجر المانجروف بوادي الجمال",
+        latitude: 25.1234,
+        longitude: 34.8234,
+        observerName: "Sarah Hassan",
+        details: "Healthy mangrove seedlings and high density of juvenile marine creatures observed.",
+        attachedFileUrl: "/uploads/mangrove_report_2026.pdf"
+      },
+      {
+        id: "eco_program_02",
+        program: "MARINE_CREATURES",
+        subType: "DOLPHIN",
+        date: now,
+        location: "Samadai Reef (Dolphin House)",
+        locationAr: "شعب صمداي (بيت الدلافين)",
+        latitude: 25.0123,
+        longitude: 34.9789,
+        observerName: "Ahmed Ali",
+        details: "Observed a pod of 25 spinner dolphins including 3 calves.",
+        attachedFileUrl: "/uploads/spinner_dolphins.png"
+      }
+    ];
+
+    const strandingCasesData = [
+      {
+        id: "stranding_01",
+        date: now,
+        location: "Abu Dabbab Coast",
+        locationAr: "ساحل أبو دباب",
+        latitude: 25.3375,
+        longitude: 34.7369,
+        status: "ALIVE",
+        species: "Green Sea Turtle",
+        speciesAr: "السلحفاة الخضراء",
+        attachedFileUrl: "/uploads/turtle_rescue.jpg",
+        description: "Juvenile green turtle found entangled in discarded fishing nets. Extricated safely and released after health assessment."
+      },
+      {
+        id: "stranding_02",
+        date: now,
+        location: "Elphinstone Offshore",
+        locationAr: "محيط شعب الفنستون",
+        latitude: 25.3111,
+        longitude: 34.8633,
+        status: "DEAD",
+        species: "Dugong",
+        speciesAr: "الأطوم (عروس البحر)",
+        attachedFileUrl: "/uploads/dugong_stranding.jpg",
+        description: "Adult female dugong washed ashore with propeller wounds on her back. Tissue samples taken for analysis."
+      }
+    ];
+
+    const sightingsData = [
+      {
+        id: "sighting_01",
+        date: now,
+        location: "Marsa Alam Bay",
+        locationAr: "خليج مرسى علم",
+        latitude: 25.0645,
+        longitude: 34.8921,
+        species: "Whale Shark",
+        speciesAr: "القرش الحوت",
+        count: 1,
+        notes: "Large whale shark (~7m) cruising slowly near the surface. Gentle interaction observed with local divers.",
+        observerName: "Sarah Hassan"
+      },
+      {
+        id: "sighting_02",
+        date: now,
+        location: "Giftun Shallow Lagoon",
+        locationAr: "بحيرة الجفتون الضحلة",
+        latitude: 27.2333,
+        longitude: 34.0123,
+        species: "Hawksbill Sea Turtle",
+        speciesAr: "السلحفاة صقرية المنقار",
+        count: 3,
+        notes: "Three juvenile hawksbills feeding on sponges along the reef wall.",
+        observerName: "Sarah Hassan"
+      }
+    ];
+
+    const beachSurveysData = [
+      {
+        id: "beach_survey_01",
+        date: now,
+        location: "Wadi El Gemal Beach",
+        locationAr: "شاطئ وادي الجمال",
+        latitude: 25.0123,
+        longitude: 34.8567,
+        attachedFileUrl: "/uploads/beach_debris_survey.pdf",
+        description: "Systematic beach survey covered 1km of sandy shore. High level of microplastics found near high tide line. Clean-up scheduled."
+      },
+      {
+        id: "beach_survey_02",
+        date: now,
+        location: "Hamata Mangrove Coast",
+        locationAr: "ساحل أشجار حماطة",
+        latitude: 25.2123,
+        longitude: 34.9123,
+        attachedFileUrl: "/uploads/hamata_mangrove_survey.pdf",
+        description: "Surveyed nesting areas for migratory marine birds. Checked 15 active nests. No direct human disturbance reported."
+      }
+    ];
+
     // 4. WRITE DATA TO PRISMA SQLITE
     console.log("Writing datasets to Prisma SQLite...");
     
@@ -567,6 +682,23 @@ export async function GET() {
     }
     for (const acc of eiaAccidents) {
       await prisma.eiaAccident.create({ data: acc });
+    }
+
+    // Seed Eco Programs
+    for (const ep of ecoProgramsData) {
+      await (prisma as any).ecoProgramReport.create({ data: ep });
+    }
+    // Seed Stranding Cases
+    for (const sc of strandingCasesData) {
+      await (prisma as any).strandingCase.create({ data: sc });
+    }
+    // Seed Sightings
+    for (const s of sightingsData) {
+      await (prisma as any).sighting.create({ data: s });
+    }
+    // Seed Beach Surveys
+    for (const bs of beachSurveysData) {
+      await (prisma as any).beachSurvey.create({ data: bs });
     }
 
     console.log("SQLite database seeded successfully.");
@@ -761,6 +893,42 @@ export async function GET() {
           imageUrl: ml.imageUrl || null,
           createdAt: timestampNow,
           updatedAt: timestampNow
+        });
+      });
+
+      // Sync Eco Programs
+      ecoProgramsData.forEach((ep) => {
+        const ref = doc(db, 'eco_programs', ep.id);
+        fbBatch.set(ref, {
+          ...ep,
+          date: timestampNow
+        });
+      });
+
+      // Sync Stranding Cases
+      strandingCasesData.forEach((sc) => {
+        const ref = doc(db, 'stranding_cases', sc.id);
+        fbBatch.set(ref, {
+          ...sc,
+          date: timestampNow
+        });
+      });
+
+      // Sync Sightings
+      sightingsData.forEach((s) => {
+        const ref = doc(db, 'sightings', s.id);
+        fbBatch.set(ref, {
+          ...s,
+          date: timestampNow
+        });
+      });
+
+      // Sync Beach Surveys
+      beachSurveysData.forEach((bs) => {
+        const ref = doc(db, 'beach_surveys', bs.id);
+        fbBatch.set(ref, {
+          ...bs,
+          date: timestampNow
         });
       });
 

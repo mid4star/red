@@ -1,4 +1,4 @@
-process.env.DATABASE_URL = 'file:./prisma/dev.db';
+process.env.DATABASE_URL = 'file:./dev.db';
 
 const { PrismaClient } = require('@prisma/client');
 const { PrismaLibSql } = require('@prisma/adapter-libsql');
@@ -31,6 +31,10 @@ async function main() {
   await prisma.user.deleteMany({});
   await prisma.marineSpecies.deleteMany({});
   await prisma.mapLocation.deleteMany({});
+  await prisma.ecoProgramReport.deleteMany({});
+  await prisma.strandingCase.deleteMany({});
+  await prisma.sighting.deleteMany({});
+  await prisma.beachSurvey.deleteMany({});
 
   console.log('Cleared SQLite database.');
 
@@ -524,6 +528,132 @@ async function main() {
       description: "شحط يخت سياحي (بلو لايت) على الشعاب المرجانية السطحية، مما أدى لتدمير مساحة 50 متر مربع من الشعاب.",
       reportFileUrl: "/uploads/technical_report_bluelight.pdf",
       createdBy: "مصطفى لايق"
+    }
+  });
+
+  // Seed EcoProgramReports
+  await prisma.ecoProgramReport.create({
+    data: {
+      id: "eco_program_01",
+      program: "MANGROVE",
+      subType: null,
+      date: new Date(),
+      location: "Wadi El Gemal Mangroves",
+      locationAr: "شجر المانجروف بوادي الجمال",
+      latitude: 25.1234,
+      longitude: 34.8234,
+      observerName: "Sarah Hassan",
+      details: "Healthy mangrove seedlings and high density of juvenile marine creatures observed.",
+      attachedFileUrl: "/uploads/mangrove_report_2026.pdf"
+    }
+  });
+
+  await prisma.ecoProgramReport.create({
+    data: {
+      id: "eco_program_02",
+      program: "MARINE_CREATURES",
+      subType: "DOLPHIN",
+      date: new Date(),
+      location: "Samadai Reef (Dolphin House)",
+      locationAr: "شعب صمداي (بيت الدلافين)",
+      latitude: 25.0123,
+      longitude: 34.9789,
+      observerName: "Ahmed Ali",
+      details: "Observed a pod of 25 spinner dolphins including 3 calves.",
+      attachedFileUrl: "/uploads/spinner_dolphins.png"
+    }
+  });
+
+  // Seed StrandingCases
+  await prisma.strandingCase.create({
+    data: {
+      id: "stranding_01",
+      date: new Date(),
+      location: "Abu Dabbab Coast",
+      locationAr: "ساحل أبو دباب",
+      latitude: 25.3375,
+      longitude: 34.7369,
+      status: "ALIVE",
+      species: "Green Sea Turtle",
+      speciesAr: "السلحفاة الخضراء",
+      attachedFileUrl: "/uploads/turtle_rescue.jpg",
+      description: "Juvenile green turtle found entangled in discarded fishing nets. Extricated safely and released after health assessment."
+    }
+  });
+
+  await prisma.strandingCase.create({
+    data: {
+      id: "stranding_02",
+      date: new Date(),
+      location: "Elphinstone Offshore",
+      locationAr: "محيط شعب الفنستون",
+      latitude: 25.3111,
+      longitude: 34.8633,
+      status: "DEAD",
+      species: "Dugong",
+      speciesAr: "الأطوم (عروس البحر)",
+      attachedFileUrl: "/uploads/dugong_stranding.jpg",
+      description: "Adult female dugong washed ashore with propeller wounds on her back. Tissue samples taken for analysis."
+    }
+  });
+
+  // Seed Sightings
+  await prisma.sighting.create({
+    data: {
+      id: "sighting_01",
+      date: new Date(),
+      location: "Marsa Alam Bay",
+      locationAr: "خليج مرسى علم",
+      latitude: 25.0645,
+      longitude: 34.8921,
+      species: "Whale Shark",
+      speciesAr: "القرش الحوت",
+      count: 1,
+      notes: "Large whale shark (~7m) cruising slowly near the surface. Gentle interaction observed with local divers.",
+      observerName: "Sarah Hassan"
+    }
+  });
+
+  await prisma.sighting.create({
+    data: {
+      id: "sighting_02",
+      date: new Date(),
+      location: "Giftun Shallow Lagoon",
+      locationAr: "بحيرة الجفتون الضحلة",
+      latitude: 27.2333,
+      longitude: 34.0123,
+      species: "Hawksbill Sea Turtle",
+      speciesAr: "السلحفاة صقرية المنقار",
+      count: 3,
+      notes: "Three juvenile hawksbills feeding on sponges along the reef wall.",
+      observerName: "Sarah Hassan"
+    }
+  });
+
+  // Seed BeachSurveys
+  await prisma.beachSurvey.create({
+    data: {
+      id: "beach_survey_01",
+      date: new Date(),
+      location: "Wadi El Gemal Beach",
+      locationAr: "شاطئ وادي الجمال",
+      latitude: 25.0123,
+      longitude: 34.8567,
+      attachedFileUrl: "/uploads/beach_debris_survey.pdf",
+      description: "Systematic beach survey covered 1km of sandy shore. High level of microplastics found near high tide line. Clean-up scheduled."
+    }
+  });
+
+  await prisma.beachSurvey.create({
+    data: {
+      id: "beach_survey_02",
+      date: new Date(),
+      location: "Hamata Mangrove Coast",
+      locationAr: "ساحل أشجار حماطة",
+      latitude: 25.2123,
+      longitude: 34.9123,
+      attachedFileUrl: "/uploads/hamata_mangrove_survey.pdf",
+      description: "Surveyed nesting areas for migratory marine birds. Checked 15 active nests. No direct human disturbance reported."
     }
   });
 

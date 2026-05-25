@@ -17,6 +17,10 @@ const getModelDelegate = (collectionName: string) => {
     case 'homepage': return (prisma as any).homepageSettings;
     case 'marine_species': return (prisma as any).marineSpecies;
     case 'map_locations': return (prisma as any).mapLocation;
+    case 'eco_programs': return (prisma as any).ecoProgramReport;
+    case 'stranding_cases': return (prisma as any).strandingCase;
+    case 'sightings': return (prisma as any).sighting;
+    case 'beach_surveys': return (prisma as any).beachSurvey;
     default: return null;
   }
 };
@@ -65,6 +69,16 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
   delete mapped.createdAt;
   delete mapped.updatedAt;
 
+  // Convert coordinate/count string inputs to numeric types
+  if (['eco_programs', 'stranding_cases', 'sightings', 'beach_surveys'].includes(collectionName)) {
+    if (mapped.latitude !== undefined && mapped.latitude !== null) {
+      mapped.latitude = parseFloat(mapped.latitude);
+    }
+    if (mapped.longitude !== undefined && mapped.longitude !== null) {
+      mapped.longitude = parseFloat(mapped.longitude);
+    }
+  }
+
   // Handle specific fields transformations
   if (collectionName === 'users') {
     if (Array.isArray(mapped.certifications)) {
@@ -104,6 +118,10 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
   } else if (collectionName === 'visitor_guide') {
     if (mapped.links) {
       mapped.links = JSON.stringify(mapped.links);
+    }
+  } else if (collectionName === 'sightings') {
+    if (mapped.count !== undefined && mapped.count !== null) {
+      mapped.count = parseInt(mapped.count, 10);
     }
   }
   
