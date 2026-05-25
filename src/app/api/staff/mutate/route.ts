@@ -120,7 +120,9 @@ export async function POST(request: Request) {
         sqlInput.id = id;
       }
       const result = await dbDelegate.create({ data: sqlInput });
-      await syncToFirebase(collectionName, result.id, result);
+      syncToFirebase(collectionName, result.id, result).catch(err => {
+        console.error('Firebase sync error:', err);
+      });
       return NextResponse.json({ success: true, id: result.id, data: result });
       
     } else if (action === 'UPDATE') {
@@ -132,7 +134,9 @@ export async function POST(request: Request) {
         where: { id },
         data: sqlInput
       });
-      await syncToFirebase(collectionName, id, result);
+      syncToFirebase(collectionName, id, result).catch(err => {
+        console.error('Firebase sync error:', err);
+      });
       return NextResponse.json({ success: true, id, data: result });
       
     } else if (action === 'DELETE') {
@@ -140,7 +144,9 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'id is required for DELETE action' }, { status: 400 });
       }
       await dbDelegate.delete({ where: { id } });
-      await deleteFromFirebase(collectionName, id);
+      deleteFromFirebase(collectionName, id).catch(err => {
+        console.error('Firebase delete error:', err);
+      });
       return NextResponse.json({ success: true, id });
       
     } else {
