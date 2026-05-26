@@ -55,17 +55,17 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  // Simulated active role (for demonstration and access testing)
-  const [simulatedRole, setSimulatedRole] = useState<UserRole>('ADMIN');
+  // Active role from session
+  const [activeRole, setActiveRole] = useState<UserRole>('ADMIN');
 
-  // Load simulated role from localStorage on mount
+  // Load active role from localStorage on mount
   useEffect(() => {
     const raw = localStorage.getItem('active_user_session');
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
         if (parsed.role) {
-          setSimulatedRole(parsed.role as UserRole);
+          setActiveRole(parsed.role as UserRole);
         }
       } catch (e) {
         console.error(e);
@@ -277,69 +277,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto relative" dir={isArabic ? 'rtl' : 'ltr'}>
       
-      {/* ── Role Simulator Header Toolbar ── */}
-      <div className="flex justify-between items-center bg-slate-950/80 border border-white/5 rounded-2xl p-3 backdrop-blur-md shadow-lg">
-        <div className="flex items-center gap-2">
-          <ShieldCheck size={18} className="text-teal-400" />
-          <span className="text-xs font-bold text-slate-300">
-            {isArabic ? 'محاكاة اختبار الصلاحية:' : 'Role Simulation Test:'}
-          </span>
-        </div>
-        <div className="flex gap-2">
-          {(['ADMIN', 'RANGER', 'RESEARCHER', 'MANAGER'] as UserRole[]).map((role) => (
-            <button
-              key={role}
-              onClick={() => {
-                setSimulatedRole(role);
-                // Reset form on simulation switch to prevent leaks
-                setShowAddForm(false);
-
-                // Construct and save simulated session
-                let allowed: string[] = [];
-                let nameEn = 'M. Layaq';
-                let nameAr = 'مصطفى لايق';
-                if (role === 'ADMIN') {
-                  allowed = ['patrols', 'monitoring', 'eia', 'violations', 'fleet', 'media', 'settings'];
-                } else if (role === 'MANAGER') {
-                  allowed = ['patrols', 'monitoring', 'violations'];
-                  nameEn = 'Manager Mike';
-                  nameAr = 'المشرف مايك';
-                } else if (role === 'RANGER') {
-                  allowed = ['patrols', 'monitoring'];
-                  nameEn = 'Ranger John';
-                  nameAr = 'الحارس جون';
-                } else if (role === 'RESEARCHER') {
-                  allowed = ['monitoring', 'eia'];
-                  nameEn = 'Researcher Jane';
-                  nameAr = 'الباحثة جين';
-                }
-                
-                const sessionObj = {
-                  employeeId: role.toLowerCase(),
-                  role: role,
-                  name: nameEn,
-                  nameAr: nameAr,
-                  allowedSections: allowed
-                };
-                localStorage.setItem('active_user_session', JSON.stringify(sessionObj));
-                window.dispatchEvent(new Event('user-session-changed'));
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
-                simulatedRole === role
-                  ? 'bg-teal-500 text-[#0a1628] shadow-[0_0_15px_rgba(20,184,166,0.3)]'
-                  : 'bg-white/5 text-slate-400 hover:text-white'
-              }`}
-            >
-              {role === 'ADMIN' ? (isArabic ? 'مدير النظام (Admin)' : 'Admin') :
-               role === 'MANAGER' ? (isArabic ? 'مشرف قسم (Manager)' : 'Manager') :
-               role === 'RANGER' ? (isArabic ? 'حارس محمية (Ranger)' : 'Ranger') :
-               (isArabic ? 'باحث بيئي (Researcher)' : 'Researcher')}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {simulatedRole !== 'ADMIN' ? (
+      {activeRole !== 'ADMIN' ? (
         /* ── ACCESS DENIED SCREEN ── */
         <div className="py-20 flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="relative">
@@ -358,8 +296,8 @@ export default function UserManagementPage({ params }: { params: { lang: string 
             </h2>
             <p className="text-slate-400 text-sm leading-relaxed font-medium">
               {isArabic 
-                ? 'لوحة التحكم بإدارة المستخدمين وتوزيع الصلاحيات هي صلاحية حصرية لمدير النظام الرئيسي. يمكنك تغيير دور المحاكاة بالأعلى لتجربة لوحة التحكم.'
-                : 'The User Directory & Access Control dashboard is restricted to the System Admin. Use the role simulator above to preview the console.'}
+                ? 'لوحة التحكم بإدارة المستخدمين وتوزيع الصلاحيات هي صلاحية حصرية لمدير النظام الرئيسي.'
+                : 'The User Directory & Access Control dashboard is restricted to the System Admin.'}
             </p>
           </div>
         </div>
@@ -368,7 +306,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         <div className="space-y-6 animate-in fade-in duration-300">
           
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-white/10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 pb-4 border-b border-white/10">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                  <div className="w-8 h-1 bg-teal-500 rounded-full" />
@@ -376,7 +314,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                      {isArabic ? 'التحكم بالوصول والأعضاء' : 'Access Control & Members'}
                  </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic">
                 {isArabic ? 'إدارة مستخدمي المنصة' : 'User Management'}
               </h1>
             </div>
@@ -384,7 +322,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
             <Button 
               onClick={() => { resetFormFields(); setShowAddForm(true); }}
               intent="primary" 
-              className="rounded-2xl py-3.5 px-6 flex items-center gap-2.5 shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic font-black"
+              className="w-full md:w-auto rounded-2xl py-3.5 px-6 flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic font-black"
             >
               <UserPlus size={16} />
               {isArabic ? 'إضافة مستخدم جديد' : 'Add User'}
@@ -393,16 +331,16 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
           {/* Form Modal (Add / Edit) */}
           {showAddForm && (
-            <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[999] flex items-center justify-center p-4 overflow-y-auto">
-              <Card className="w-full max-w-[700px] p-8 border border-white/10 bg-[#0c1628]/95 rounded-3xl shadow-2xl relative">
+            <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+              <Card className="w-full max-w-[700px] p-5 sm:p-8 border border-white/10 bg-[#0c1628]/95 rounded-3xl shadow-2xl relative">
                 <button 
                   onClick={() => setShowAddForm(false)}
-                  className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors"
+                  className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors"
                 >
                   <X size={20} />
                 </button>
 
-                <h2 className="text-2xl font-black text-white tracking-tight mb-6 flex items-center gap-2 pb-3 border-b border-white/5">
+                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-4 sm:mb-6 flex items-center gap-2 pb-3 border-b border-white/5">
                   <UserPlus className="text-teal-400" size={24} />
                   {editingUser 
                     ? (isArabic ? 'تعديل صلاحيات وبيانات المستخدم' : 'Edit User Permissions')
@@ -549,11 +487,11 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                   </div>
 
                   {/* Actions */}
-                  <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
+                  <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-4 sm:pt-6 border-t border-white/5">
                     <button 
                       type="button" 
                       onClick={() => setShowAddForm(false)}
-                      className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors"
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors text-center"
                       disabled={submitting}
                     >
                       {isArabic ? 'إلغاء' : 'Cancel'}
@@ -562,7 +500,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                     <Button 
                       type="submit" 
                       disabled={submitting}
-                      className="bg-teal-600 hover:bg-teal-500 text-[#0c1628] font-black rounded-xl py-2.5 px-6"
+                      className="w-full sm:w-auto bg-teal-600 hover:bg-teal-500 text-[#0c1628] font-black rounded-xl py-2.5 px-6 flex justify-center items-center"
                     >
                       {submitting 
                         ? <Loader2 className="animate-spin" size={16} /> 
@@ -577,7 +515,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
           )}
 
           {/* Users Table / Grid Controls */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-4 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-3xl">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl">
             
             {/* Search Input */}
             <div className="relative flex items-center w-full sm:max-w-md">
@@ -587,11 +525,11 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                 placeholder={isArabic ? 'بحث بالاسم، الرقم الوظيفي، أو الدور...' : 'Search by name, employee ID, role...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full bg-[#050b14]/60 border border-white/10 text-slate-200 rounded-2xl ${isArabic ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-3 text-xs focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all`}
+                className={`w-full bg-[#050b14]/60 border border-white/10 text-slate-200 rounded-2xl ${isArabic ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2.5 sm:py-3 text-xs focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all`}
               />
             </div>
 
-            <div className="text-xs text-slate-500 font-bold">
+            <div className="text-xs text-slate-500 font-bold w-full sm:w-auto text-center sm:text-right">
               {isArabic 
                 ? `إجمالي المستخدمين: ${filteredUsers.length}` 
                 : `Total Users: ${filteredUsers.length}`
@@ -612,24 +550,24 @@ export default function UserManagementPage({ params }: { params: { lang: string 
               {isArabic ? 'لا يوجد مستخدمون متوافقون مع شروط البحث' : 'No matching users found'}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredUsers.map((user) => (
                 <Card 
                   key={user.id} 
-                  className="p-6 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-teal-500/30 hover:shadow-[0_0_30px_rgba(45,212,191,0.05)] transition-all flex flex-col justify-between"
+                  className="p-4 sm:p-6 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-teal-500/30 hover:shadow-[0_0_30px_rgba(45,212,191,0.05)] transition-all flex flex-col justify-between"
                 >
                   <div>
                     {/* User profile header card */}
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl border border-white/10 shrink-0">
+                    <div className="flex justify-between items-start mb-3 sm:mb-4">
+                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center text-xl sm:text-2xl border border-white/10 shrink-0">
                           {user.role === 'ADMIN' ? '👑' : '👤'}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-extrabold text-white text-base leading-tight truncate">
+                          <h3 className="font-extrabold text-white text-sm sm:text-base leading-tight truncate">
                             {isArabic ? user.nameAr : user.name}
                           </h3>
-                          <span className="text-[10px] text-slate-500 font-mono">
+                          <span className="text-[9px] sm:text-[10px] text-slate-500 font-mono">
                             {user.employeeId}
                           </span>
                         </div>
@@ -637,7 +575,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
                       <Badge 
                         color={user.status === 'ACTIVE' ? 'success' : user.status === 'ON_LEAVE' ? 'warning' : 'danger'} 
-                        className="text-[9px] font-black px-2 py-0.5"
+                        className="text-[9px] font-black px-1.5 sm:px-2 py-0.5 shrink-0"
                       >
                         {isArabic 
                           ? (user.status === 'ACTIVE' ? 'نشط' : user.status === 'ON_LEAVE' ? 'إجازة' : 'غير نشط')
@@ -647,16 +585,16 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                     </div>
 
                     {/* Role & Location */}
-                    <div className="space-y-1.5 py-3 border-t border-b border-white/5 my-3 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">{isArabic ? 'الدور الوظيفي:' : 'Platform Role:'}</span>
-                        <span className="font-black text-teal-400 uppercase tracking-wide">
+                    <div className="space-y-1 py-2 sm:py-3 border-t border-b border-white/5 my-2 sm:my-3 text-xs">
+                      <div className="flex justify-between gap-2">
+                        <span className="text-slate-500 shrink-0">{isArabic ? 'الدور الوظيفي:' : 'Platform Role:'}</span>
+                        <span className="font-black text-teal-400 uppercase tracking-wide truncate">
                           {user.role}
                         </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">{isArabic ? 'الموقع المعين:' : 'Reserve Station:'}</span>
-                        <span className="font-bold text-slate-300">
+                      <div className="flex justify-between gap-2">
+                        <span className="text-slate-500 shrink-0">{isArabic ? 'الموقع المعين:' : 'Reserve Station:'}</span>
+                        <span className="font-bold text-slate-300 truncate">
                           {isArabic ? user.reserveAr : user.reserve}
                         </span>
                       </div>
@@ -665,7 +603,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                           <span className="text-slate-500 block">{isArabic ? 'الشهادات المعتمدة:' : 'Certifications:'}</span>
                           <div className="flex flex-wrap gap-1">
                             {user.certifications.map((cert, index) => (
-                              <span key={index} className="text-[9.5px] px-1.5 py-0.5 rounded bg-white/5 border border-white/5 text-slate-400 font-medium">
+                              <span key={index} className="text-[9px] sm:text-[9.5px] px-1 py-0.5 rounded bg-white/5 border border-white/5 text-slate-400 font-medium truncate max-w-full">
                                 {cert}
                               </span>
                             ))}
@@ -675,8 +613,8 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                     </div>
 
                     {/* Allowed Sections List */}
-                    <div className="space-y-2 py-1">
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">
+                    <div className="space-y-1.5 py-1">
+                      <span className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest block">
                         {isArabic ? 'الأقسام المسموح بالوصول إليها:' : 'Authorized Modules:'}
                       </span>
                       
@@ -685,7 +623,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                           {isArabic ? '✗ لا توجد صلاحيات وصول نشطة' : '✗ No active permissions'}
                         </span>
                       ) : (
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1 sm:gap-1.5">
                           {user.allowedSections.map((secId) => {
                             const meta = SECTIONS_METADATA.find(s => s.id === secId);
                             if (!meta) return null;
@@ -693,10 +631,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                             return (
                               <div 
                                 key={secId} 
-                                className={`flex items-center gap-1 px-2.5 py-1 rounded-xl border border-white/5 text-[10px] font-extrabold ${meta.color} bg-white/5`}
+                                className={`flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl border border-white/5 text-[9px] sm:text-[10px] font-extrabold ${meta.color} bg-white/5`}
                               >
-                                <Icon size={10} />
-                                <span>{isArabic ? meta.nameAr : meta.name}</span>
+                                <Icon size={10} className="shrink-0" />
+                                <span className="truncate">{isArabic ? meta.nameAr : meta.name}</span>
                               </div>
                             );
                           })}
@@ -706,7 +644,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                   </div>
 
                   {/* Actions buttons */}
-                  <div className="mt-6 pt-4 border-t border-white/5 flex gap-2">
+                  <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-white/5 flex gap-2">
                     <button 
                       onClick={() => startEditing(user)}
                       className="flex-1 py-2 rounded-xl bg-white/5 hover:bg-teal-500/10 text-slate-300 hover:text-teal-400 border border-white/5 hover:border-teal-500/20 transition-all text-xs font-bold flex items-center justify-center gap-1.5"
@@ -717,7 +655,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                     
                     <button 
                       onClick={() => handleDeleteUser(user)}
-                      className="py-2 px-3 rounded-xl bg-rose-500/5 hover:bg-rose-500/15 text-rose-400 border border-rose-500/10 hover:border-rose-500/30 transition-all text-xs font-bold flex items-center justify-center"
+                      className="py-2 px-3 rounded-xl bg-rose-500/5 hover:bg-rose-500/15 text-rose-400 border border-rose-500/10 hover:border-rose-500/30 transition-all text-xs font-bold flex items-center justify-center shrink-0"
                     >
                       <Trash2 size={13} />
                     </button>

@@ -63,22 +63,6 @@ export function AccessDenied({ lang, sectionNameEn, sectionNameAr }: AccessDenie
               </button>
             </Link>
 
-            <button 
-              onClick={() => {
-                const adminSession = {
-                  employeeId: 'admin',
-                  role: 'ADMIN',
-                  name: 'M. Layaq',
-                  nameAr: 'مصطفى لايق',
-                  allowedSections: ['patrols', 'monitoring', 'eia', 'violations', 'fleet', 'media', 'settings']
-                };
-                localStorage.setItem('active_user_session', JSON.stringify(adminSession));
-                window.dispatchEvent(new Event('user-session-changed'));
-              }}
-              className="block mx-auto text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-colors uppercase tracking-widest bg-teal-500/5 hover:bg-teal-500/10 border border-teal-500/20 rounded-xl py-2 px-4 cursor-pointer"
-            >
-              {isArabic ? '⚡ محاكاة دور مدير النظام لتجاوز القفل' : '⚡ Simulate Admin Role to Bypass Lock'}
-            </button>
           </div>
 
           {/* v2.0 watermark */}
