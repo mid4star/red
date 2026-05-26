@@ -31,7 +31,8 @@ import {
   Check,
   X,
   ShieldAlert,
-  Clock
+  Clock,
+  Compass
 } from 'lucide-react';
 import { MapItem } from '@/components/eia/MapComponent';
 
@@ -106,6 +107,19 @@ interface Accident {
 export default function EIAPage({ params }: { params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
   
+  // Mobile responsiveness states
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [mobilePanel, setMobilePanel] = useState<'map' | 'data'>('data');
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Navigation tabs
   const [activeTab, setActiveTab] = useState<'costs' | 'inspections' | 'violations' | 'accidents'>('costs');
   
@@ -783,6 +797,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
         ...item
       });
     }
+    if (isMobile) {
+      setMobilePanel('map');
+    }
   };
 
   const handleOpenDetail = (item: any, type: 'costs' | 'inspections' | 'violations' | 'accidents') => {
@@ -809,6 +826,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
           details: item.description || item.inspectorName || item.entityName,
           ...item
         });
+      }
+      if (isMobile) {
+        setMobilePanel('map');
       }
     }
   };
@@ -1757,7 +1777,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               {isArabic ? 'تقييم الأثر البيئي' : 'Environmental Impact Assessment'}
             </span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter">
             {isArabic ? 'قسم تقييم الأثر البيئي' : 'EIA Administration Department'}
           </h1>
           <p className="text-slate-400 text-sm font-medium">
@@ -1787,46 +1807,74 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
         </Button>
       </div>
 
+      {/* Mobile View Toggle: Map vs Data */}
+      {isMobile && (
+        <div className="flex p-1 bg-[#0a1628]/90 backdrop-blur-2xl border border-white/10 rounded-2xl mb-4 gap-1.5 shadow-xl">
+          <button
+            onClick={() => setMobilePanel('data')}
+            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              mobilePanel === 'data'
+                ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <FolderOpen size={14} />
+            {isArabic ? 'البيانات والاستمارات' : 'Data & Forms'}
+          </button>
+          <button
+            onClick={() => setMobilePanel('map')}
+            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              mobilePanel === 'map'
+                ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Compass size={14} />
+            {isArabic ? 'الخريطة والتفاعلات' : 'Map & GIS'}
+          </button>
+        </div>
+      )}
+
       {/* ── Main Layout Split Screen: 60% Lists & Forms, 40% GIS Map ────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         
         {/* Left Side: Forms & Content Lists (60% equivalent = 3 cols) */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className={`lg:col-span-3 space-y-6 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`}>
           {selectedDetailItem ? (
             renderDetailedView()
           ) : (
             <>
               {/* Section Navigation Tabs */}
-          <div className="flex bg-[#0d1e36] p-1.5 rounded-2xl border border-white/5 shadow-inner gap-1">
-            <button 
-              onClick={() => { setActiveTab('costs'); setShowAddForm(false); }}
-              className={`flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'costs' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <DollarSign size={15} />
-              {isArabic ? 'التكاليف' : 'Costs'}
-            </button>
-            <button 
-              onClick={() => { setActiveTab('inspections'); setShowAddForm(false); }}
-              className={`flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'inspections' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <ClipboardList size={15} />
-              {isArabic ? 'المعاينات' : 'Inspections'}
-            </button>
-            <button 
-              onClick={() => { setActiveTab('violations'); setShowAddForm(false); }}
-              className={`flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'violations' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <AlertTriangle size={15} />
-              {isArabic ? 'المخالفات' : 'Violations'}
-            </button>
-            <button 
-              onClick={() => { setActiveTab('accidents'); setShowAddForm(false); }}
-              className={`flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'accidents' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <Waves size={15} />
-              {isArabic ? 'الحوادث' : 'Accidents'}
-            </button>
-          </div>
+              <div className="grid grid-cols-4 bg-[#0d1e36] p-1.5 rounded-2xl border border-white/5 shadow-inner gap-1">
+                <button 
+                  onClick={() => { setActiveTab('costs'); setShowAddForm(false); }}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'costs' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                >
+                  <DollarSign size={14} className="shrink-0" />
+                  <span className="truncate">{isArabic ? 'التكاليف' : 'Costs'}</span>
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('inspections'); setShowAddForm(false); }}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'inspections' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                >
+                  <ClipboardList size={14} className="shrink-0" />
+                  <span className="truncate">{isArabic ? 'المعاينات' : 'Inspections'}</span>
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('violations'); setShowAddForm(false); }}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'violations' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                >
+                  <AlertTriangle size={14} className="shrink-0" />
+                  <span className="truncate">{isArabic ? 'المخالفات' : 'Violations'}</span>
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('accidents'); setShowAddForm(false); }}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'accidents' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                >
+                  <Waves size={14} className="shrink-0" />
+                  <span className="truncate">{isArabic ? 'الحوادث' : 'Accidents'}</span>
+                </button>
+              </div>
 
           {/* Form Panel: Shows up when clicking 'New ...' button */}
           {showAddForm && (
@@ -2681,7 +2729,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
       </div>
 
         {/* Right Side: Fixed/Interactive GIS Leaflet Map (40% equivalent = 2 cols) */}
-        <div className="lg:col-span-2 h-[600px] lg:h-[calc(100vh-14rem)] sticky top-6">
+        <div className={`lg:col-span-2 relative ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''} ${isMobile ? 'h-[calc(100vh-16rem)]' : 'h-[600px] lg:h-[calc(100vh-14rem)] sticky top-6'}`}>
           <MapComponent 
             items={mapItems} 
             activeItem={activeMapItem} 

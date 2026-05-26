@@ -193,6 +193,19 @@ function ActiveUnitCard({
 export default function PatrolsPage({ params }: { params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
   
+  // Mobile responsiveness states
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [mobilePanel, setMobilePanel] = useState<'data' | 'map'>('data');
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [activePatrols, setActivePatrols] = useState<PatrolWithRelations[]>([]);
   const [recentMissions, setRecentMissions] = useState<PatrolWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
@@ -461,7 +474,7 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
                  {isArabic ? 'وحدة السيطرة البحرية' : 'Marine Control Unit'}
              </span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter">
             {isArabic ? 'عمليات الدوريات النشطة' : 'Active Patrol Operations'}
           </h1>
         </div>
@@ -482,6 +495,36 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
         </div>
       </div>
 
+      {/* Mobile View Toggle: Map vs Data */}
+      {isMobile && (
+        <div className="flex p-1 bg-[#0a1628]/90 backdrop-blur-2xl border border-white/10 rounded-2xl mb-4 gap-1.5 shadow-xl">
+          <button
+            type="button"
+            onClick={() => setMobilePanel('data')}
+            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              mobilePanel === 'data'
+                ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Shield size={14} className="shrink-0" />
+            {isArabic ? 'لوحة العمليات والوحدات' : 'Operations & Units'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobilePanel('map')}
+            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              mobilePanel === 'map'
+                ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Compass size={14} className="shrink-0" />
+            {isArabic ? 'الخريطة التكتيكية' : 'Tactical Map'}
+          </button>
+        </div>
+      )}
+
       {/* ── Summary Stats Row ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {dynamicStats.map((stat, idx) => (
@@ -493,23 +536,23 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Tactical Map HUD Card */}
-        <div className="lg:col-span-2">
-           <Card className="h-[550px] border-none shadow-lg overflow-hidden relative group bg-[#0a1628]">
+        <div className={`lg:col-span-2 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''}`}>
+           <Card className={`${isMobile ? 'h-[320px]' : 'h-[550px]'} border-none shadow-lg overflow-hidden relative group bg-[#0a1628]`}>
               {/* GIS HUD Elements Overlay */}
-              <div className="absolute top-6 right-6 z-20 flex flex-col gap-3">
-                 <div className="p-3.5 rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/5 shadow-2xl min-w-[180px]">
-                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-2">Marine Weather</p>
-                    <div className="flex items-center justify-between text-white">
-                       <span className="text-xl font-bold font-mono tracking-tighter">24°C</span>
-                       <Wind size={18} className="text-teal-400" />
-                       <span className="text-[11px] font-bold text-teal-400">12 kt</span>
+              <div className="absolute top-3 right-3 md:top-6 md:right-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
+                 <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/5 shadow-2xl min-w-[110px] md:min-w-[180px]">
+                    <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Marine Weather</p>
+                    <div className="flex items-center justify-between gap-1.5 text-white">
+                       <span className="text-sm md:text-xl font-bold font-mono tracking-tighter">24°C</span>
+                       <Wind size={14} className="text-teal-400 shrink-0" />
+                       <span className="text-[9px] md:text-[11px] font-bold text-teal-400 shrink-0">12 kt</span>
                     </div>
                  </div>
-                 <div className="p-3.5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl">
-                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-2">Sync Status</p>
+                 <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl hidden sm:block">
+                    <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Sync Status</p>
                     <div className="flex items-center gap-2">
                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                       <span className="text-[11px] font-bold text-white tracking-tight">Database Synchronized</span>
+                       <span className="text-[9px] md:text-[11px] font-bold text-white tracking-tight">Database Synchronized</span>
                     </div>
                  </div>
               </div>
@@ -521,15 +564,15 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
               </div>
 
               {/* Central Map Controls HUD */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 px-6 py-3 rounded-full bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-3xl flex items-center gap-8">
-                 <div className="flex items-center gap-3 border-r border-white/10 pr-6">
+              <div className="absolute bottom-3 md:bottom-6 left-1/2 -translate-x-1/2 z-20 px-3 py-2 md:px-6 md:py-3 rounded-full bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-3xl flex items-center gap-4 md:gap-8">
+                 <div className="hidden md:flex items-center gap-3 border-r border-white/10 pr-6">
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em] italic">Strategic Tracking Active</span>
                  </div>
-                 <div className="flex gap-6">
-                    <button className="text-white/50 hover:text-white transition-colors"><MapIcon size={18} /></button>
-                    <button className="text-white/50 hover:text-white transition-colors"><Compass size={18} /></button>
-                    <button className="text-white/50 hover:text-white transition-colors"><Menu size={18} /></button>
+                 <div className="flex gap-4 md:gap-6">
+                    <button className="text-white/50 hover:text-white transition-colors"><MapIcon size={16} /></button>
+                    <button className="text-white/50 hover:text-white transition-colors"><Compass size={16} /></button>
+                    <button className="text-white/50 hover:text-white transition-colors"><Menu size={16} /></button>
                  </div>
               </div>
 
@@ -544,7 +587,7 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
         </div>
 
         {/* Active Unit Sidebar */}
-        <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
+        <div className={`space-y-4 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`} onClick={(e) => e.stopPropagation()}>
            <div className="flex items-center justify-between px-1">
               <h3 className="font-bold text-white text-sm tracking-tight">{isArabic ? 'الوحدات الميدانية' : 'Units On-Field'}</h3>
               <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest px-2 py-0.5 bg-teal-500/10 rounded-full">
@@ -582,7 +625,8 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
       </div>
 
       {/* ── Tactical History Table Section ──────────────────────────────────── */}
-      <Card className="border-none shadow-lg overflow-hidden bg-slate-900/40 backdrop-blur-xl">
+      <div className={isMobile && mobilePanel !== 'data' ? 'hidden' : ''}>
+        <Card className="border-none shadow-lg overflow-hidden bg-slate-900/40 backdrop-blur-xl">
          <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                <h3 className="text-lg font-bold text-white tracking-tight">{isArabic ? 'تاريخ المهمات التكتيكية' : 'Tactical Mission History'}</h3>
@@ -686,7 +730,8 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
                Load Extended Tactical History
             </button>
          </div>
-      </Card>
+        </Card>
+      </div>
 
       {/* ── Add/Edit Modal Form ──────────────────────────────────────────────── */}
       {showModal && (
@@ -695,12 +740,12 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
           onClick={() => setShowModal(false)}
         >
           <Card 
-            className="w-full max-w-[700px] p-8 border border-white/10 bg-[#0c1628]/95 rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-200" 
+            className="w-full max-w-[700px] p-5 md:p-8 border border-white/10 bg-[#0c1628]/95 rounded-2xl md:rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-200" 
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={() => setShowModal(false)}
-              className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors"
+              className="absolute top-4 right-4 md:top-6 md:right-6 text-slate-500 hover:text-white transition-colors"
             >
               <X size={20} />
             </button>
