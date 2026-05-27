@@ -113,6 +113,19 @@ export interface ReserveProfile {
   establishedYear: number;
   imageUrl?: string;
   status: 'OPEN' | 'CLOSED' | 'RESTRICTED';
+  coords: string;
+  speciesCount: number;
+  healthIndex: number;
+  statusAr: string;
+  activities: string;
+  activitiesAr: string;
+  rules: string;
+  rulesAr: string;
+  ticketPrice: string;
+  ticketPriceAr: string;
+  famousSpecies: string;
+  famousSpeciesAr: string;
+  gallery: string;
 }
 
 export interface OpenDataDocument {

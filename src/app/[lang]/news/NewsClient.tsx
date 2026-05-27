@@ -114,7 +114,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                     {isAr ? 'مركز المعلومات الإعلامي' : 'Media Intelligence Hub'}
                   </span>
                </div>
-               <h1 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none">
+               <h1 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
                   {isAr ? 'تلقيم البيانات الاستراتيجي' : 'Strategic Data Feed'}
                </h1>
             </div>
@@ -176,7 +176,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                     initial={{ opacity: 0, x: -30 }} 
                     animate={{ opacity: 1, x: 0 }}
                     onClick={() => setSelectedArticle(filtered[0])}
-                    className="lg:col-span-8 group relative h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl cursor-pointer"
+                    className="lg:col-span-8 group relative h-[350px] sm:h-[500px] rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl cursor-pointer"
                   >
                      <img 
                        src={filtered[0].imageUrl || '/red_sea_hero_aerial_1774790601114.png'} 
@@ -189,13 +189,13 @@ export default function NewsClient({ lang }: { lang: string }) {
                            {isAr ? 'الخبر الرئيسي' : 'HEADLINE INTEL'}
                         </div>
                      </div>
-                     <div className="absolute bottom-10 left-10 right-10 space-y-4">
+                     <div className="absolute bottom-6 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10 space-y-2 sm:space-y-4">
                         <div className="flex items-center gap-4 text-[10px] font-black text-teal-400 uppercase tracking-widest italic">
                            <span>{formatDate(filtered[0].date)}</span>
                            <span>•</span>
                            <span>{getReadTime(filtered[0])}</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter drop-shadow-lg group-hover:text-teal-400 transition-colors">
+                        <h2 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase italic tracking-tighter drop-shadow-lg group-hover:text-teal-400 transition-colors leading-tight">
                            {isAr ? filtered[0].titleAr : filtered[0].title}
                         </h2>
                         <p className="text-lg font-medium text-slate-200 max-w-2xl italic leading-relaxed line-clamp-2">
@@ -215,7 +215,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                   {filtered[1] ? (
                      <div 
                        onClick={() => setSelectedArticle(filtered[1])}
-                       className="flex-1 p-8 rounded-[2rem] bg-slate-900/60 border border-white/5 flex flex-col justify-between group cursor-pointer hover:bg-slate-900 transition-all"
+                       className="flex-1 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] bg-slate-900/60 border border-white/5 flex flex-col justify-between group cursor-pointer hover:bg-slate-900 transition-all"
                      >
                         <div className="flex items-center justify-between mb-4">
                            <TrendingUp className="text-teal-500" size={24} />
@@ -251,7 +251,7 @@ export default function NewsClient({ lang }: { lang: string }) {
 
                   <button
                      onClick={() => setActiveTab('ops')}
-                     className="h-[200px] rounded-[2rem] bg-teal-500 p-8 flex flex-col justify-between group cursor-pointer relative overflow-hidden shadow-[0_20px_40px_rgba(45,212,191,0.1)] text-start"
+                     className="h-auto min-h-[160px] sm:h-[200px] rounded-2xl sm:rounded-[2rem] bg-teal-500 p-6 sm:p-8 flex flex-col justify-between group cursor-pointer relative overflow-hidden shadow-[0_20px_40px_rgba(45,212,191,0.1)] text-start"
                   >
                      <FileText className="absolute top-[-20px] right-[-20px] text-black/10 scale-[5] opacity-50" />
                      <div className="text-[12px] font-black text-black uppercase tracking-tighter italic">Official Publications</div>
@@ -282,7 +282,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                       transition={{ delay: (i % 3) * 0.1 }}
                       viewport={{ once: true }}
                       onClick={() => setSelectedArticle(item)}
-                      className="group flex flex-col h-full bg-slate-900/40 border border-white/5 rounded-[2.5rem] overflow-hidden hover:bg-slate-900/60 transition-all cursor-pointer"
+                      className="group flex flex-col h-full bg-slate-900/40 border border-white/5 rounded-2xl sm:rounded-[2.5rem] overflow-hidden hover:bg-slate-900/60 transition-all cursor-pointer"
                     >
                        <div className="h-64 relative overflow-hidden">
                           <img 
@@ -346,7 +346,7 @@ export default function NewsClient({ lang }: { lang: string }) {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-4xl max-h-[85vh] bg-[#0c1b2f]/95 border border-teal-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col z-10 text-white"
+              className="relative w-full max-w-4xl max-h-[90vh] bg-[#0c1b2f]/95 border border-teal-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col z-10 text-white"
             >
               {/* Sci-Fi Decorative Corner Brackets */}
               <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-teal-400 rounded-tl-2xl pointer-events-none" />
@@ -365,7 +365,7 @@ export default function NewsClient({ lang }: { lang: string }) {
               {/* Scrollable Container */}
               <div className="overflow-y-auto flex-1 custom-scrollbar">
                 {/* Header Image */}
-                <div className="w-full h-80 relative">
+                <div className="w-full h-48 sm:h-80 relative">
                   <img 
                     src={selectedArticle.imageUrl || '/red_sea_hero_aerial_1774790601114.png'} 
                     className="w-full h-full object-cover" 
@@ -375,7 +375,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                 </div>
 
                 {/* Body Content */}
-                <div className="p-8 md:p-12 space-y-6">
+                <div className="p-6 md:p-12 space-y-6">
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 text-[10px] font-black text-teal-400 uppercase tracking-widest italic">
                       <span className="px-3 py-1 rounded-lg bg-teal-500/10 border border-teal-500/20">

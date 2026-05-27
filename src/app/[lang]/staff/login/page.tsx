@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Lock, User, MapPin, ChevronRight, Fingerprint, Activity, Zap } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const RESERVES = [
   { id: 'northern-islands', en: 'Northern Islands', ar: 'محمية الجزر الشمالية' },
@@ -14,9 +14,98 @@ const RESERVES = [
 
 export default function LoginPage({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
+  const router = useRouter();
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [selectedReserve, setSelectedReserve] = useState(RESERVES[0].id);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!employeeId || !password) {
+      setError(isAr ? 'يرجى إدخال رقم الموظف ورمز الدخول' : 'Please enter Employee ID and Access Code');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ employeeId, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || (isAr ? 'بيانات الاعتماد غير صالحة' : 'Invalid credentials'));
+      }
+
+      // Successful login
+      const reserveInfo = RESERVES.find(r => r.id === selectedReserve);
+      const sessionData = {
+        ...data.user,
+        reserveId: selectedReserve,
+        reserve: reserveInfo?.en,
+        reserveAr: reserveInfo?.ar,
+      };
+
+      localStorage.setItem('active_user_session', JSON.stringify(sessionData));
+      window.dispatchEvent(new Event('user-session-changed'));
+      
+      router.push(`/${params.lang}/staff`);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || (isAr ? 'حدث خطأ أثناء الاتصال بالخادم' : 'Failed to connect to authentication server'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const triggerQuickLogin = async (empId: string, accessCode: string) => {
+    setEmployeeId(empId);
+    setPassword(accessCode);
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ employeeId: empId, password: accessCode }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Quick login failed');
+      }
+
+      const reserveInfo = RESERVES.find(r => r.id === selectedReserve);
+      const sessionData = {
+        ...data.user,
+        reserveId: selectedReserve,
+        reserve: reserveInfo?.en,
+        reserveAr: reserveInfo?.ar,
+      };
+
+      localStorage.setItem('active_user_session', JSON.stringify(sessionData));
+      window.dispatchEvent(new Event('user-session-changed'));
+      
+      router.push(`/${params.lang}/staff`);
+    } catch (err: any) {
+      setError(err.message || 'Quick login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#050b14] flex items-center justify-center relative overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
@@ -93,7 +182,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
               <Fingerprint size={120} />
             </div>
 
-            <div className="mb-10 relative z-10">
+            <div className="mb-8 relative z-10">
               <h2 className="text-3xl font-black text-white tracking-tighter mb-2">
                 {isAr ? 'تسجيل الدخول' : 'Authentication'}
               </h2>
@@ -102,7 +191,18 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
               </p>
             </div>
 
-            <form className="space-y-6 relative z-10" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-5 relative z-10" onSubmit={handleLogin}>
+              {/* Error Box */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold flex items-center gap-3 backdrop-blur-md"
+                >
+                  <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
+                  <span>{error}</span>
+                </motion.div>
+              )}
               
               {/* Employee ID */}
               <div className="space-y-2">
@@ -116,9 +216,10 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                   <input 
                     type="text" 
                     value={employeeId}
+                    disabled={loading}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     placeholder={isAr ? 'أدخل رقم هويتك الوظيفية' : 'Enter your staff ID'}
-                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all`}
+                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
                   />
                 </div>
               </div>
@@ -135,9 +236,10 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                   <input 
                     type="password" 
                     value={password}
+                    disabled={loading}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all`}
+                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
                   />
                 </div>
               </div>
@@ -153,8 +255,9 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                   </div>
                   <select 
                     value={selectedReserve}
+                    disabled={loading}
                     onChange={(e) => setSelectedReserve(e.target.value)}
-                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer`}
+                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer disabled:opacity-50`}
                   >
                     {RESERVES.map(res => (
                       <option key={res.id} value={res.id} className="bg-[#0a1628] text-white">
@@ -170,30 +273,64 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
               </div>
 
               {/* Forgot Password */}
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end pt-1">
                 <a href="#" className="text-xs font-bold text-teal-500 hover:text-teal-400 transition-colors">
                   {isAr ? 'هل نسيت رمز الدخول؟' : 'Forgot Access Code?'}
                 </a>
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4">
-                <Link href={`/${params.lang}/staff`} className="block w-full">
-                  <button className="w-full relative group overflow-hidden rounded-2xl p-[1px]">
-                    <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-indigo-500 opacity-80 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative bg-[#0a1628] rounded-2xl py-4 px-8 flex items-center justify-center gap-3 transition-all group-hover:bg-opacity-0">
-                      <span className="text-sm font-black uppercase tracking-widest text-white">
-                        {isAr ? 'تأكيد الولوج' : 'Authorize Protocol'}
-                      </span>
-                      <ChevronRight size={18} className={`text-white transition-transform group-hover:translate-x-1 ${isAr ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
-                    </div>
-                  </button>
-                </Link>
+              <div className="pt-2">
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full relative group overflow-hidden rounded-2xl p-[1px] disabled:opacity-50 cursor-pointer block"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-indigo-500 opacity-80 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative bg-[#0a1628] rounded-2xl py-4 px-8 flex items-center justify-center gap-3 transition-all group-hover:bg-opacity-0">
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span className="text-sm font-black uppercase tracking-widest text-white">
+                          {isAr ? 'تأكيد الولوج' : 'Authorize Protocol'}
+                        </span>
+                        <ChevronRight size={18} className={`text-white transition-transform group-hover:translate-x-1 ${isAr ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
+                      </>
+                    )}
+                  </div>
+                </button>
               </div>
-
             </form>
 
-            <div className="mt-8 pt-6 border-t border-white/10 text-center relative z-10">
+            {/* Quick Login Section */}
+            <div className="mt-8 pt-6 border-t border-white/10 space-y-3 relative z-10">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">
+                {isAr ? 'تسجيل دخول سريع للفحص' : 'Developer Quick Access'}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => triggerQuickLogin('ADMIN-01', 'admin')}
+                  disabled={loading}
+                  className="py-2.5 px-3 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-teal-500/10 hover:border-teal-500/30 text-[11.5px] font-bold text-slate-300 hover:text-teal-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isAr ? 'مسئول النظام' : 'System Admin'}</span>
+                  <span className="text-[9px] text-slate-500 font-medium">ADMIN-01 / admin</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => triggerQuickLogin('MON-102', 'password')}
+                  disabled={loading}
+                  className="py-2.5 px-3 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-indigo-500/10 hover:border-indigo-500/30 text-[11.5px] font-bold text-slate-300 hover:text-indigo-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isAr ? 'مراقب ميداني' : 'Field Monitor'}</span>
+                  <span className="text-[9px] text-slate-500 font-medium">MON-102 / password</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-white/10 text-center relative z-10">
                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">
                  {isAr ? 'نظام تحكم الإدارة البيئية • v2.0' : 'Environmental Management Control • v2.0'}
                </p>

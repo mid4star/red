@@ -80,7 +80,15 @@ export function PublicNavbar({ lang }: { lang: string }) {
           {/* ── Action Buttons ─────────────────────────────────────────────── */}
           <div className="flex items-center gap-4">
             <Link 
-              href={isAr ? pathname.replace('/ar', '/en') : pathname.replace('/en', '/ar')}
+              href={(() => {
+                if (!pathname) return `/${isAr ? 'en' : 'ar'}`;
+                const segments = pathname.split('/');
+                if (segments.length > 1 && (segments[1] === 'ar' || segments[1] === 'en')) {
+                  segments[1] = isAr ? 'en' : 'ar';
+                  return segments.join('/');
+                }
+                return `/${isAr ? 'en' : 'ar'}`;
+              })()}
               className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/80 hover:text-white hover:bg-white/10 transition-all text-[11px] font-black uppercase tracking-widest"
             >
               <Globe size={14} className="text-teal-400" />
@@ -124,7 +132,19 @@ export function PublicNavbar({ lang }: { lang: string }) {
               </Link>
             ))}
             <div className="pt-6 border-t border-white/5 flex flex-col gap-4">
-               <Link href={isAr ? '/en' : '/ar'} className="text-sm font-bold text-teal-400 uppercase tracking-widest">
+               <Link 
+                 href={(() => {
+                   if (!pathname) return `/${isAr ? 'en' : 'ar'}`;
+                   const segments = pathname.split('/');
+                   if (segments.length > 1 && (segments[1] === 'ar' || segments[1] === 'en')) {
+                     segments[1] = isAr ? 'en' : 'ar';
+                     return segments.join('/');
+                   }
+                   return `/${isAr ? 'en' : 'ar'}`;
+                 })()}
+                 onClick={() => setMobileMenuOpen(false)}
+                 className="text-sm font-bold text-teal-400 uppercase tracking-widest"
+               >
                   {isAr ? 'Switch to English' : 'التحويل للعربية'}
                </Link>
             </div>

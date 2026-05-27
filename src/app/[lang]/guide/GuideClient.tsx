@@ -100,7 +100,7 @@ export default function GuideClient({ lang }: { lang: string }) {
          
          <div className="flex flex-col lg:flex-row justify-between items-end gap-10">
             <div className="max-w-4xl space-y-6">
-               <h1 className="text-6xl md:text-[8rem] font-black uppercase italic tracking-tighter leading-[0.8] drop-shadow-2xl">
+               <h1 className="text-4xl md:text-6xl lg:text-[7.5rem] font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1] drop-shadow-2xl">
                   {isAr ? 'دليل الإحاطة الميداني' : 'Strategic Field Briefing'}
                </h1>
             </div>
@@ -138,7 +138,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                        whileInView={{ opacity: 1, y: 0 }}
                        transition={{ delay: i * 0.15 }}
                        viewport={{ once: true }}
-                       className="group p-10 rounded-[3rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 hover:border-teal-500/20 transition-all shadow-2xl relative flex flex-col justify-between h-[500px]"
+                       className="group p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 hover:border-teal-500/20 transition-all shadow-2xl relative flex flex-col justify-between h-auto lg:h-[500px]"
                      >
                         <div className="space-y-8">
                            <div className="w-16 h-16 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform shadow-[0_0_40px_rgba(45,212,191,0.05)]">
@@ -154,7 +154,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                            </div>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-4 mt-8">
                            {section.links && section.links.map((link: any, j: number) => (
                              <div key={j} className="flex justify-between items-center group/link cursor-pointer">
                                 <span className="text-[11px] font-black text-slate-500 group-hover/link:text-teal-400 uppercase tracking-[0.2em] italic transition-colors">
@@ -179,7 +179,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                   <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic leading-tight">
                      {isAr ? 'مركز معلومات الأنواع' : 'Species Intelligence Hub'}
                   </span>
-                  <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none">
+                  <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
                      {isAr ? 'موسوعة الكائنات البحرية' : 'Marine Species Encyclopedia'}
                   </h2>
                </div>
@@ -214,7 +214,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                     <div 
                       key={spec.id || i} 
                       onClick={() => setSelectedSpecies(spec)}
-                      className="group relative h-96 rounded-[3rem] overflow-hidden border border-white/5 cursor-pointer shadow-xl"
+                      className="group relative h-80 sm:h-96 rounded-2xl sm:rounded-[3rem] overflow-hidden border border-white/5 cursor-pointer shadow-xl"
                     >
                        <img 
                          src={spec.imageUrl || '/marsa_alam_dugong_underwater_1774861424689.png'} 
@@ -255,7 +255,7 @@ export default function GuideClient({ lang }: { lang: string }) {
             </h2>
          </div>
          
-         <div className="h-[600px] w-full relative">
+         <div className="h-[350px] sm:h-[600px] w-full relative">
             <TopographyMap 
                locations={locations} 
                lang={lang} 
@@ -283,7 +283,7 @@ export default function GuideClient({ lang }: { lang: string }) {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-4xl bg-[#081220]/95 border border-teal-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col md:flex-row z-10 text-white"
+              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-[#081220]/95 border border-teal-500/30 rounded-[2.5rem] shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col md:flex-row z-10 text-white"
             >
               {/* Sci-Fi Decorative Corner Brackets */}
               <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-teal-400 rounded-tl-2xl pointer-events-none"></div>
@@ -300,7 +300,7 @@ export default function GuideClient({ lang }: { lang: string }) {
               </button>
 
               {/* Species Image Side */}
-              <div className="md:w-1/2 relative h-72 md:h-auto min-h-[350px]">
+              <div className="md:w-1/2 relative h-56 md:h-auto min-h-[220px] md:min-h-[350px]">
                 <img 
                   src={selectedSpecies.imageUrl || '/marsa_alam_dugong_underwater_1774861424689.png'} 
                   className="absolute inset-0 w-full h-full object-cover" 
@@ -317,7 +317,7 @@ export default function GuideClient({ lang }: { lang: string }) {
               </div>
 
               {/* Species Details Side */}
-              <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-between space-y-6">
+              <div className="md:w-1/2 p-6 md:p-12 flex flex-col justify-between space-y-6">
                 <div className="space-y-6">
                   <div>
                     <span className="text-[10px] font-black text-teal-400 uppercase tracking-[0.3em] italic block mb-1">

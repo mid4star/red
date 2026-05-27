@@ -107,7 +107,7 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
     <div className="w-full h-full relative rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border border-white/10 shadow-2xl">
       {isClient && (
         <div 
-          className="absolute top-6 right-6 z-[1000] flex gap-1.5 bg-[#0a1628]/90 backdrop-blur-xl border border-white/10 p-1.5 rounded-2xl shadow-2xl pointer-events-auto"
+          className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} md:top-6 ${isAr ? 'md:left-6' : 'md:right-6'} z-[1000] flex gap-1 bg-[#0a1628]/90 backdrop-blur-xl border border-white/10 p-1 rounded-xl sm:p-1.5 sm:rounded-2xl shadow-2xl pointer-events-auto`}
           dir={isAr ? 'rtl' : 'ltr'}
         >
           {mapStyles.map((style) => {
@@ -116,17 +116,17 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
               <button
                 key={style.id}
                 onClick={() => setCurrentStyle(style.id)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black uppercase transition-all duration-300 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase transition-all duration-300 ${
                   isActive 
                     ? 'bg-teal-500 text-[#001529] shadow-lg scale-105' 
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
                 title={isAr ? style.nameAr : style.name}
               >
-                {style.id === 'satellite' && <Globe size={14} />}
-                {style.id === 'dark' && <Eye size={14} />}
-                {style.id === 'streets' && <Map size={14} />}
-                {style.id === 'voyager' && <Compass size={14} />}
+                {style.id === 'satellite' && <Globe size={12} className="sm:w-3.5 sm:h-3.5" />}
+                {style.id === 'dark' && <Eye size={12} className="sm:w-3.5 sm:h-3.5" />}
+                {style.id === 'streets' && <Map size={12} className="sm:w-3.5 sm:h-3.5" />}
+                {style.id === 'voyager' && <Compass size={12} className="sm:w-3.5 sm:h-3.5" />}
                 <span className="hidden md:inline">{isAr ? style.nameAr : style.name}</span>
               </button>
             );
@@ -183,7 +183,7 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: isAr ? -30 : 30, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className={`absolute top-6 ${isAr ? 'left-6' : 'right-6'} z-[1000] w-full max-w-sm bg-[#071324]/90 backdrop-blur-md border border-teal-500/20 p-6 rounded-3xl shadow-[0_0_50px_rgba(45,212,191,0.1)] text-white pointer-events-auto`}
+            className={`absolute bottom-4 left-4 right-4 md:bottom-auto md:top-6 ${isAr ? 'md:left-6 md:right-auto' : 'md:right-6 md:left-auto'} z-[1000] w-auto md:w-full md:max-w-sm bg-[#071324]/90 backdrop-blur-md border border-teal-500/20 p-5 md:p-6 rounded-3xl shadow-[0_0_50px_rgba(45,212,191,0.1)] text-white pointer-events-auto`}
             dir={isAr ? 'rtl' : 'ltr'}
           >
             {/* Sci-Fi Decorative Corner Brackets */}

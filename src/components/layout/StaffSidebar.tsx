@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -36,8 +36,15 @@ type ScreenMode = 'mobile' | 'tablet' | 'desktop';
 export function StaffSidebar({ lang }: { lang: string }) {
   const isArabic = lang === 'ar';
   const pathname = usePathname();
+  const router = useRouter();
 
   const [session, setSession] = useState<{ role: string; allowedSections: string[]; name?: string; nameAr?: string } | null>(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('active_user_session');
+    window.dispatchEvent(new Event('user-session-changed'));
+    router.push(`/${lang}/staff/login`);
+  };
   const [screenMode, setScreenMode] = useState<ScreenMode>('desktop');
   const [moreDrawerOpen, setMoreDrawerOpen] = useState(false);
   const [tabletExpanded, setTabletExpanded] = useState(false);
@@ -75,15 +82,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
           console.error(e);
         }
       } else {
-        const defaultSession = {
-          employeeId: 'admin',
-          role: 'ADMIN',
-          name: 'M. Layaq',
-          nameAr: 'مصطفى لايق',
-          allowedSections: ['patrols', 'monitoring', 'eia', 'violations', 'fleet', 'media', 'settings']
-        };
-        localStorage.setItem('active_user_session', JSON.stringify(defaultSession));
-        setSession(defaultSession);
+        setSession(null);
       }
     };
 
@@ -282,7 +281,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
                           {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
                         </p>
                       </div>
-                      <button className="text-slate-500 hover:text-red-400 transition-colors p-2">
+                      <button 
+                        onClick={handleLogout} 
+                        className="text-slate-500 hover:text-red-400 transition-colors p-2 cursor-pointer"
+                        title={isArabic ? 'تسجيل الخروج' : 'Log Out'}
+                      >
                         <LogOut size={16} />
                       </button>
                     </div>
@@ -402,14 +405,23 @@ export function StaffSidebar({ lang }: { lang: string }) {
               />
             </div>
             {tabletExpanded && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 min-w-0">
-                <h4 className="text-[11px] font-bold text-white truncate">
-                  {session ? (isArabic ? session.nameAr || 'مصطفى لايق' : session.name || 'M. Layaq') : (isArabic ? 'مصطفى لايق' : 'M. Layaq')}
-                </h4>
-                <p className="text-[9px] text-slate-500 font-medium truncate uppercase tracking-tighter">
-                  {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
-                </p>
-              </motion.div>
+              <>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 min-w-0">
+                  <h4 className="text-[11px] font-bold text-white truncate">
+                    {session ? (isArabic ? session.nameAr || 'مصطفى لايق' : session.name || 'M. Layaq') : (isArabic ? 'مصطفى لايق' : 'M. Layaq')}
+                  </h4>
+                  <p className="text-[9px] text-slate-500 font-medium truncate uppercase tracking-tighter">
+                    {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
+                  </p>
+                </motion.div>
+                <button 
+                  onClick={handleLogout} 
+                  className="text-slate-500 hover:text-red-400 transition-colors p-1 cursor-pointer shrink-0"
+                  title={isArabic ? 'تسجيل الخروج' : 'Log Out'}
+                >
+                  <LogOut size={14} />
+                </button>
+              </>
             )}
           </div>
           <div className={`mt-2 flex items-center px-1 ${tabletExpanded ? 'justify-between' : 'justify-center'}`}>
@@ -531,7 +543,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
               {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع ' : 'Site Manager')}
             </p>
           </div>
-          <button className="text-slate-500 hover:text-red-400 transition-colors">
+          <button 
+            onClick={handleLogout} 
+            className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+            title={isArabic ? 'تسجيل الخروج' : 'Log Out'}
+          >
             <LogOut size={16} />
           </button>
         </div>

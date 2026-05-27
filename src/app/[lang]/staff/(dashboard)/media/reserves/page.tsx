@@ -21,7 +21,10 @@ const STATUS_COLORS: Record<string, string> = {
 const emptyReserve = (): Partial<ReserveProfile> => ({
   name: '', nameAr: '', description: '', descriptionAr: '',
   location: '', locationAr: '', area: 0, establishedYear: 2020,
-  imageUrl: '', status: 'OPEN',
+  imageUrl: '', status: 'OPEN', coords: '', speciesCount: 0,
+  healthIndex: 0, statusAr: '', activities: '', activitiesAr: '',
+  rules: '', rulesAr: '', ticketPrice: '', ticketPriceAr: '',
+  famousSpecies: '', famousSpeciesAr: '',
 });
 
 export default function ReservesCMSPage({ params }: { params: { lang: string } }) {
@@ -117,6 +120,56 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
       if (data.url) setForm(prev => ({ ...prev, imageUrl: data.url }));
     } catch (e) { console.error(e); }
     setUploading(false);
+  };
+
+  const getGallerySlides = (): { src: string; caption: string; captionAr: string }[] => {
+    if (!form.gallery) return [];
+    try {
+      return JSON.parse(form.gallery) || [];
+    } catch (e) {
+      return [];
+    }
+  };
+
+  const setGallerySlides = (slides: { src: string; caption: string; captionAr: string }[]) => {
+    setForm(prev => ({ ...prev, gallery: JSON.stringify(slides) }));
+  };
+
+  const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', files[0]);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.url) {
+        const currentSlides = getGallerySlides();
+        const updated = [...currentSlides, { src: data.url, caption: '', captionAr: '' }];
+        setGallerySlides(updated);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setUploading(false);
+  };
+
+  const handleRemoveGallerySlide = (indexToRemove: number) => {
+    const currentSlides = getGallerySlides();
+    const updated = currentSlides.filter((_, idx) => idx !== indexToRemove);
+    setGallerySlides(updated);
+  };
+
+  const handleGalleryCaptionChange = (index: number, langKey: 'caption' | 'captionAr', value: string) => {
+    const currentSlides = getGallerySlides();
+    const updated = currentSlides.map((slide, idx) => {
+      if (idx === index) {
+        return { ...slide, [langKey]: value };
+      }
+      return slide;
+    });
+    setGallerySlides(updated);
   };
 
   return (
@@ -259,6 +312,84 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
                       <option value="CLOSED" className="bg-slate-800">{isAr ? 'مغلقة' : 'Closed'}</option>
                       <option value="RESTRICTED" className="bg-slate-800">{isAr ? 'مقيدة' : 'Restricted'}</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Coordinates + Arabic Status Label */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'الإحداثيات الجغرافية' : 'Coordinates'}</label>
+                    <input type="text" value={form.coords || ''} onChange={(e) => setForm(p => ({ ...p, coords: e.target.value }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                      placeholder="e.g. 27.2288° N, 33.8541° E" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'حالة الحماية (عربي)' : 'Arabic Status Title'}</label>
+                    <input type="text" value={form.statusAr || ''} onChange={(e) => setForm(p => ({ ...p, statusAr: e.target.value }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                      placeholder="مثال: محمية ذات أولوية قصوى" />
+                  </div>
+                </div>
+
+                {/* Species Count + Health Index */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'عدد الأنواع المحمية' : 'Species Count'}</label>
+                    <input type="number" value={form.speciesCount || 0} onChange={(e) => setForm(p => ({ ...p, speciesCount: Number(e.target.value) }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'مؤشر الصحة البيئية' : 'Health Index'}</label>
+                    <input type="number" step="0.1" value={form.healthIndex || 0} onChange={(e) => setForm(p => ({ ...p, healthIndex: Number(e.target.value) }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                  </div>
+                </div>
+
+                {/* Activities + Famous Species */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                      {langTab === 'ar' ? 'الأنشطة المتاحة (عربي)' : 'Activities (English)'}
+                    </label>
+                    <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
+                      value={langTab === 'ar' ? (form.activitiesAr || '') : (form.activities || '')}
+                      onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'activitiesAr' : 'activities']: e.target.value }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                      placeholder={langTab === 'ar' ? 'مثال: غوص، رصد الطيور' : 'e.g. Scuba diving, Bird watching'} />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                      {langTab === 'ar' ? 'أشهر الكائنات (عربي)' : 'Famous Species (English)'}
+                    </label>
+                    <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
+                      value={langTab === 'ar' ? (form.famousSpeciesAr || '') : (form.famousSpecies || '')}
+                      onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'famousSpeciesAr' : 'famousSpecies']: e.target.value }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                      placeholder={langTab === 'ar' ? 'مثال: الأطوم، السلاحف الخضراء' : 'e.g. Dugong, Green Turtles'} />
+                  </div>
+                </div>
+
+                {/* Rules + Ticket Price */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                      {langTab === 'ar' ? 'أهم القوانين (عربي)' : 'Rules (English)'}
+                    </label>
+                    <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
+                      value={langTab === 'ar' ? (form.rulesAr || '') : (form.rules || '')}
+                      onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'rulesAr' : 'rules']: e.target.value }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                      placeholder={langTab === 'ar' ? 'مثال: يمنع الرسو على المرجان' : 'e.g. No anchoring on reefs'} />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                      {langTab === 'ar' ? 'أسعار التذاكر (عربي)' : 'Ticket Prices (English)'}
+                    </label>
+                    <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
+                      value={langTab === 'ar' ? (form.ticketPriceAr || '') : (form.ticketPrice || '')}
+                      onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'ticketPriceAr' : 'ticketPrice']: e.target.value }))}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                      placeholder={langTab === 'ar' ? 'مثال: 50 ج.م للمصريين' : 'e.g. 50 EGP for Egyptians'} />
                   </div>
                 </div>
 

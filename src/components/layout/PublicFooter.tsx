@@ -23,10 +23,10 @@ export function PublicFooter({ lang }: { lang: string }) {
     {
       title: isAr ? 'المحميات' : 'Reserves',
       links: [
-        { name: isAr ? 'الجزر الشمالية' : 'Northern Islands', href: '#' },
-        { name: isAr ? 'وادي الجمال' : 'Wadi El Gemal', href: '#' },
-        { name: isAr ? 'جبل علبة' : 'Gebel Elba', href: '#' },
-        { name: isAr ? 'الحيد المرجاني' : 'Coral Reef', href: '#' },
+        { name: isAr ? 'الجزر الشمالية' : 'Northern Islands', href: `/${lang}/reserves/reserve_northern_islands` },
+        { name: isAr ? 'وادي الجمال' : 'Wadi El Gemal', href: `/${lang}/reserves/reserve_wadi_el_gemal` },
+        { name: isAr ? 'جبل علبة' : 'Gebel Elba', href: `/${lang}/reserves/reserve_gebel_elba` },
+        { name: isAr ? 'الحيد المرجاني' : 'Coral Reef', href: `/${lang}/reserves/reserve_coral_reef` },
       ]
     },
     {
@@ -87,7 +87,7 @@ export function PublicFooter({ lang }: { lang: string }) {
           </div>
 
           {/* ── Link Columns ──────────────────────────────────────────────────── */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-12">
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-12">
             {footerLinks.map((section, i) => (
               <div key={i} className="space-y-6">
                 <h3 className="text-xs font-black text-white uppercase tracking-[0.3em] italic">{section.title}</h3>

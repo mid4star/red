@@ -1,4 +1,4 @@
-process.env.DATABASE_URL = 'file:./dev.db';
+process.env.DATABASE_URL = 'file:./prisma/dev.db';
 
 const { PrismaClient } = require('@prisma/client');
 const { PrismaLibSql } = require('@prisma/adapter-libsql');
@@ -227,16 +227,133 @@ async function main() {
   // 8. Seed Reserves
   await prisma.reserveProfile.create({
     data: {
-      id: "reserve_ras_mohammed",
-      name: "Ras Mohammed National Park",
-      nameAr: "محمية رأس محمد الوطنية",
-      description: "Egypt's first national park, famous for its diverse marine life and healthy coral reefs.",
-      descriptionAr: "أول محمية وطنية في مصر، تشتهر بالحياة البحرية المتنوعة والشعاب المرجانية السليمة.",
-      location: "Sinai Peninsula",
-      locationAr: "شبه جزيرة سيناء",
-      area: 480,
-      establishedYear: 1983,
-      status: "OPEN"
+      id: "reserve_northern_islands",
+      name: "Northern Islands Protectorate",
+      nameAr: "محمية الجزر الشمالية",
+      description: "A pristine archipelago serving as a critical sanctuary for marine turtles and migratory birds in the northern Red Sea. Highly restricted zones safeguard nesting grounds.",
+      descriptionAr: "أرخبيل بكر يعد ملاذاً حرجاً للسلاحف البحرية والطيور المهاجرة في شمال البحر الأحمر. مناطق محظورة تماماً لحماية مواقع التعشيش.",
+      location: "Hurghada & Northern Islands",
+      locationAr: "الغردقة والجزر الشمالية",
+      area: 3500,
+      establishedYear: 2006,
+      status: "OPEN",
+      coords: "27.2288° N, 33.8541° E",
+      speciesCount: 750,
+      healthIndex: 9.7,
+      statusAr: "محمية ذات أولوية قصوى",
+      imageUrl: "/red_sea_hero_aerial_1774790601114.png",
+      activities: "Scuba Diving, Bird Watching, Wildlife Photography, Sailing",
+      activitiesAr: "الغوص السطحي، رصد الطيور البحرية، التصوير الفوتوغرافي للحياة البرية، الإبحار الشراعي",
+      rules: "No anchoring on reefs, No single-use plastics allowed, Maximum speed 8 knots near nesting islands",
+      rulesAr: "يمنع ربط القوارب بالشعاب المرجانية، يُحظر تماماً حمل البلاستيك أحادي الاستخدام، السرعة القصوى 8 عقد قرب جزر التعشيش",
+      ticketPrice: "Egyptian: 50 EGP | Foreigner: $10 USD",
+      ticketPriceAr: "المصريين: 50 ج.م | الأجانب: 10 دولار أمريكي",
+      famousSpecies: "Green Sea Turtle, Sooty Falcon, Spinner Dolphin, Hawksbill Turtle",
+      famousSpeciesAr: "السلحفاة الخضراء، الصقر الأسحم، الدلفين الدوار، السلحفاة صقرية المنقار",
+      gallery: JSON.stringify([
+        { src: "/red_sea_hero_aerial_1774790601114.png", caption: "Stunning aerial view of the Northern Islands protectorate", captionAr: "منظر جوي ساحر لأرخبيل الجزر الشمالية المحمية" },
+        { src: "/sea_turtle_close_up_1774790619989.png", caption: "Green sea turtle nesting on sandy beaches of the archipelago", captionAr: "سلحفاة خضراء معششة على الشواطئ الرملية للجزر" },
+        { src: "/red_sea_sunset_mountains_1774790636632.png", caption: "Sunset hues over the pristine coastal lagoons", captionAr: "ألوان الغروب الساحرة على البحيرات الساحلية البكر" }
+      ])
+    }
+  });
+
+  await prisma.reserveProfile.create({
+    data: {
+      id: "reserve_wadi_el_gemal",
+      name: "Wadi El Gemal National Park",
+      nameAr: "محمية وادي الجمال",
+      description: "A vast expanse of coastal lagoons, mangroves, and desert peaks. Home to the legendary ancient emerald mines and critical dugong populations.",
+      descriptionAr: "مساحات شاسعة من البحيرات الساحلية والمنجروف والقمم الجبلية. موطن لمناجم الزمرد التاريخية ومجتمعات الأطوم النادرة.",
+      location: "Marsa Alam Sector",
+      locationAr: "قطاع مرسى علم",
+      area: 4770,
+      establishedYear: 2003,
+      status: "OPEN",
+      coords: "24.6644° N, 35.0886° E",
+      speciesCount: 650,
+      healthIndex: 9.4,
+      statusAr: "محمية طبيعية ووطنية",
+      imageUrl: "/wadi_el_gemal_mangroves_aerial_1774861445577.png",
+      activities: "Snorkeling with Dugongs, Mangrove Walk, Emerald Mine Tours, Camel Riding",
+      activitiesAr: "السباحة مع الأطوم (عروس البحر)، المسير البيئي بالمنجروف، جولات مناجم الزمرد الأثرية، ركوب الجمال شاطئياً",
+      rules: "Do not touch or approach dugongs closer than 5 meters, Use reef-safe sunscreen, No littering",
+      rulesAr: "يمنع منعاً باتاً لمس أو الاقتراب من حيوان الأطوم لمسافة تقل عن 5 أمتار، استخدام واقي شمس صديق للبيئة، التخلص الآمن من النفايات",
+      ticketPrice: "Egyptian: 40 EGP | Foreigner: $8 USD",
+      ticketPriceAr: "المصريين: 40 ج.م | الأجانب: 8 دولار أمريكي",
+      famousSpecies: "Dugong (Sea Cow), Green Turtle, Osprey, Ibex",
+      famousSpeciesAr: "الأطوم (عروس البحر)، السلحفاة الخضراء، العقاب النساري، الوعل النوبي",
+      gallery: JSON.stringify([
+        { src: "/wadi_el_gemal_mangroves_aerial_1774861445577.png", caption: "Dense and vibrant coastal mangrove forests", captionAr: "غابات المنجروف الكثيفة والحيوية على طول الساحل" },
+        { src: "/sea_turtle_close_up_1774790619989.png", caption: "Endangered hawksbill sea turtle swimming near the shallow reefs", captionAr: "سلحفاة صقرية المنقار المهددة بالانقراض تسبح قرب الشعاب" },
+        { src: "/marsa_alam_dugong_underwater_1774861424689.png", caption: "Rare Dugong grazing peacefully in shallow seagrass meadows", captionAr: "عروس البحر (الأطوم) يتغذى بسلام في مراعي أعشاب البحر" }
+      ])
+    }
+  });
+
+  await prisma.reserveProfile.create({
+    data: {
+      id: "reserve_gebel_elba",
+      name: "Gebel Elba Biosphere",
+      nameAr: "محمية جبل علبة",
+      description: "An unparalleled mist oasis in the desert offering unique biodiversity, rich flora, and a meeting point of distinct Afro-Asian ecosystems.",
+      descriptionAr: "واحة ضبابية فريدة في الصحراء توفر تنوعاً بيولوجياً نادراً ونباتات غنية، وتعتبر نقطة التقاء لنظم بيئية متميزة.",
+      location: "Halaib Triangle",
+      locationAr: "مثلث حلايب",
+      area: 35600,
+      establishedYear: 1986,
+      status: "RESTRICTED",
+      coords: "22.1833° N, 36.3333° E",
+      speciesCount: 920,
+      healthIndex: 9.8,
+      statusAr: "محمية محيط حيوي",
+      imageUrl: "/red_sea_sunset_mountains_1774790636632.png",
+      activities: "Eco-Hiking, Bird Watching, Cultural Heritage Tours, Botanist Exploration",
+      activitiesAr: "المسير الجبلي البيئي، رصد الطيور النادرة، جولات التراث الثقافي المحلي، استكشاف النباتات البرية",
+      rules: "Prior military/governmental permit required, Mooring/camping only in designated sectors, No fire building",
+      rulesAr: "يتطلب الحصول على تصريح أمني وحكومي مسبق، التخييم والمبيت في القطاعات المحددة فقط، يُمنع إشعال النيران في المناطق المفتوحة",
+      ticketPrice: "Egyptian: 100 EGP | Foreigner: $25 USD",
+      ticketPriceAr: "المصريين: 100 ج.م | الأجانب: 25 دولار أمريكي",
+      famousSpecies: "Aoudad (Barbary Sheep), Dragon Blood Tree, Nubian Wild Ass, Egyptian Vulture",
+      famousSpeciesAr: "الأروي (الكبش البري)، شجرة دم الأخوين، الحمار البري النوبي، الرخمة المصرية",
+      gallery: JSON.stringify([
+        { src: "/red_sea_sunset_mountains_1774790636632.png", caption: "Mist-shrouded green peaks of the Elba biosphere reserve", captionAr: "القمم الخضراء المغطاة بالضباب في محمية جبل علبة" },
+        { src: "/red_sea_hero_aerial_1774790601114.png", caption: "Diverse terrestrial and coastal boundary tracks", captionAr: "المسارات البرية والساحلية المتنوعة في قطاع المحمية" },
+        { src: "/sea_turtle_close_up_1774790619989.png", caption: "Unique biodiversity records along the mountain foothills", captionAr: "رصد فريد للتنوع البيولوجي على طول سفوح الجبال" }
+      ])
+    }
+  });
+
+  await prisma.reserveProfile.create({
+    data: {
+      id: "reserve_coral_reef",
+      name: "Coral Reef Protectorate",
+      nameAr: "محمية الحيد المرجاني",
+      description: "Vibrant, resilient, and extensive coral reef systems providing critical habitat for diverse marine life and world-class diving expeditions.",
+      descriptionAr: "أنظمة شعاب مرجانية نابضة بالحياة وممتدة توفر موائل حرجة للحياة البحرية المتنوعة وتجارب غوص عالمية.",
+      location: "Brother Islands Sector",
+      locationAr: "قطاع جزر الأخوة",
+      area: 1200,
+      establishedYear: 1998,
+      status: "OPEN",
+      coords: "25.3131° N, 34.8569° E",
+      speciesCount: 1100,
+      healthIndex: 9.9,
+      statusAr: "ملاذ بحري محمي",
+      imageUrl: "/brother_islands_reef_wall_1774861464852.png",
+      activities: "Deep Wall Diving, Shark Expeditions, Wreck Diving, Marine Biology Seminars",
+      activitiesAr: "غوص الحوائط العميقة، رحلات رصد القروش، غوص السفن الغارقة، ندوات الأحياء البحرية الميدانية",
+      rules: "Dive computer mandatory for every diver, Night diving strictly prohibited, No touching reef structures",
+      rulesAr: "كمبيوتر الغوص إلزامي لكل غواص، يُمنع منعاً باتاً الغوص الليلي، يحظر لمس أو الوقوف على هياكل المرجان",
+      ticketPrice: "Egyptian: 80 EGP | Foreigner: $15 USD",
+      ticketPriceAr: "المصريين: 80 ج.م | الأجانب: 15 دولار أمريكي",
+      famousSpecies: "Hammerhead Shark, Oceanic Whitetip Shark, Manta Ray, Napoleon Wrasse",
+      famousSpeciesAr: "قرش المطرقة، القرش المحيطي ذو الطرف الأبيض، سمكة مانتا، سمكة النابليون",
+      gallery: JSON.stringify([
+        { src: "/brother_islands_reef_wall_1774861464852.png", caption: "Spectacular vertical coral walls at the Brother Islands", captionAr: "حوائط مرجانية عمودية مذهلة في أعماق جزر الأخوة" },
+        { src: "/marsa_alam_dugong_underwater_1774861424689.png", caption: "Bustling reef environment hosting schools of pelagic fish", captionAr: "بيئة الشعاب المرجانية النابضة بالحياة تجمع قروش وأسماك البحر" },
+        { src: "/sea_turtle_close_up_1774790619989.png", caption: "Hawksbill sea turtle grazing on marine sponges", captionAr: "سلحفاة صقرية المنقار تتغذى على الإسفنج البحري في الأعماق" }
+      ])
     }
   });
 

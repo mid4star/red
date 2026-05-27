@@ -3,13 +3,14 @@
 import { StaffSidebar } from '@/components/layout/StaffSidebar';
 import { AccessDenied } from '@/components/layout/AccessDenied';
 import { useState, useEffect, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 type ScreenMode = 'mobile' | 'tablet' | 'desktop';
 
 export default function StaffLayout({ children, params }: { children: React.ReactNode, params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
   const pathname = usePathname();
+  const router = useRouter();
 
   const [session, setSession] = useState<{ role: string; allowedSections: string[]; name?: string; nameAr?: string } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,21 +41,14 @@ export default function StaffLayout({ children, params }: { children: React.Reac
       if (raw) {
         try {
           setSession(JSON.parse(raw));
+          setLoading(false);
         } catch (e) {
           console.error(e);
+          router.push(`/${params.lang}/staff/login`);
         }
       } else {
-        const defaultSession = {
-          employeeId: 'admin',
-          role: 'ADMIN',
-          name: 'M. Layaq',
-          nameAr: 'مصطفى لايق',
-          allowedSections: ['patrols', 'monitoring', 'eia', 'violations', 'fleet', 'media', 'settings']
-        };
-        localStorage.setItem('active_user_session', JSON.stringify(defaultSession));
-        setSession(defaultSession);
+        router.push(`/${params.lang}/staff/login`);
       }
-      setLoading(false);
     };
 
     checkSession();

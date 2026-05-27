@@ -236,6 +236,19 @@ model ReserveProfile {
   establishedYear Int
   imageUrl        String?
   status          String   @default("OPEN")
+  coords          String   @default("")
+  speciesCount    Int      @default(0)
+  healthIndex     Float    @default(0.0)
+  statusAr        String   @default("")
+  activities      String   @default("")
+  activitiesAr    String   @default("")
+  rules           String   @default("")
+  rulesAr         String   @default("")
+  ticketPrice     String   @default("")
+  ticketPriceAr   String   @default("")
+  famousSpecies   String   @default("")
+  famousSpeciesAr String   @default("")
+  gallery         String   @default("")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
