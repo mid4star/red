@@ -188,15 +188,13 @@ export default function GuideClient({ lang }: { lang: string }) {
                     ? 'مركز بيانات استراتيجي لجميع الكائنات البحرية المحمية في إقليم البحر الأحمر.' 
                     : 'A strategic data hub for all protected marine species within the Red Sea territory.'}
                </p>
-               <button 
-                 onClick={() => {
-                   if (species.length > 0) setSelectedSpecies(species[0]);
-                 }}
-                 className="px-10 py-5 rounded-2xl bg-teal-500 text-[#001529] font-black text-sm tracking-tighter uppercase italic hover:bg-teal-400 transition-all flex items-center gap-3"
+               <Link 
+                 href={`/${lang}/guide/species`}
+                 className="px-10 py-5 rounded-2xl bg-teal-500 text-[#001529] font-black text-sm tracking-tighter uppercase italic hover:bg-teal-400 transition-all flex items-center gap-3 inline-flex"
                >
                   {isAr ? 'افتح الموسوعة الكاملة' : 'Deploy Full Encyclopedia'}
                   <FileText size={18} />
-               </button>
+               </Link>
             </div>
 
             <div className="lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -210,7 +208,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                      {isAr ? 'لا توجد كائنات مسجلة حالياً.' : 'NO REGISTERED SPECIES FOUND.'}
                   </div>
                ) : (
-                  species.map((spec, i) => (
+                 species.slice(0, 2).map((spec, i) => (
                     <div 
                       key={spec.id || i} 
                       onClick={() => setSelectedSpecies(spec)}
