@@ -41,7 +41,7 @@ const mapStyles = [
 
 const isClient = typeof window !== 'undefined';
 
-// Custom glowing tactical radar pin creator
+// Custom glowing radar pin creator
 const createRadarPin = (isSelected: boolean) => {
   if (!isClient) return null;
   
@@ -200,7 +200,7 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
               <div className="flex items-center gap-2">
                 <Activity className="text-teal-400 animate-pulse" size={18} />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-400 italic font-mono">
-                  {isAr ? 'بيانات الموقع النشطة' : 'LOCATION telemetry'}
+                  {isAr ? 'بيانات الموقع الجغرافي' : 'LOCATION METRICS'}
                 </span>
               </div>
               <button 
@@ -253,12 +253,12 @@ export default function TopographyMap({ locations, lang, selectedLocation, onSel
               {/* Description */}
               <div className="space-y-1">
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 italic block">
-                  {isAr ? 'الإيجاز البيئي' : 'Environmental Intel'}
+                  {isAr ? 'الملخص البيئي' : 'Environmental Info'}
                 </span>
                 <p className="text-[13px] text-slate-300 font-medium italic leading-relaxed">
                   {isAr 
                     ? selectedLocation.descriptionAr || selectedLocation.description 
-                    : selectedLocation.description || 'No description available for this telemetry zone.'}
+                    : selectedLocation.description || 'No description available for this reserve zone.'}
                 </p>
               </div>
             </div>

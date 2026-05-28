@@ -3,42 +3,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-   BookOpen,
-   Map,
-   ShieldCheck,
-   Info,
-   CheckCircle2,
-   ArrowRight,
-   Waves,
-   Globe,
-   Zap,
    Compass,
-   Eye,
-   Shield,
-   Droplets,
-   Microscope,
+   ShieldCheck,
    LifeBuoy,
+   BookOpen,
+   ArrowLeft,
+   ArrowRight,
    FileText,
-   Navigation,
-   X,
-   Loader2
+   Loader2,
+   X
 } from 'lucide-react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { PublicFooter } from '@/components/layout/PublicFooter';
-import { VisitorGuideSection, MarineSpecies, MapLocation } from '@/lib/firebase/schema';
+import dynamic from 'next/dynamic';
 
-// Dynamically import TopographyMap to bypass Next.js SSR leaflet errors
 const TopographyMap = dynamic(() => import('@/components/guide/TopographyMap'), {
    ssr: false,
    loading: () => (
-      <div className="w-full h-full bg-[#070f1e] flex items-center justify-center rounded-[4rem] border border-white/10 min-h-[450px]">
-         <div className="flex flex-col items-center gap-3">
-            <Loader2 className="animate-spin text-teal-400" size={32} />
-            <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-               Loading GIS Telemetry Map...
-            </span>
+      <div className="w-full h-full bg-[#070f1e] flex items-center justify-center border border-white/10 rounded-[2.5rem] md:rounded-[4rem]">
+         <div className="flex flex-col items-center gap-3 text-slate-500 font-mono">
+            <Loader2 className="animate-spin text-teal-400" size={24} />
+            <span className="text-[10px] uppercase tracking-widest">Loading Map...</span>
          </div>
       </div>
    )
@@ -46,86 +32,80 @@ const TopographyMap = dynamic(() => import('@/components/guide/TopographyMap'), 
 
 export default function GuideClient({ lang }: { lang: string }) {
    const isAr = lang === 'ar';
-
-   const [guideSections, setGuideSections] = useState<VisitorGuideSection[]>([]);
-   const [species, setSpecies] = useState<MarineSpecies[]>([]);
-   const [locations, setLocations] = useState<MapLocation[]>([]);
+   const [guideSections, setGuideSections] = useState<any[]>([]);
+   const [species, setSpecies] = useState<any[]>([]);
+   const [locations, setLocations] = useState<any[]>([]);
    const [loading, setLoading] = useState(true);
 
-   const [selectedSpecies, setSelectedSpecies] = useState<MarineSpecies | null>(null);
-   const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
+   const [selectedSpecies, setSelectedSpecies] = useState<any | null>(null);
+   const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
 
    useEffect(() => {
-      const loadAll = async () => {
+      const fetchData = async () => {
          try {
-            const [resGuide, resSpecies, resLocations] = await Promise.all([
-               fetch('/api/staff/query?collection=visitor_guide').then(r => r.json()),
-               fetch('/api/staff/query?collection=marine_species').then(r => r.json()),
-               fetch('/api/staff/query?collection=map_locations').then(r => r.json())
-            ]);
+            // Fetch visitor guide sections
+            const resGuide = await fetch('/api/staff/query?collection=visitor_guide');
+            const jsonGuide = await resGuide.json();
+            if (jsonGuide.success) {
+               setGuideSections(jsonGuide.data);
+            }
 
-            if (resGuide.success) {
-               const sorted = [...resGuide.data].sort((a, b) => (a.order || 0) - (b.order || 0));
-               setGuideSections(sorted);
+            // Fetch marine species
+            const resSpecies = await fetch('/api/staff/query?collection=marine_species');
+            const jsonSpecies = await resSpecies.json();
+            if (jsonSpecies.success) {
+               setSpecies(jsonSpecies.data);
             }
-            if (resSpecies.success) {
-               setSpecies(resSpecies.data);
-            }
-            if (resLocations.success) {
-               setLocations(resLocations.data);
+
+            // Fetch map locations
+            const resLocs = await fetch('/api/staff/query?collection=map_locations');
+            const jsonLocs = await resLocs.json();
+            if (jsonLocs.success) {
+               setLocations(jsonLocs.data);
             }
          } catch (e) {
-            console.error(e);
+            console.error('Error fetching guide page data:', e);
          } finally {
             setLoading(false);
          }
       };
-      loadAll();
+      fetchData();
    }, []);
 
    return (
-      <div className="bg-[#0a1628] text-white min-h-screen" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
          <PublicNavbar lang={lang} />
 
-         {/* ── Strategic Field Briefing Header ───────────────────────────────── */}
-         <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto space-y-12">
-            <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
-                  <BookOpen size={24} strokeWidth={2.5} />
-               </div>
-               <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">
-                  {isAr ? 'دليل الانتشار التكتيكي' : 'Tactical Deployment Guide'}
-               </span>
-            </div>
-
+         {/* ── Page Header ─────────────────────────────────────────────────── */}
+         <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto w-full">
             <div className="flex flex-col lg:flex-row justify-between items-end gap-10">
                <div className="max-w-4xl space-y-6">
                   <h1 className="text-4xl md:text-6xl lg:text-[7.5rem] font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1] drop-shadow-2xl">
-                     {isAr ? 'دليل الزوار' : 'Strategic Field Briefing'}
+                     {isAr ? 'دليل الزوار' : 'Visitor Field Guide'}
                   </h1>
                </div>
                <div className="flex flex-col items-end gap-4">
                   <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-teal-900/10 border border-teal-500/10">
                      <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
                      <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest italic">
-                        {isAr ? 'حالة النظام: قطاعات مفتوحة' : 'System Status: Sectors Open'}
+                        {isAr ? 'حالة الدخول: المحميات مفتوحة للزيارة' : 'Access Status: Reserves Open'}
                      </span>
                   </div>
                </div>
             </div>
          </section>
 
-         {/* ── Sectional Intel ─────────────────────────────────────────────── */}
+         {/* ── Guide Sections ─────────────────────────────────────────────── */}
          <section className="pb-40 px-6 max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                {loading ? (
                   <div className="col-span-3 text-center text-slate-500 font-mono py-20 flex flex-col items-center justify-center gap-3">
                      <Loader2 className="animate-spin text-teal-400" size={24} />
-                     <span>{isAr ? 'جاري تحميل البيانات الميدانية...' : 'LOADING FIELD INTEL TELEMETRY...'}</span>
+                     <span>{isAr ? 'جاري تحميل الدليل الميداني...' : 'LOADING FIELD GUIDE DATA...'}</span>
                   </div>
                ) : guideSections.length === 0 ? (
                   <div className="col-span-3 text-center text-slate-500 font-mono py-20">
-                     {isAr ? 'لا توجد أقسام إحاطة متاحة حالياً.' : 'NO FIELD BRIEFING SECTIONS AVAILABLE.'}
+                     {isAr ? 'لا توجد أقسام دليل متاحة حالياً.' : 'NO FIELD GUIDE SECTIONS AVAILABLE.'}
                   </div>
                ) : (
                   guideSections.map((section, i) => {
@@ -187,13 +167,13 @@ export default function GuideClient({ lang }: { lang: string }) {
             </div>
          </section>
 
-         {/* ── Species Tactical Encyclopedia ─────────────────────────────────── */}
+         {/* ── Species Encyclopedia ─────────────────────────────────── */}
          <section className="py-40 bg-slate-900/40 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row gap-20 items-center">
                <div className="lg:w-2/5 space-y-10">
                   <div className="space-y-4">
                      <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic leading-tight">
-                        {isAr ? 'مركز معلومات الأنواع' : 'Species Intelligence Hub'}
+                        {isAr ? 'دليل الكائنات البحرية' : 'Species Information Hub'}
                      </span>
                      <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
                         {isAr ? 'موسوعة الكائنات البحرية' : 'Marine Species Encyclopedia'}
@@ -201,14 +181,14 @@ export default function GuideClient({ lang }: { lang: string }) {
                   </div>
                   <p className="text-xl text-slate-400 font-medium italic leading-relaxed">
                      {isAr
-                        ? 'مركز بيانات استراتيجي لجميع الكائنات البحرية المحمية في إقليم البحر الأحمر.'
-                        : 'A strategic data hub for all protected marine species within the Red Sea territory.'}
+                        ? 'دليل معرفي شامل لجميع الكائنات البحرية المحمية في البحر الأحمر.'
+                        : 'A comprehensive information directory for all protected marine species within the Red Sea.'}
                   </p>
                   <Link
                      href={`/${lang}/guide/species`}
                      className="px-10 py-5 rounded-2xl bg-teal-500 text-[#001529] font-black text-sm tracking-tighter uppercase italic hover:bg-teal-400 transition-all flex items-center gap-3 inline-flex"
                   >
-                     {isAr ? 'افتح الموسوعة الكاملة' : 'Deploy Full Encyclopedia'}
+                     {isAr ? 'افتح الموسوعة الكاملة' : 'Explore Full Encyclopedia'}
                      <FileText size={18} />
                   </Link>
                </div>
@@ -217,7 +197,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                   {loading ? (
                      <div className="col-span-2 text-center text-slate-500 font-mono py-20 flex flex-col items-center justify-center gap-3">
                         <Loader2 className="animate-spin text-teal-400" size={24} />
-                        <span>{isAr ? 'جاري تحميل الكائنات...' : 'LOADING SPECIES TELEMETRY...'}</span>
+                        <span>{isAr ? 'جاري تحميل الكائنات...' : 'LOADING SPECIES DIRECTORY...'}</span>
                      </div>
                   ) : species.length === 0 ? (
                      <div className="col-span-2 text-center text-slate-500 font-mono py-20">
@@ -262,7 +242,7 @@ export default function GuideClient({ lang }: { lang: string }) {
          <section className="py-40 px-6 max-w-7xl mx-auto space-y-12">
             <div className="text-center space-y-4">
                <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic">
-                  {isAr ? 'نظام تحديد المواقع الجغرافي اللحظي' : 'REAL-TIME GIS LOCATIONS SYSTEM'}
+                  {isAr ? 'خريطة مواقع المحميات' : 'RESERVE LOCATIONS MAP'}
                </span>
                <h2 className="text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none opacity-20">
                   {isAr ? 'استكشف التضاريس' : 'Explore the Topography'}
@@ -299,7 +279,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                      exit={{ opacity: 0, scale: 0.95, y: 20 }}
                      className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-[#081220]/95 border border-teal-500/30 rounded-[2.5rem] shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col md:flex-row z-10 text-white"
                   >
-                     {/* Sci-Fi Decorative Corner Brackets */}
+                     {/* Decorative Corner Brackets */}
                      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-teal-400 rounded-tl-2xl pointer-events-none"></div>
                      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-teal-400 rounded-tr-2xl pointer-events-none"></div>
                      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-teal-400 rounded-bl-2xl pointer-events-none"></div>
@@ -350,8 +330,8 @@ export default function GuideClient({ lang }: { lang: string }) {
                         </div>
 
                         <div className="pt-6 border-t border-teal-500/10 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                           <span>SPECIES_TELEMETRY: {selectedSpecies.id?.slice(0, 8).toUpperCase() || 'N/A'}</span>
-                           <span>SECTOR: RED_SEA_HQ</span>
+                           <span>SPECIES_ID: {selectedSpecies.id?.slice(0, 8).toUpperCase() || 'N/A'}</span>
+                           <span>REGION: RED_SEA</span>
                         </div>
                      </div>
                   </motion.div>

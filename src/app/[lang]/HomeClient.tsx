@@ -186,14 +186,14 @@ export default function HomeClient({ lang }: { lang: string }) {
                <p className="text-xl text-slate-400 font-medium leading-relaxed italic">
                   {isAr 
                     ? 'نعمل على تطبيق أعلى المعايير الدولية في إدارة المحميات من خلال حلول ذكية وتقنيات رصد متطورة تضمن استدامة الموارد.' 
-                    : 'Implementing cutting-edge management protocols through intelligent solutions and tactical monitoring, ensuring resource sustainability for the next millennium.'}
+                    : 'Implementing cutting-edge ecosystem preservation practices through intelligent solutions and regular ecological monitoring, ensuring resource sustainability.'}
                </p>
 
                <div className="flex gap-8">
                   <div className="space-y-4">
                      <div className="flex items-center gap-3 text-white font-black text-sm uppercase italic">
                         <CheckCircle2 className="text-teal-400" size={18} />
-                        {isAr ? 'رصد ذكي' : 'Strategic Monitoring'}
+                        {isAr ? 'رصد مستمر' : 'Continuous Monitoring'}
                      </div>
                      <div className="flex items-center gap-3 text-white font-black text-sm uppercase italic">
                         <CheckCircle2 className="text-teal-400" size={18} />
@@ -203,11 +203,11 @@ export default function HomeClient({ lang }: { lang: string }) {
                   <div className="space-y-4">
                      <div className="flex items-center gap-3 text-white font-black text-sm uppercase italic">
                         <CheckCircle2 className="text-teal-400" size={18} />
-                        {isAr ? 'وعي بيئي' : 'Environmental Intel'}
+                        {isAr ? 'وعي بيئي' : 'Environmental Awareness'}
                      </div>
                      <div className="flex items-center gap-3 text-white font-black text-sm uppercase italic">
                         <CheckCircle2 className="text-teal-400" size={18} />
-                        {isAr ? 'إدارة ذكية' : 'Intelligent MGMT'}
+                        {isAr ? 'إدارة ذكية' : 'Smart Management'}
                      </div>
                   </div>
                </div>
@@ -237,10 +237,10 @@ export default function HomeClient({ lang }: { lang: string }) {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
                <div className="space-y-3">
                   <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.3em] italic">Explore the Arcana</span>
-                  <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">{isAr ? 'عجائب المحميات' : 'Strategic Highlights'}</h2>
+                  <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">{isAr ? 'عجائب المحميات' : 'Reserve Highlights'}</h2>
                </div>
                <Link href={`/${lang}/reserves`} className="group flex items-center gap-3 text-[12px] font-black text-teal-400 uppercase tracking-widest italic no-underline">
-                  {isAr ? 'عرض كافة المحميات' : 'Deploy Full Intel'}
+                  {isAr ? 'تصفح جميع المحميات' : 'Explore All Reserves'}
                   <div className="w-10 h-10 rounded-full border border-teal-500/30 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-[#001529] transition-all">
                      <ArrowRight size={16} />
                   </div>
@@ -310,10 +310,10 @@ export default function HomeClient({ lang }: { lang: string }) {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
                <button className="px-12 py-6 rounded-3xl bg-teal-500 text-[#001529] font-black text-lg tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-2xl">
-                  {isAr ? 'احجز زيارة الآن' : 'Schedule Deployment'}
+                  {isAr ? 'احجز زيارة الآن' : 'Book a Visit'}
                </button>
                <button className="px-12 py-6 rounded-3xl bg-white/5 border border-white/10 text-white font-black text-lg tracking-tighter uppercase italic hover:bg-white/10 transition-all backdrop-blur-xl">
-                  {isAr ? 'دعم الأبحاث' : 'Support Intelligence'}
+                  {isAr ? 'دعم جهود الصون' : 'Support Conservation'}
                </button>
             </div>
          </div>

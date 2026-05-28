@@ -56,16 +56,16 @@ export default function CareersClient({ lang }: { lang: string }) {
     },
     {
       id: 'job_03',
-      title: 'GIS Telemetry Data Analyst',
-      titleAr: 'محلل نظم معلومات وتتبع بيئي (GIS)',
-      dept: 'GIS Telemetry & Intelligence',
-      deptAr: 'إدارة تكنولوجيا المعلومات ونظم الجغرافيا',
+      title: 'GIS Spatial Data Analyst',
+      titleAr: 'محلل خرائط وبيانات جغرافية (GIS)',
+      dept: 'GIS Mapping & Spatial Data',
+      deptAr: 'إدارة نظم المعلومات الجغرافية والخرائط',
       loc: 'Hurghada HQ',
       locAr: 'المقر الرئيسي بالغردقة',
       type: 'Full-time',
       typeAr: 'دوام كامل',
-      desc: 'Process satellite telemetry, monitor vessel AIS positioning, visualize patrol tracks, and maintain real-time GIS monitoring databases.',
-      descAr: 'معالجة صور الأقمار الصناعية البيئية، ومراقبة مسارات السفن عبر إشارات AIS، وتوثيق وعرض البيانات الجغرافية للدوريات والمخالفات.'
+      desc: 'Process satellite and mapping data, monitor vessel positioning, visualize reserve zones, and maintain GIS monitoring databases.',
+      descAr: 'معالجة صور الأقمار الصناعية البيئية، والمساعدة في رسم الخرائط التفاعلية للمحميات وتحديث قواعد البيانات الجغرافية.'
     }
   ];
 
@@ -171,7 +171,7 @@ export default function CareersClient({ lang }: { lang: string }) {
               <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-teal-400 rounded-tr-2xl pointer-events-none"></div>
 
               <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.3em] italic">
-                {isAr ? 'استمارة التوظيف الميدانية' : 'Field Deployment Application'}
+                {isAr ? 'طلب الانضمام للمحميات' : 'Join Our Team Application'}
               </h3>
 
               <AnimatePresence mode="wait">
@@ -286,7 +286,7 @@ export default function CareersClient({ lang }: { lang: string }) {
                     <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto italic">
                       {isAr 
                         ? 'شكراً لاهتمامك بالانضمام إلينا. سيقوم فريق الموارد البشرية بمراجعة ملفك والتواصل معك قريباً.' 
-                        : 'Thank you for your interest. Our HR telemetry command will review your file and correspond shortly.'}
+                        : 'Thank you for your interest. Our HR department will review your application and correspond shortly.'}
                     </p>
                     <button
                       onClick={() => {

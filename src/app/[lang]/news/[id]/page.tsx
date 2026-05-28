@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
    Calendar,
    Clock,
    ArrowLeft,
    ArrowRight,
    Share2,
-   Twitter,
    Link2,
    CheckCircle,
    BookOpen,
@@ -102,7 +101,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
             <div className="flex-1 flex flex-col items-center justify-center gap-4 py-40">
                <Loader2 className="animate-spin text-teal-400" size={40} />
                <span className="text-sm font-black uppercase tracking-widest text-slate-400 font-mono">
-                  {isAr ? 'جاري تحميل تفاصيل الخبر...' : 'Retrieving news feed telemetry...'}
+                  {isAr ? 'جاري تحميل تفاصيل الخبر...' : 'Loading news details...'}
                </span>
             </div>
             <PublicFooter lang={lang} />
@@ -117,12 +116,12 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
             <div className="flex-1 flex flex-col items-center justify-center gap-6 py-40 max-w-xl mx-auto text-center px-6">
                <BookOpen className="text-rose-500 scale-125" size={48} />
                <h2 className="text-3xl font-black uppercase italic tracking-tighter">
-                  {isAr ? 'الخبر غير موجود' : 'Intel Feed Offline'}
+                  {isAr ? 'الخبر غير موجود' : 'News Article Not Found'}
                </h2>
                <p className="text-slate-400 italic font-medium leading-relaxed">
                   {isAr 
                      ? 'لم يتم العثور على الخبر المطلوب أو تم نقله لمكان آخر.' 
-                     : 'The requested article could not be located in our active intelligence feeds.'}
+                     : 'The requested article could not be located in our active news feed.'}
                </p>
                <Link href={`/${lang}/news`} className="no-underline">
                   <button className="px-8 py-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest flex items-center gap-2">
@@ -229,7 +228,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
                   {/* Share panel */}
                   <div className="p-8 rounded-[2rem] bg-[#0c1b2f]/60 border border-white/5 backdrop-blur-3xl space-y-6 relative overflow-hidden">
                      <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.3em] italic">
-                        {isAr ? 'مشاركة الخبر' : 'Share Intelligence'}
+                        {isAr ? 'مشاركة الخبر' : 'Share Article'}
                      </h3>
                      
                      <div className="grid grid-cols-2 gap-4">
@@ -314,7 +313,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
                   {/* Metadata telemetry card */}
                   <div className="p-8 rounded-[2rem] bg-[#0c1b2f]/30 border border-white/5 space-y-4">
                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">
-                        INTEL METADATA
+                        ARTICLE DETAILS
                      </span>
                      <div className="space-y-3 font-mono text-xs">
                         <div className="flex justify-between">
@@ -323,11 +322,11 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
                         </div>
                         <div className="flex justify-between">
                            <span className="text-slate-500">FORMAT:</span>
-                           <span className="text-slate-300 font-bold">SECURE_JSON</span>
+                           <span className="text-slate-300 font-bold">ARTICLE_JSON</span>
                         </div>
                         <div className="flex justify-between">
-                           <span className="text-slate-500">AUTHOR SIGN:</span>
-                           <span className="text-teal-400 font-bold">{article.authorName ? 'VERIFIED' : 'SYSTEM'}</span>
+                           <span className="text-slate-500">PUBLISHER:</span>
+                           <span className="text-teal-400 font-bold">{article.authorName ? 'VERIFIED' : 'ADMIN'}</span>
                         </div>
                      </div>
                   </div>
@@ -343,7 +342,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
                   <div className="flex items-center gap-3">
                      <Compass className="text-teal-400 animate-spin-slow" size={20} />
                      <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">
-                        {isAr ? 'موجزات استراتيجية ذات صلة' : 'Related Intelligence Feeds'}
+                        {isAr ? 'أخبار ذات صلة' : 'Related Articles'}
                      </h3>
                   </div>
 
@@ -370,7 +369,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
                               </h4>
                               <div className="pt-2 mt-auto">
                                  <span className="flex items-center gap-2 text-[10px] font-black text-teal-400 uppercase tracking-widest italic">
-                                    {isAr ? 'قراءة الملف' : 'Read File'}
+                                    {isAr ? 'قراءة الخبر' : 'Read Article'}
                                     <ChevronRight size={14} />
                                  </span>
                               </div>

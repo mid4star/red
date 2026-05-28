@@ -97,10 +97,10 @@ export default function OpenDataClient({ lang }: { lang: string }) {
         <section className="space-y-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
-              <Database size={20} strokeWidth={2.5} />
+               <Database size={20} strokeWidth={2.5} />
             </div>
             <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">
-              {isAr ? 'مخزن البيانات العلمي المفتوح' : 'Open Scientific Telemetry Vault'}
+               {isAr ? 'أرشيف البيانات العلمية المفتوحة' : 'Open Scientific Data Archives'}
             </span>
           </div>
 
@@ -111,7 +111,7 @@ export default function OpenDataClient({ lang }: { lang: string }) {
             <p className="text-lg text-slate-400 font-medium italic leading-relaxed">
               {isAr 
                 ? 'مستودعنا العام للدراسات الأكاديمية ومجموعات البيانات والتقارير التنظيمية حول النظام البيئي لمحميات البحر الأحمر.' 
-                : 'Our public vault for academic inquiries, biological datasets, and administrative reports concerning the Red Sea ecosystem.'}
+                : 'Our public archives for academic studies, biological datasets, and administrative reports concerning the Red Sea ecosystem.'}
             </p>
           </div>
         </section>

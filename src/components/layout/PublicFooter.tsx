@@ -88,7 +88,7 @@ export function PublicFooter({ lang }: { lang: string }) {
                 <h2 className="text-2xl font-black text-white italic leading-tight tracking-tighter uppercase">
                   {isAr ? 'محميات البحر الأحمر' : 'Red Sea Reserves'}
                 </h2>
-                <span className="text-xs font-black text-teal-500 uppercase tracking-[0.4em] mt-1 italic">Authority Intelligence</span>
+                <span className="text-[10px] font-black text-teal-500 uppercase tracking-[0.2em] mt-1 italic">{isAr ? 'مركز الحماية والأبحاث' : 'Conservation & Research Hub'}</span>
               </div>
             </div>
             

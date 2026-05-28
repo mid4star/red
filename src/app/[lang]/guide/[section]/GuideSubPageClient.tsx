@@ -43,7 +43,7 @@ const SECTIONS = [
    },
    {
       id: 'seasonal',
-      name: 'Seasonal Intelligence',
+      name: 'Seasonal Weather Info',
       nameAr: 'البيانات الموسمية',
       icon: Calendar,
       desc: 'Analyze visibility and water temperature.',
@@ -59,10 +59,10 @@ const SECTIONS = [
    },
    {
       id: 'security',
-      name: 'Security Protocol',
-      nameAr: 'البروتوكول الأمني',
+      name: 'Safety & Security',
+      nameAr: 'إرشادات السلامة والأمان',
       icon: Shield,
-      desc: 'Distress frequencies and emergency contacts.',
+      desc: 'Emergency contacts and safety guidelines.',
       descAr: 'قنوات الاتصال الميداني وإجراءات الطوارئ.'
    },
    {

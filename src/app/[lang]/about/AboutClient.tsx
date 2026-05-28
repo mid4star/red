@@ -49,10 +49,10 @@ export default function AboutClient({ lang }: { lang: string }) {
     },
     {
       icon: Map,
-      title: isAr ? 'المراقبة البيئية الذكية' : 'GIS & Remote Telemetry',
+      title: isAr ? 'نظم خرائط المحميات' : 'GIS & Mapping Systems',
       desc: isAr 
         ? 'استخدام تكنولوجيا الاستشعار عن بعد ونظم المعلومات الجغرافية لمراقبة جودة المياه وتتبع الكائنات البحرية.' 
-        : 'Utilizing remote sensing and GIS tracking to monitor water quality and trace migratory species.',
+        : 'Utilizing geographic data and GIS maps to monitor water quality and trace migratory species.',
     },
     {
       icon: Activity,
@@ -75,8 +75,8 @@ export default function AboutClient({ lang }: { lang: string }) {
       color: 'from-blue-500 to-indigo-600'
     },
     {
-      name: isAr ? 'إدارة نظم المعلومات الجغرافية (GIS)' : 'GIS Telemetry & Monitoring',
-      role: isAr ? 'معالجة البيانات الميدانية، والخرائط ثلاثية الأبعاد، وتتبع الدوريات والمخالفات بيئياً ولحظياً.' : 'Processing field telemetry, 3D mapping, and real-time visualization of patrols and violations.',
+      name: isAr ? 'إدارة نظم المعلومات الجغرافية (GIS)' : 'GIS Mapping & Spatial Data',
+      role: isAr ? 'معالجة البيانات الجغرافية، والخرائط ثلاثية الأبعاد، وتصور الحالة البيئية للمحميات.' : 'Processing geographic data, 3D mapping, and visualization of environmental statuses.',
       color: 'from-purple-500 to-pink-500'
     },
     {

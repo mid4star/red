@@ -18,9 +18,9 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 import { NewsArticle } from '@/lib/firebase/schema';
 
 const NEWS_CATEGORIES = [
-   { id: 'all', name: 'Intelligence Feed', nameAr: 'تلقيم البيانات الاستراتيجي' },
+   { id: 'all', name: 'News Feed', nameAr: 'آخر الأخبار والمستجدات' },
    { id: 'press', name: 'Press Releases', nameAr: 'بيانات صحفية' },
-   { id: 'ops', name: 'Operational Reports', nameAr: 'تقارير العمليات' },
+   { id: 'ops', name: 'Conservation Reports', nameAr: 'تقارير بيئية' },
    { id: 'video', name: 'Field Recordings', nameAr: 'تسجيلات ميدانية' },
 ];
 
@@ -110,11 +110,11 @@ export default function NewsClient({ lang }: { lang: string }) {
                         <div className="w-1.5 h-6 bg-teal-500/50 rounded-full" />
                      </div>
                      <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">
-                        {isAr ? 'ابقى على اطلاع  ' : 'Media Intelligence Hub'}
+                        {isAr ? 'ابقى على اطلاع' : 'Media & News Center'}
                      </span>
                   </div>
                   <h1 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
-                     {isAr ? 'المركز الاعلامي  ' : 'Strategic Data Feed'}
+                     {isAr ? 'المركز الإعلامي' : 'News & Media Feed'}
                   </h1>
                </div>
 
@@ -126,7 +126,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={isAr ? 'ابحث في الموجز الاستراتيجي...' : 'Search strategic feed...'}
+                        placeholder={isAr ? 'ابحث في أخبار ومستجدات المحميات...' : 'Search news & updates...'}
                         className={`w-full ${isAr ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-slate-900/40 hover:bg-slate-900/60 focus:bg-slate-900 border border-white/5 focus:border-teal-500/50 rounded-2xl text-sm font-medium text-white placeholder-slate-500 outline-none transition-all shadow-inner`}
                      />
                   </div>
@@ -148,14 +148,14 @@ export default function NewsClient({ lang }: { lang: string }) {
                </div>
             </div>
 
-            {/* ── Featured Intelligence ───────────────────────────────────────── */}
+            {/* ── Featured Articles ───────────────────────────────────────── */}
             {loading ? (
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
                   <div className="lg:col-span-8 h-[500px] rounded-[2.5rem] bg-slate-900/40 border border-white/5 flex items-center justify-center">
                      <div className="flex flex-col items-center gap-3">
                         <Loader2 className="animate-spin text-teal-400" size={32} />
                         <span className="text-[12px] font-bold text-slate-500 uppercase tracking-widest font-mono">
-                           {isAr ? 'جاري تحميل موجز البيانات...' : 'Synchronizing Data Feed...'}
+                           {isAr ? 'جاري تحميل آخر الأخبار...' : 'Loading News Feed...'}
                         </span>
                      </div>
                   </div>
@@ -166,7 +166,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                </div>
             ) : news.length === 0 ? (
                <div className="text-center py-20 text-slate-500 border border-white/5 rounded-[2.5rem] bg-slate-900/20 mb-20 font-mono">
-                  {isAr ? 'لا توجد بيانات استخباراتية منشورة حالياً.' : 'NO PUBLISHED INTELLIGENCE TELEMETRY YET.'}
+                  {isAr ? 'لا توجد أخبار منشورة حالياً.' : 'NO PUBLISHED NEWS ARTICLES YET.'}
                </div>
             ) : (
                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
@@ -185,7 +185,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-black/20 to-transparent" />
                            <div className="absolute top-8 left-8">
                               <div className="px-5 py-2 rounded-xl bg-teal-500 text-[#001529] font-black text-[10px] tracking-widest uppercase italic">
-                                 {isAr ? 'الخبر الرئيسي' : 'HEADLINE INTEL'}
+                                 {isAr ? 'الخبر الرئيسي' : 'FEATURED ARTICLE'}
                               </div>
                            </div>
                            <div className="absolute bottom-6 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10 space-y-2 sm:space-y-4">
@@ -218,7 +218,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                               <div className="flex items-center justify-between mb-4">
                                  <TrendingUp className="text-teal-500" size={24} />
                                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                                    {isAr ? 'الاتجاهات الحالية' : 'Trending Intelligence'}
+                                    {isAr ? 'الأكثر قراءة' : 'Trending Articles'}
                                  </span>
                               </div>
                               <div className="space-y-2">
@@ -227,7 +227,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                                  </h3>
                                  <div className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase italic mt-4">
                                     <Signal size={12} className="text-emerald-500" />
-                                    SEC OPS VERIFIED
+                                    OFFICIAL UPDATE
                                  </div>
                               </div>
                            </div>
@@ -236,14 +236,14 @@ export default function NewsClient({ lang }: { lang: string }) {
                         <div className="flex-1 p-8 rounded-[2rem] bg-slate-900/60 border border-white/5 flex flex-col justify-between group cursor-pointer hover:bg-slate-900">
                            <div className="flex items-center justify-between mb-4">
                               <TrendingUp className="text-teal-500" size={24} />
-                              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Trending Intelligence</span>
+                              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Trending Articles</span>
                            </div>
                            <h3 className="text-2xl font-black uppercase italic tracking-tighter leading-tight group-hover:text-teal-400 transition-colors">
-                              {isAr ? 'بروتوكولات الرصد الجديدة 2026' : 'New Surveillance Protocols 2026'}
+                              {isAr ? 'إرشادات المحميات الجديدة 2026' : 'New Reserve Guidelines 2026'}
                            </h3>
                            <div className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase italic mt-4">
                               <Signal size={12} className="text-emerald-500" />
-                              SEC OPS VERIFIED
+                              OFFICIAL UPDATE
                            </div>
                         </div>
                      )}
@@ -253,23 +253,23 @@ export default function NewsClient({ lang }: { lang: string }) {
                         className="h-auto min-h-[160px] sm:h-[200px] rounded-2xl sm:rounded-[2rem] bg-teal-500 p-6 sm:p-8 flex flex-col justify-between group cursor-pointer relative overflow-hidden shadow-[0_20px_40px_rgba(45,212,191,0.1)] text-start"
                      >
                         <FileText className="absolute top-[-20px] right-[-20px] text-black/10 scale-[5] opacity-50" />
-                        <div className="text-[12px] font-black text-black uppercase tracking-tighter italic">Official Publications</div>
+                        <div className="text-[12px] font-black text-black uppercase tracking-tighter italic">Resource Documents</div>
                         <div className="space-y-1">
                            <p className="text-3xl font-black text-black tracking-tighter uppercase italic leading-none">{isAr ? 'تصفح التقارير' : 'View Reports'}</p>
-                           <p className="text-[10px] font-bold text-black/60 uppercase">{isAr ? 'التقارير الميدانية الدورية' : 'Periodic Field Reports'}</p>
+                           <p className="text-[10px] font-bold text-black/60 uppercase">{isAr ? 'التقارير البيئية الدورية' : 'Reserve Environmental Reports'}</p>
                         </div>
                      </button>
                   </div>
                </div>
             )}
 
-            {/* ── Intelligence List ───────────────────────────────────────────── */}
+            {/* ── News Articles List ───────────────────────────────────────────── */}
             {!loading && news.length > 0 && (
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-40">
                   {filtered.length <= 1 ? (
                      filtered.length === 0 ? null : (
                         <div className="col-span-full text-center py-10 text-slate-500 font-mono">
-                           {isAr ? 'لا توجد عناصر إضافية في القائمة.' : 'NO ADDITIONAL FEED ITEMS AVAILABLE.'}
+                           {isAr ? 'لا توجد أخبار إضافية في القائمة.' : 'NO ADDITIONAL NEWS ITEMS AVAILABLE.'}
                         </div>
                      )
                   ) : (
@@ -314,7 +314,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                                  </p>
                                  <div className="pt-4 mt-auto">
                                     <span className="flex items-center gap-2 text-[11px] font-black text-teal-400 uppercase tracking-widest italic group-hover:gap-4 transition-all">
-                                       {isAr ? 'فتح الملف التفصيلي' : 'Open Intel File'}
+                                       {isAr ? 'اقرأ الخبر كاملاً' : 'Read Full Article'}
                                        <ChevronRight size={16} />
                                     </span>
                                  </div>

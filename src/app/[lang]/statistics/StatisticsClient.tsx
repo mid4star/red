@@ -30,7 +30,7 @@ import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 
 const DATA_CATEGORIES = [
-  { id: 'env', name: 'Environmental Telemetry', count: '1.2M Data Points' },
+  { id: 'env', name: 'Environmental Metrics', count: '1.2M Data Points' },
   { id: 'bio', name: 'Biodiversity Census', count: '14,200 Records' },
   { id: 'ops', name: 'Operational Analytics', count: '850 Missions' },
 ];
@@ -69,18 +69,18 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
                <Layers size={24} strokeWidth={2.5} />
             </div>
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">Open Intelligence Protocol</span>
+            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">Open Data Guidelines</span>
          </div>
          
          <div className="flex flex-col lg:flex-row justify-between items-end gap-10 border-b border-white/5 pb-16">
             <div className="max-w-3xl space-y-6">
                <h1 className="text-4xl md:text-5xl lg:text-[7rem] font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1] drop-shadow-2xl">
-                  {isAr ? 'مركز البيانات المفتوحة' : 'Open Data Intelligence'}
+                  {isAr ? 'مركز البيانات المفتوحة' : 'Open Ecological Data'}
                </h1>
                <p className="text-xl md:text-2xl font-medium text-slate-400 italic">
                   {isAr 
-                    ? 'الوصول الاستراتيجي إلى بيانات التشفير والقياس البيئي لمحميات البحر الأحمر.' 
-                    : 'Strategic access to telemetry and ecological metric datasets for the Red Sea territory.'}
+                    ? 'الوصول المباشر إلى البيانات البيئية والإحصائيات الخاصة بمحميات البحر الأحمر.' 
+                    : 'Direct access to ecological data and metric datasets for the Red Sea reserves.'}
                </p>
             </div>
             <div className="hidden lg:flex gap-4">
@@ -99,7 +99,7 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             <div className="lg:col-span-8 p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-2xl space-y-8">
                <div className="flex justify-between items-center">
                   <div className="space-y-1">
-                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Temporal Intel View</h3>
+                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Data Trends Over Time</h3>
                      <p className="text-2xl font-black uppercase italic tracking-tighter">Ecological Health Index (EHI)</p>
                   </div>
                   <div className="flex gap-4">
@@ -153,7 +153,7 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             {/* Diversity Breakdown */}
             <div className="lg:col-span-4 p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-2xl flex flex-col items-center justify-center space-y-10 relative overflow-hidden">
                <div className="absolute top-8 left-8">
-                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Categorical Intel</h3>
+                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Data Category Breakdown</h3>
                </div>
                
                <div className="h-64 w-full">
@@ -229,12 +229,12 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             <div className="relative z-10 lg:flex items-center justify-between gap-10">
                <div className="space-y-4 max-w-xl">
                   <h3 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase italic tracking-tighter leading-none">
-                     {isAr ? 'بروتوكولات تصدير البيانات' : 'Batch Export Protocols'}
+                     {isAr ? 'تصدير البيانات البيئية المفتوحة' : 'Open Data Export'}
                   </h3>
                   <p className="text-lg font-bold italic opacity-80 leading-relaxed italic">
                      {isAr 
-                       ? 'قم بتنزيل الحزم الكاملة بالصيغ المعيارية للأغراض البحثية والأكاديمية.' 
-                       : 'Deploy full data packets in industry-standard formats for research and academic intelligence.'}
+                       ? 'قم بتنزيل البيانات بالصيغ القياسية لأغراض البحث والدراسات العلمية.' 
+                       : 'Download data packets in standard formats for research and academic study purposes.'}
                   </p>
                </div>
                <div className="flex flex-col sm:flex-row gap-4 mt-8 lg:mt-0">
