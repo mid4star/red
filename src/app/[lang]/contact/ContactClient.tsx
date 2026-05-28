@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, 
@@ -19,6 +19,35 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 export default function ContactClient({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [config, setConfig] = useState({
+    phone: '+20 65 354 8400',
+    email: 'info@redsea.gov.sa',
+    address: 'El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt',
+    addressAr: 'طريق الكورنيش، الغردقة، محافظة البحر الأحمر، جمهورية مصر العربية',
+    latitude: 27.2579,
+    longitude: 33.8116
+  });
+
+  useEffect(() => {
+     fetch('/api/staff/query?collection=system_config')
+        .then(r => r.json())
+        .then(json => {
+           if (json.success && json.data && json.data.length > 0) {
+              const globalConfig = json.data.find((item: any) => item.id === 'global') || json.data[0];
+              if (globalConfig) {
+                 setConfig({
+                    phone: globalConfig.phone || '+20 65 354 8400',
+                    email: globalConfig.email || 'info@redsea.gov.sa',
+                    address: globalConfig.address || '',
+                    addressAr: globalConfig.addressAr || '',
+                    latitude: parseFloat(globalConfig.latitude) || 27.2579,
+                    longitude: parseFloat(globalConfig.longitude) || 33.8116
+                 });
+              }
+           }
+        })
+        .catch(err => console.error(err));
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -79,7 +108,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                   <h4 className="text-sm font-black text-slate-400 uppercase tracking-wider font-mono">
                     {isAr ? 'الهاتف المباشر' : 'Direct Phone'}
                   </h4>
-                  <p className="text-md font-bold text-white font-mono" dir="ltr">+20 65 354 8400</p>
+                  <p className="text-md font-bold text-white font-mono" dir="ltr">{config.phone}</p>
                 </div>
 
                 {/* Email */}
@@ -88,7 +117,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                   <h4 className="text-sm font-black text-slate-400 uppercase tracking-wider font-mono">
                     {isAr ? 'البريد الإلكتروني' : 'Secure Email'}
                   </h4>
-                  <p className="text-md font-bold text-white font-mono">info@redsea.gov.sa</p>
+                  <p className="text-md font-bold text-white font-mono">{config.email}</p>
                 </div>
 
                 {/* HQ Address */}
@@ -98,9 +127,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                     {isAr ? 'المقر الرئيسي' : 'Headquarters Address'}
                   </h4>
                   <p className="text-sm font-medium text-white italic">
-                    {isAr 
-                      ? 'طريق الكورنيش، الغردقة، محافظة البحر الأحمر، جمهورية مصر العربية' 
-                      : 'El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt'}
+                    {isAr ? config.addressAr : config.address}
                   </p>
                 </div>
               </div>
@@ -134,7 +161,9 @@ export default function ContactClient({ lang }: { lang: string }) {
 
                 <div className="text-center font-mono text-[9px] uppercase tracking-widest bg-black/60 border border-white/10 px-3 py-1 rounded-xl">
                   <span className="text-teal-400 font-bold block">HQ TELEMETRY</span>
-                  <span className="text-slate-400 block mt-0.5">27.2579° N, 33.8116° E</span>
+                  <span className="text-slate-400 block mt-0.5">
+                    {config.latitude.toFixed(4)}° N, {config.longitude.toFixed(4)}° E
+                  </span>
                 </div>
               </div>
             </div>

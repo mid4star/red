@@ -142,6 +142,30 @@ const CHECKLIST_ITEMS = [
 export default function GuideSubPageClient({ lang, section }: { lang: string; section: string }) {
    const isAr = lang === 'ar';
    const [activeSection, setActiveSection] = useState(section);
+   const [chambers, setChambers] = useState([
+      { name: 'Hurghada Hyperbaric Center', nameAr: 'مركز الضغط العالي بالغردقة', status: 'ONLINE', statusAr: 'يعمل', phone: '+20 65 344 9150' },
+      { name: 'Marsa Alam Deco Chamber', nameAr: 'غرفة ضغط مرسى علم', status: 'ONLINE', statusAr: 'يعمل', phone: '+20 12 224 3333' },
+      { name: 'Sharm El Sheikh Chamber', nameAr: 'غرفة ضغط شرم الشيخ', status: 'ONLINE', statusAr: 'يعمل', phone: '+20 69 366 0922' }
+   ]);
+
+   // Fetch dynamic settings on mount
+   useEffect(() => {
+      fetch('/api/staff/query?collection=system_config')
+         .then(r => r.json())
+         .then(json => {
+            if (json.success && json.data && json.data.length > 0) {
+               const globalConfig = json.data.find((item: any) => item.id === 'global') || json.data[0];
+               if (globalConfig) {
+                  setChambers([
+                     { name: 'Hurghada Hyperbaric Center', nameAr: 'مركز الضغط العالي بالغردقة', status: 'ONLINE', statusAr: 'يعمل', phone: globalConfig.chamberHurghada || '+20 65 344 9150' },
+                     { name: 'Marsa Alam Deco Chamber', nameAr: 'غرفة ضغط مرسى علم', status: 'ONLINE', statusAr: 'يعمل', phone: globalConfig.chamberMarsa || '+20 12 224 3333' },
+                     { name: 'Sharm El Sheikh Chamber', nameAr: 'غرفة ضغط شرم الشيخ', status: 'ONLINE', statusAr: 'يعمل', phone: globalConfig.chamberSharm || '+20 69 366 0922' }
+                  ]);
+               }
+            }
+         })
+         .catch(err => console.error(err));
+   }, []);
 
    // Sync dynamic section change from props
    useEffect(() => {
@@ -742,7 +766,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                                        {isAr ? 'مواقع غرف الأكسجين النشطة' : 'ACTIVE DIVER RECOMPRESSION CHAMBERS'}
                                     </span>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                       {EMERGENCY_CHAMBERS.map((ch, idx) => (
+                                       {chambers.map((ch, idx) => (
                                           <div key={idx} className="p-4 rounded-xl bg-slate-900/40 border border-white/5 space-y-3">
                                              <div className="flex justify-between items-center">
                                                 <h4 className="text-xs font-black text-white truncate max-w-[130px]">{isAr ? ch.nameAr : ch.name}</h4>

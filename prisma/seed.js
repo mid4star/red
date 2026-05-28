@@ -13,6 +13,7 @@ async function main() {
   console.log('Seeding SQLite database with Prisma...');
 
   // 1. Clear existing data
+  await prisma.systemConfig.deleteMany({});
   await prisma.eiaCostFile.deleteMany({});
   await prisma.eiaCost.deleteMany({});
   await prisma.eiaInspection.deleteMany({});
@@ -772,6 +773,26 @@ async function main() {
       longitude: 34.9123,
       attachedFileUrl: "/uploads/hamata_mangrove_survey.pdf",
       description: "Surveyed nesting areas for migratory marine birds. Checked 15 active nests. No direct human disturbance reported."
+    }
+  });
+
+  // Seed SystemConfig
+  await prisma.systemConfig.create({
+    data: {
+      id: "global",
+      phone: "+20 65 354 8400",
+      email: "info@redsea.gov.sa",
+      address: "El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt",
+      addressAr: "طريق الكورنيش، الغردقة، محافظة البحر الأحمر، جمهورية مصر العربية",
+      latitude: 27.2579,
+      longitude: 33.8116,
+      facebookUrl: "#",
+      twitterUrl: "#",
+      youtubeUrl: "#",
+      instagramUrl: "#",
+      chamberHurghada: "+20 65 344 9150",
+      chamberMarsa: "+20 12 224 3333",
+      chamberSharm: "+20 69 366 0922"
     }
   });
 

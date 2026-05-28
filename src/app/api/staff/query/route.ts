@@ -107,6 +107,9 @@ export async function GET(request: Request) {
       case 'beach_surveys':
         data = await (prisma as any).beachSurvey.findMany({ orderBy: { date: 'desc' } });
         break;
+      case 'system_config':
+        data = await (prisma as any).systemConfig.findMany();
+        break;
       default:
         return NextResponse.json({ error: `Unknown collection: ${collectionName}` }, { status: 400 });
     }

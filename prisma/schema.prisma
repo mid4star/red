@@ -399,3 +399,21 @@ model BeachSurvey {
   updatedAt       DateTime @updatedAt
 }
 
+model SystemConfig {
+  id              String   @id @default("global")
+  phone           String   @default("+20 65 354 8400")
+  email           String   @default("info@redsea.gov.sa")
+  address         String   @default("El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt")
+  addressAr       String   @default("طريق الكورنيش، الغردقة، محافظة البحر الأحمر، جمهورية مصر العربية")
+  latitude        Float    @default(27.2579)
+  longitude       Float    @default(33.8116)
+  facebookUrl     String   @default("#")
+  twitterUrl      String   @default("#")
+  youtubeUrl      String   @default("#")
+  instagramUrl    String   @default("#")
+  chamberHurghada String   @default("+20 65 344 9150")
+  chamberMarsa    String   @default("+20 12 224 3333")
+  chamberSharm    String   @default("+20 69 366 0922")
+  updatedAt       DateTime @updatedAt
+}
+

@@ -21,6 +21,7 @@ const getModelDelegate = (collectionName: string) => {
     case 'stranding_cases': return (prisma as any).strandingCase;
     case 'sightings': return (prisma as any).sighting;
     case 'beach_surveys': return (prisma as any).beachSurvey;
+    case 'system_config': return (prisma as any).systemConfig;
     default: return null;
   }
 };
@@ -70,7 +71,7 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
   delete mapped.updatedAt;
 
   // Convert coordinate/count string inputs to numeric types
-  if (['eco_programs', 'stranding_cases', 'sightings', 'beach_surveys'].includes(collectionName)) {
+  if (['eco_programs', 'stranding_cases', 'sightings', 'beach_surveys', 'system_config'].includes(collectionName)) {
     if (mapped.latitude !== undefined && mapped.latitude !== null) {
       mapped.latitude = parseFloat(mapped.latitude);
     }
@@ -140,6 +141,19 @@ export async function POST(request: Request) {
     const dbDelegate = getModelDelegate(collectionName);
     if (!dbDelegate) {
       return NextResponse.json({ error: `Invalid collectionName: ${collectionName}` }, { status: 400 });
+    }
+
+    if (collectionName === 'system_config' && action === 'UPDATE') {
+       const sqlInput = mapClientToSql(collectionName, data, action);
+       const result = await (prisma as any).systemConfig.upsert({
+          where: { id: 'global' },
+          update: sqlInput,
+          create: { id: 'global', ...sqlInput }
+       });
+       syncToFirebase(collectionName, 'global', result).catch(err => {
+          console.error('Firebase sync error:', err);
+       });
+       return NextResponse.json({ success: true, id: 'global', data: result });
     }
 
     console.log(`Processing database write operation. Collection: ${collectionName}, Action: ${action}`);
