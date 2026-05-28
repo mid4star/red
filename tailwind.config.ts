@@ -18,6 +18,7 @@ const config: Config = {
       },
       fontFamily: {
         arabic: ['var(--font-cairo)', 'sans-serif'],
+        alyamama: ['Alyamama', 'Cairo', 'sans-serif'],
         english: ['var(--font-inter)', 'sans-serif'],
       }
     },

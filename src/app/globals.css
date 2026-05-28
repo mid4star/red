@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Alyamama&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,7 +32,18 @@ body {
 /* Disable faux italic slant for Arabic/RTL to keep text clean and readable */
 [dir="rtl"] .italic,
 [dir="rtl"] italic,
+[dir="rtl"] .font-italic,
 html[lang="ar"] .italic,
-html[lang="ar"] italic {
+html[lang="ar"] italic,
+html[lang="ar"] .font-italic {
   font-style: normal !important;
 }
+
+/* Apply Alyamama font for Arabic sub-text and paragraphs after main font Cairo */
+html[lang="ar"] p,
+html[lang="ar"] .font-sub,
+html[lang="ar"] label,
+html[lang="ar"] .font-alyamama {
+  font-family: 'Alyamama', 'Cairo', sans-serif;
+}
+
