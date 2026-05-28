@@ -1,10 +1,11 @@
-process.env.DATABASE_URL = 'file:./prisma/dev.db';
+process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:./prisma/dev.db';
 
 const { PrismaClient } = require('@prisma/client');
 const { PrismaLibSql } = require('@prisma/adapter-libsql');
 
 const adapter = new PrismaLibSql({
   url: process.env.DATABASE_URL,
+  authToken: process.env.DATABASE_AUTH_TOKEN,
 });
 const prisma = new PrismaClient({ adapter });
 

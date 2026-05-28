@@ -36,20 +36,23 @@ async function main() {
 
   for (let i = 0; i < statements.length; i++) {
     const stmt = statements[i];
-    if (stmt.startsWith('--')) continue; // Skip single statement comments
+    const cleanStmt = stmt.replace(/\s+/g, ' ');
+    if (cleanStmt.startsWith('--') || !cleanStmt) continue;
     
+    console.log(`Executing SQL ${i + 1}/${statements.length}: ${cleanStmt.substring(0, 80)}...`);
     try {
       await client.execute(stmt);
+      console.log(`  ✅ Success`);
     } catch (err) {
       if (err.message.includes('already exists')) {
-        // Table or index already exists, this is fine
+        console.log(`  ⏭️  Already exists (skipped)`);
       } else {
-        console.warn(`Warning/Error running statement ${i + 1}:`, err.message);
+        console.warn(`  ❌ Error running statement ${i + 1}:`, err.message);
       }
     }
   }
 
-  console.log('Schema pushed to Turso successfully!');
+  console.log('Schema push execution completed.');
   client.close();
 }
 

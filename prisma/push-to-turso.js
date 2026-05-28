@@ -77,9 +77,9 @@ async function main() {
   const client = createClient({ url, authToken });
 
   // Read the SQL migration file
-  const sqlPath = path.join(__dirname, "turso-migration.sql");
+  const sqlPath = path.join(__dirname, "current-schema.sql");
   if (!fs.existsSync(sqlPath)) {
-    console.error("❌ Migration SQL file not found.");
+    console.error("❌ Schema SQL file not found.");
     process.exit(1);
   }
 
