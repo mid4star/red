@@ -40,10 +40,43 @@ html[lang="ar"] .font-italic {
 }
 
 /* Apply Alyamama font for Arabic sub-text and paragraphs after main font Cairo */
+html[lang="ar"] body,
 html[lang="ar"] p,
-html[lang="ar"] .font-sub,
+html[lang="ar"] span,
+html[lang="ar"] a,
+html[lang="ar"] button,
+html[lang="ar"] li,
 html[lang="ar"] label,
+html[lang="ar"] input,
+html[lang="ar"] textarea,
+html[lang="ar"] select,
+html[lang="ar"] option,
+html[lang="ar"] div,
 html[lang="ar"] .font-alyamama {
   font-family: 'Alyamama', 'Cairo', sans-serif;
 }
+
+/* Headings and bold/medium texts use Cairo (which has native bold weights) */
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] h4,
+html[lang="ar"] h5,
+html[lang="ar"] h6,
+html[lang="ar"] .font-arabic,
+html[lang="ar"] .font-medium,
+html[lang="ar"] .font-semibold,
+html[lang="ar"] .font-bold,
+html[lang="ar"] .font-extrabold,
+html[lang="ar"] .font-black,
+html[lang="ar"] strong,
+html[lang="ar"] b {
+  font-family: 'Cairo', 'Alyamama', sans-serif !important;
+}
+
+/* Monospace fonts in Arabic override to prevent browser fallback to basic sans-serif */
+html[lang="ar"] .font-mono {
+  font-family: 'Cairo', 'Alyamama', monospace !important;
+}
+
 
