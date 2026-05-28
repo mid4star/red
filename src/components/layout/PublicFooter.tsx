@@ -32,19 +32,19 @@ export function PublicFooter({ lang }: { lang: string }) {
     {
       title: isAr ? 'الموارد' : 'Resources',
       links: [
-        { name: isAr ? 'دليل الزوار' : 'Visitor Guide', href: '#' },
-        { name: isAr ? 'البحث العلمي' : 'Scientific Research', href: '#' },
-        { name: isAr ? 'البيانات المفتوحة' : 'Open Data', href: '#' },
-        { name: isAr ? 'القوانين واللوائح' : 'Laws & Regulations', href: '#' },
+        { name: isAr ? 'دليل الزوار' : 'Visitor Guide', href: `/${lang}/guide` },
+        { name: isAr ? 'البحث العلمي' : 'Scientific Research', href: `/${lang}/statistics` },
+        { name: isAr ? 'البيانات المفتوحة' : 'Open Data', href: `/${lang}/opendata` },
+        { name: isAr ? 'القوانين واللوائح' : 'Laws & Regulations', href: `/${lang}/regulations` },
       ]
     },
     {
       title: isAr ? 'من نحن' : 'About Us',
       links: [
-        { name: isAr ? 'الأهداف والاستراتيجية' : 'Mission & Strategy', href: '#' },
-        { name: isAr ? 'الهيكل التنظيمي' : 'Management Structure', href: '#' },
-        { name: isAr ? 'الوظائف' : 'Careers', href: '#' },
-        { name: isAr ? 'تواصل معنا' : 'Contact Us', href: '#' },
+        { name: isAr ? 'الأهداف والاستراتيجية' : 'Mission & Strategy', href: `/${lang}/about#mission` },
+        { name: isAr ? 'الهيكل التنظيمي' : 'Management Structure', href: `/${lang}/about#structure` },
+        { name: isAr ? 'الوظائف' : 'Careers', href: `/${lang}/careers` },
+        { name: isAr ? 'تواصل معنا' : 'Contact Us', href: `/${lang}/contact` },
       ]
     }
   ];
