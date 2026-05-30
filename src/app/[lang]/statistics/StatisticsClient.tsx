@@ -30,9 +30,9 @@ import { PublicNavbar } from '@/components/layout/PublicNavbar';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 
 const DATA_CATEGORIES = [
-  { id: 'env', name: 'Environmental Metrics', count: '1.2M Data Points' },
-  { id: 'bio', name: 'Biodiversity Census', count: '14,200 Records' },
-  { id: 'ops', name: 'Operational Analytics', count: '850 Missions' },
+  { id: 'env', name: 'Environmental Metrics', nameAr: 'المقاييس البيئية', count: '1.2M Data Points', countAr: '١.٢ مليون نقطة بيانات' },
+  { id: 'bio', name: 'Biodiversity Census', nameAr: 'تعداد التنوع البيولوجي', count: '14,200 Records', countAr: '١٤,٢٠٠ سجل' },
+  { id: 'ops', name: 'Operational Analytics', nameAr: 'التحليلات التشغيلية', count: '850 Missions', countAr: '٨٥٠ مهمة ميدانية' },
 ];
 
 const HEALTH_DATA = [
@@ -45,10 +45,10 @@ const HEALTH_DATA = [
 ];
 
 const SPECIES_DIST = [
-  { name: 'Corals', value: 45, color: '#2dd4bf' },
-  { name: 'Fish', value: 35, color: '#0ea5e9' },
-  { name: 'Mammals', value: 12, color: '#f59e0b' },
-  { name: 'Other', value: 8, color: '#8b5cf6' },
+  { name: 'Corals', nameAr: 'الشعاب المرجانية', value: 45, color: '#2dd4bf' },
+  { name: 'Fish', nameAr: 'الأسماك', value: 35, color: '#0ea5e9' },
+  { name: 'Mammals', nameAr: 'الثدييات البحرية', value: 12, color: '#f59e0b' },
+  { name: 'Other', nameAr: 'كائنات أخرى', value: 8, color: '#8b5cf6' },
 ];
 
 export default function StatisticsClient({ lang }: { lang: string }) {
@@ -69,7 +69,7 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
                <Layers size={24} strokeWidth={2.5} />
             </div>
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">Open Data Guidelines</span>
+            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">{isAr ? 'لوائح البيانات المفتوحة' : 'Open Data Guidelines'}</span>
          </div>
          
          <div className="flex flex-col lg:flex-row justify-between items-end gap-10 border-b border-white/5 pb-16">
@@ -99,17 +99,17 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             <div className="lg:col-span-8 p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-2xl space-y-8">
                <div className="flex justify-between items-center">
                   <div className="space-y-1">
-                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Data Trends Over Time</h3>
-                     <p className="text-2xl font-black uppercase italic tracking-tighter">Ecological Health Index (EHI)</p>
+                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'اتجاهات البيانات بمرور الوقت' : 'Data Trends Over Time'}</h3>
+                     <p className="text-2xl font-black uppercase italic tracking-tighter">{isAr ? 'مؤشر الصحة البيئية (EHI)' : 'Ecological Health Index (EHI)'}</p>
                   </div>
                   <div className="flex gap-4">
                      <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-teal-500" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase italic">Alpha Sector</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase italic">{isAr ? 'القطاع ألفا' : 'Alpha Sector'}</span>
                      </div>
                      <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase italic">Beta Range</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase italic">{isAr ? 'النطاق بيتا' : 'Beta Range'}</span>
                      </div>
                   </div>
                </div>
@@ -153,7 +153,7 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             {/* Diversity Breakdown */}
             <div className="lg:col-span-4 p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-2xl flex flex-col items-center justify-center space-y-10 relative overflow-hidden">
                <div className="absolute top-8 left-8">
-                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Data Category Breakdown</h3>
+                  <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'تحليل فئات البيانات' : 'Data Category Breakdown'}</h3>
                </div>
                
                <div className="h-64 w-full">
@@ -184,7 +184,7 @@ export default function StatisticsClient({ lang }: { lang: string }) {
                     <div key={i} className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest italic">
                        <span className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                          {item.name}
+                          {isAr ? item.nameAr : item.name}
                        </span>
                        <span className="text-white">{item.value}%</span>
                     </div>
@@ -212,8 +212,8 @@ export default function StatisticsClient({ lang }: { lang: string }) {
                        <Download size={18} />
                     </button>
                  </div>
-                 <h4 className="text-xl font-black uppercase italic tracking-tighter mb-1 select-none">{cat.name}</h4>
-                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{cat.count}</p>
+                 <h4 className="text-xl font-black uppercase italic tracking-tighter mb-1 select-none">{isAr ? cat.nameAr : cat.name}</h4>
+                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? cat.countAr : cat.count}</p>
                  <div className="absolute bottom-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <TrendingUp size={80} />
                  </div>

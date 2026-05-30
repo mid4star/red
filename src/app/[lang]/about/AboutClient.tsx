@@ -51,8 +51,8 @@ export default function AboutClient({ lang }: { lang: string }) {
       icon: Map,
       title: isAr ? 'نظم خرائط المحميات' : 'GIS & Mapping Systems',
       desc: isAr 
-        ? 'استخدام تكنولوجيا الاستشعار عن بعد ونظم المعلومات الجغرافية لمراقبة جودة المياه وتتبع الكائنات البحرية.' 
-        : 'Utilizing geographic data and GIS maps to monitor water quality and trace migratory species.',
+        ? 'استخدام نظم المعلومات الجغرافية لرسم الخرائط البيئية وتحديد موائل الكائنات البحرية.' 
+        : 'Utilizing GIS mapping to chart ecological zones and identify critical marine habitats.',
     },
     {
       icon: Activity,

@@ -238,25 +238,24 @@ export default function GuideClient({ lang }: { lang: string }) {
             </div>
          </section>
 
-         {/* ── Interactive Site Map Preview ─────────────────────────────────── */}
-         <section className="py-40 px-6 max-w-7xl mx-auto space-y-12">
-            <div className="text-center space-y-4">
-               <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic">
-                  {isAr ? 'خريطة مواقع المحميات' : 'RESERVE LOCATIONS MAP'}
-               </span>
-               <h2 className="text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none opacity-20">
-                  {isAr ? 'استكشف التضاريس' : 'Explore the Topography'}
-               </h2>
-            </div>
+         {/* ── Interactive Site Map Preview Title ─────────────────────────────── */}
+         <section className="pt-40 pb-12 px-6 max-w-7xl mx-auto text-center space-y-4">
+            <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic">
+               {isAr ? 'خريطة مواقع المحميات' : 'RESERVE LOCATIONS MAP'}
+            </span>
+            <h2 className="text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none opacity-20">
+               {isAr ? 'استكشف التضاريس' : 'Explore the Topography'}
+            </h2>
+         </section>
 
-            <div className="h-[350px] sm:h-[600px] w-full relative">
-               <TopographyMap
-                  locations={locations}
-                  lang={lang}
-                  selectedLocation={selectedLocation}
-                  onSelectLocation={setSelectedLocation}
-               />
-            </div>
+         {/* ── Full-Bleed Map Section ─────────────────────────────────────────── */}
+         <section className="w-full relative pb-40">
+            <TopographyMap
+               locations={locations}
+               lang={lang}
+               selectedLocation={selectedLocation}
+               onSelectLocation={setSelectedLocation}
+            />
          </section>
 
          {/* ── Premium Detail Modal for Species ─────────────────────────────── */}

@@ -451,8 +451,8 @@ export async function GET() {
       id: "home-config",
       heroTitle: "Protecting the Red Sea Treasures",
       heroTitleAr: "حماية كنوز البحر الأحمر",
-      heroSubtitle: "Real-time monitoring and environmental impact management",
-      heroSubtitleAr: "مراقبة فورية وإدارة الأثر البيئي",
+      heroSubtitle: "Active field monitoring and environmental impact management",
+      heroSubtitleAr: "رصد ميداني مستمر وإدارة الأثر البيئي",
       announcements: JSON.stringify([
         { id: "ann-01", text: "New patrol vessels added to fleet.", textAr: "تم إضافة زوارق دورية جديدة للأسطول.", active: true }
       ])

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,7 +23,7 @@ export default function ContactClient({ lang }: { lang: string }) {
     phone: '+20 65 354 8400',
     email: 'info@redsea.gov.sa',
     address: 'El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt',
-    addressAr: 'طريق الكورنيش، الغردقة، محافظة البحر الأحمر، جمهورية مصر العربية',
+    addressAr: 'ط·ط±ظٹظ‚ ط§ظ„ظƒظˆط±ظ†ظٹط´طŒ ط§ظ„ط؛ط±ط¯ظ‚ط©طŒ ظ…ط­ط§ظپط¸ط© ط§ظ„ط¨ط­ط± ط§ظ„ط£ط­ظ…ط±طŒ ط¬ظ…ظ‡ظˆط±ظٹط© ظ…طµط± ط§ظ„ط¹ط±ط¨ظٹط©',
     latitude: 27.2579,
     longitude: 33.8116
   });
@@ -75,17 +75,17 @@ export default function ContactClient({ lang }: { lang: string }) {
               <Compass size={20} strokeWidth={2.5} />
             </div>
             <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">
-              {isAr ? 'قنوات الاتصال والانتشار المفتوحة' : 'Open Communications Channels'}
+              {isAr ? 'ظ‚ظ†ظˆط§طھ ط§ظ„ط§طھطµط§ظ„ ظˆط§ظ„ط§ظ†طھط´ط§ط± ط§ظ„ظ…ظپطھظˆط­ط©' : 'Open Communications Channels'}
             </span>
           </div>
 
           <div className="max-w-4xl space-y-4">
             <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
-              {isAr ? 'تواصل معنا' : 'Contact Us'}
+              {isAr ? 'طھظˆط§طµظ„ ظ…ط¹ظ†ط§' : 'Contact Us'}
             </h1>
             <p className="text-lg text-slate-400 font-medium italic leading-relaxed">
               {isAr 
-                ? 'تواصل مباشرة مع قيادة العمليات أو الموارد البشرية أو تقديم بلاغات بيئية فورية.' 
+                ? 'طھظˆط§طµظ„ ظ…ط¨ط§ط´ط±ط© ظ…ط¹ ظ‚ظٹط§ط¯ط© ط§ظ„ط¹ظ…ظ„ظٹط§طھ ط£ظˆ ط§ظ„ظ…ظˆط§ط±ط¯ ط§ظ„ط¨ط´ط±ظٹط© ط£ظˆ طھظ‚ط¯ظٹظ… ط¨ظ„ط§ط؛ط§طھ ط¨ظٹط¦ظٹط© ظپظˆط±ظٹط©.' 
                 : 'Connect directly with operations control, administrative headquarters, or submit environmental reports.'}
             </p>
           </div>
@@ -98,7 +98,7 @@ export default function ContactClient({ lang }: { lang: string }) {
           <div className="lg:col-span-6 space-y-8 flex flex-col justify-between">
             <div className="space-y-6">
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] italic">
-                {isAr ? 'معلومات الاتصال بالهيئة' : 'Authority Directives'}
+                {isAr ? 'ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„ط§طھطµط§ظ„ ط¨ط§ظ„ظ‡ظٹط¦ط©' : 'Authority Directives'}
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -106,7 +106,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                 <div className="p-6 rounded-2xl bg-[#0c1b2f]/40 border border-white/5 space-y-3">
                   <Phone className="text-teal-400" size={24} />
                   <h4 className="text-sm font-black text-slate-400 uppercase tracking-wider font-mono">
-                    {isAr ? 'الهاتف المباشر' : 'Direct Phone'}
+                    {isAr ? 'ط§ظ„ظ‡ط§طھظپ ط§ظ„ظ…ط¨ط§ط´ط±' : 'Direct Phone'}
                   </h4>
                   <p className="text-md font-bold text-white font-mono" dir="ltr">{config.phone}</p>
                 </div>
@@ -115,7 +115,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                 <div className="p-6 rounded-2xl bg-[#0c1b2f]/40 border border-white/5 space-y-3">
                   <Mail className="text-teal-400" size={24} />
                   <h4 className="text-sm font-black text-slate-400 uppercase tracking-wider font-mono">
-                    {isAr ? 'البريد الإلكتروني' : 'Secure Email'}
+                    {isAr ? 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ' : 'Secure Email'}
                   </h4>
                   <p className="text-md font-bold text-white font-mono">{config.email}</p>
                 </div>
@@ -124,7 +124,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                 <div className="p-6 rounded-2xl bg-[#0c1b2f]/40 border border-white/5 space-y-3 sm:col-span-2">
                   <MapPin className="text-teal-400" size={24} />
                   <h4 className="text-sm font-black text-slate-400 uppercase tracking-wider font-mono">
-                    {isAr ? 'المقر الرئيسي' : 'Headquarters Address'}
+                    {isAr ? 'ط§ظ„ظ…ظ‚ط± ط§ظ„ط±ط¦ظٹط³ظٹ' : 'Headquarters Address'}
                   </h4>
                   <p className="text-sm font-medium text-white italic">
                     {isAr ? config.addressAr : config.address}
@@ -162,7 +162,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                 <div className="text-center font-mono text-[9px] uppercase tracking-widest bg-black/60 border border-white/10 px-3 py-1 rounded-xl">
                   <span className="text-teal-400 font-bold block">HQ TELEMETRY</span>
                   <span className="text-slate-400 block mt-0.5">
-                    {config.latitude.toFixed(4)}° N, {config.longitude.toFixed(4)}° E
+                    {config.latitude.toFixed(4)}آ° N, {config.longitude.toFixed(4)}آ° E
                   </span>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default function ContactClient({ lang }: { lang: string }) {
 
               <div className="space-y-6">
                 <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.3em] italic">
-                  {isAr ? 'بوابة إرسال البرقيات والمراسلات' : 'Secure Transmission Terminal'}
+                  {isAr ? 'ط¨ظˆط§ط¨ط© ط¥ط±ط³ط§ظ„ ط§ظ„ط¨ط±ظ‚ظٹط§طھ ظˆط§ظ„ظ…ط±ط§ط³ظ„ط§طھ' : 'Secure Transmission Terminal'}
                 </h3>
 
                 <AnimatePresence mode="wait">
@@ -193,21 +193,21 @@ export default function ContactClient({ lang }: { lang: string }) {
                     >
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'الاسم بالكامل' : 'Sender Identity'}
+                          {isAr ? 'ط§ظ„ط§ط³ظ… ط¨ط§ظ„ظƒط§ظ…ظ„' : 'Sender Identity'}
                         </label>
                         <input 
                           type="text" 
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          placeholder={isAr ? 'أدخل اسمك الكريم...' : 'Enter your name...'}
+                          placeholder={isAr ? 'ط£ط¯ط®ظ„ ط§ط³ظ…ظƒ ط§ظ„ظƒط±ظٹظ…...' : 'Enter your name...'}
                           className="w-full bg-[#081220]/80 border border-white/10 rounded-xl py-3.5 px-4 text-white text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium"
                         />
                       </div>
 
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'البريد الإلكتروني' : 'Return Address (Email)'}
+                          {isAr ? 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ' : 'Return Address (Email)'}
                         </label>
                         <input 
                           type="email" 
@@ -221,7 +221,7 @@ export default function ContactClient({ lang }: { lang: string }) {
 
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'طبيعة البرقية (الموضوع)' : 'Transmission Type (Subject)'}
+                          {isAr ? 'ط·ط¨ظٹط¹ط© ط§ظ„ط¨ط±ظ‚ظٹط© (ط§ظ„ظ…ظˆط¶ظˆط¹)' : 'Transmission Type (Subject)'}
                         </label>
                         <select
                           value={formData.subject}
@@ -229,27 +229,27 @@ export default function ContactClient({ lang }: { lang: string }) {
                           className="w-full bg-[#081220]/80 border border-white/10 rounded-xl py-3.5 px-4 text-white text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium"
                         >
                           <option value="Inquiry" className="bg-[#081220] text-white">
-                            {isAr ? 'استفسار بيئي عام' : 'General Inquiry'}
+                            {isAr ? 'ط§ط³طھظپط³ط§ط± ط¨ظٹط¦ظٹ ط¹ط§ظ…' : 'General Inquiry'}
                           </option>
                           <option value="Permit" className="bg-[#081220] text-white">
-                            {isAr ? 'طلب تصريح زيارة قطاع' : 'Permit Excursion Request'}
+                            {isAr ? 'ط·ظ„ط¨ طھطµط±ظٹط­ ط²ظٹط§ط±ط© ظ‚ط·ط§ط¹' : 'Permit Excursion Request'}
                           </option>
                           <option value="Violation" className="bg-[#081220] text-white">
-                            {isAr ? 'بلاغ عن مخالفة بيئية' : 'Ecological Violation Report'}
+                            {isAr ? 'ط¨ظ„ط§ط؛ ط¹ظ† ظ…ط®ط§ظ„ظپط© ط¨ظٹط¦ظٹط©' : 'Ecological Violation Report'}
                           </option>
                         </select>
                       </div>
 
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'الرسالة / البيانات التوضيحية' : 'Transmission Content (Message)'}
+                          {isAr ? 'ط§ظ„ط±ط³ط§ظ„ط© / ط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„طھظˆط¶ظٹط­ظٹط©' : 'Transmission Content (Message)'}
                         </label>
                         <textarea
                           rows={6}
                           required
                           value={formData.message}
                           onChange={(e) => setFormData({...formData, message: e.target.value})}
-                          placeholder={isAr ? 'اكتب تفاصيل استفسارك أو البلاغ بالتفصيل...' : 'Type your details or reports explicitly...'}
+                          placeholder={isAr ? 'ط§ظƒطھط¨ طھظپط§طµظٹظ„ ط§ط³طھظپط³ط§ط±ظƒ ط£ظˆ ط§ظ„ط¨ظ„ط§ط؛ ط¨ط§ظ„طھظپطµظٹظ„...' : 'Type your details or reports explicitly...'}
                           className="w-full bg-[#081220]/80 border border-white/10 rounded-xl py-3.5 px-4 text-white text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium resize-none"
                         />
                       </div>
@@ -258,7 +258,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                         type="submit"
                         className="w-full py-4 rounded-xl bg-teal-500 hover:bg-teal-400 text-[#001529] font-black text-sm tracking-tighter uppercase italic transition-all flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(20,184,166,0.15)]"
                       >
-                        {isAr ? 'بث الإرسال' : 'Transmit Message'}
+                        {isAr ? 'ط¨ط« ط§ظ„ط¥ط±ط³ط§ظ„' : 'Transmit Message'}
                         <Send size={16} />
                       </button>
                     </motion.form>
@@ -270,10 +270,10 @@ export default function ContactClient({ lang }: { lang: string }) {
                       className="py-24 text-center space-y-4"
                     >
                       <CheckCircle2 className="mx-auto text-teal-400" size={56} />
-                      <h4 className="text-xl font-black text-white italic">{isAr ? 'تم الإرسال والتشهير بنجاح' : 'Transmission Confirmed'}</h4>
+                      <h4 className="text-xl font-black text-white italic">{isAr ? 'طھظ… ط§ظ„ط¥ط±ط³ط§ظ„ ظˆط§ظ„طھط´ظ‡ظٹط± ط¨ظ†ط¬ط§ط­' : 'Transmission Confirmed'}</h4>
                       <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto italic">
                         {isAr 
-                          ? 'تأكيد البث المستلم. لقد تم استقبال برقيتك وتوجيهها للمكتب التنفيذي المختص.' 
+                          ? 'طھط£ظƒظٹط¯ ط§ظ„ط¨ط« ط§ظ„ظ…ط³طھظ„ظ…. ظ„ظ‚ط¯ طھظ… ط§ط³طھظ‚ط¨ط§ظ„ ط¨ط±ظ‚ظٹطھظƒ ظˆطھظˆط¬ظٹظ‡ظ‡ط§ ظ„ظ„ظ…ظƒطھط¨ ط§ظ„طھظ†ظپظٹط°ظٹ ط§ظ„ظ…ط®طھطµ.' 
                           : 'Transmission acknowledged. Your telegram has been received and routed to the corresponding command office.'}
                       </p>
                       <button
@@ -283,7 +283,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                         }}
                         className="px-6 py-2.5 rounded-xl border border-white/10 hover:border-teal-500/30 text-xs font-mono text-slate-400 hover:text-teal-400 transition-all"
                       >
-                        {isAr ? 'إرسال برقية جديدة' : 'Transmit Another Message'}
+                        {isAr ? 'ط¥ط±ط³ط§ظ„ ط¨ط±ظ‚ظٹط© ط¬ط¯ظٹط¯ط©' : 'Transmit Another Message'}
                       </button>
                     </motion.div>
                   )}

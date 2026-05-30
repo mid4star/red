@@ -340,17 +340,17 @@ export default function SpeciesClient({ lang }: { lang: string }) {
                   </div>
                   
                   <div className="p-4 rounded-2xl bg-[#0c1b2f]/50 border border-white/5 space-y-1">
-                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest block">{isAr ? 'حالة التواجد' : 'STATUS TELEMETRY'}</span>
+                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest block">{isAr ? 'حالة التواجد' : 'OBSERVATION STATUS'}</span>
                     <div className="flex items-center gap-2">
                       <Activity size={14} className="text-orange-400" />
-                      <span className="text-xs font-black uppercase tracking-wider text-orange-300 italic">{isAr ? 'مراقب بدقة' : 'TRACKED ACTIVE'}</span>
+                      <span className="text-xs font-black uppercase tracking-wider text-orange-300 italic">{isAr ? 'مرصود ميدانياً' : 'FIELD OBSERVED'}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 flex items-center justify-between text-[9px] font-mono text-slate-500">
-                  <span>SYSTEM_CODE: {selectedSpecies.id?.toUpperCase() || 'N/A'}</span>
-                  <span>HQ_SECTOR: RED_SEA_HQ</span>
+                  <span>{isAr ? 'رمز النظام: ' : 'SYSTEM_CODE: '}{selectedSpecies.id?.toUpperCase() || 'N/A'}</span>
+                  <span>{isAr ? 'القطاع الرئيسي: المقر الرئيسي للبحر الأحمر' : 'HQ_SECTOR: RED_SEA_HQ'}</span>
                 </div>
               </div>
             </motion.div>

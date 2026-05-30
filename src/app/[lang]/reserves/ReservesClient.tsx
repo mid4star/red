@@ -15,7 +15,8 @@ import {
   Info,
   Calendar,
   Compass,
-  Loader2
+  Loader2,
+  Users
 } from 'lucide-react';
 import Link from 'next/link';
 import { PublicNavbar } from '@/components/layout/PublicNavbar';
@@ -132,7 +133,7 @@ export default function ReservesClient({ lang }: { lang: string }) {
                <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
                   <Compass size={24} strokeWidth={2.5} />
                </div>
-               <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">Strategic Spatial Intelligence</span>
+               <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">{isAr ? 'الذكاء المكاني الاستراتيجي' : 'Strategic Spatial Intelligence'}</span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-[6rem] font-black leading-tight lg:leading-[1.1] tracking-tighter uppercase italic drop-shadow-2xl">
@@ -153,7 +154,7 @@ export default function ReservesClient({ lang }: { lang: string }) {
             {loading ? (
                <div className="text-center py-20 text-slate-500 font-mono flex flex-col items-center justify-center gap-3">
                   <Loader2 className="animate-spin text-teal-400" size={24} />
-                  <span>{isAr ? 'جاري تحميل المحميات البحرية...' : 'LOADING MARINE RESERVES TELEMETRY...'}</span>
+                  <span>{isAr ? 'جاري تحميل المحميات البحرية...' : 'LOADING MARINE RESERVES DATA...'}</span>
                </div>
             ) : (
                reserves.map((item, i) => (
@@ -191,11 +192,11 @@ export default function ReservesClient({ lang }: { lang: string }) {
                              </div>
                              <div className="flex gap-2 sm:gap-4">
                                 <div className="text-center px-2.5 py-1.5 rounded-xl sm:px-4 sm:py-3 sm:rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                                   <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase mb-1">Health index</p>
+                                   <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase mb-1">{isAr ? 'مؤشر الصحة' : 'Health Index'}</p>
                                    <p className={`text-sm sm:text-xl font-black font-mono leading-none ${item.healthIndex > 9.5 ? 'text-emerald-500' : 'text-teal-400'}`}>{item.healthIndex}</p>
                                 </div>
                                 <div className="text-center px-2.5 py-1.5 rounded-xl sm:px-4 sm:py-3 sm:rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                                   <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase mb-1">Species</p>
+                                   <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase mb-1">{isAr ? 'الأنواع' : 'Species'}</p>
                                    <p className="text-sm sm:text-xl font-black font-mono leading-none text-white">{item.speciesCount}</p>
                                 </div>
                              </div>
@@ -218,12 +219,12 @@ export default function ReservesClient({ lang }: { lang: string }) {
 
                        <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-2">
-                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Protection Type</h4>
-                             <p className="text-sm font-bold text-white uppercase italic">{isAr ? 'درجة أولى' : 'Type I Sanctuary'}</p>
+                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'درجة الحماية' : 'Protection Type'}</h4>
+                             <p className="text-sm font-bold text-white uppercase italic">{isAr ? 'محمية طبيعية' : 'Type I Sanctuary'}</p>
                           </div>
                           <div className="space-y-2">
-                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Deployment Area</h4>
-                             <p className="text-sm font-bold text-white uppercase italic">{isAr ? 'منطقة مركزية' : 'Core Alpha Zone'}</p>
+                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'نطاق الانتشار' : 'Deployment Area'}</h4>
+                             <p className="text-sm font-bold text-white uppercase italic">{isAr ? 'منطقة مركزية (ألفا)' : 'Core Alpha Zone'}</p>
                           </div>
                        </div>
 
@@ -251,24 +252,24 @@ export default function ReservesClient({ lang }: { lang: string }) {
                </h2>
                <p className="text-lg text-slate-400 font-medium italic italic">
                   {isAr 
-                    ? 'نحن نراقب آلاف الهكتارات من الشعاب المرجانية والأنواع النادرة من خلال شبكة استشعار ورقابة ذكية.' 
-                    : 'Monitoring thousands of reef hectares and rare species via an integrated sensory intelligence network.'}
+                    ? 'نراقب آلاف الهكتارات من الشعاب المرجانية والأنواع النادرة من خلال فرق الدوريات الميدانية والمسوحات المستمرة.' 
+                    : 'Monitoring thousands of reef hectares and rare species via field patrol teams and continuous environmental surveys.'}
                </p>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
                {[
-                 { l: 'Total Coverage', v: '9,442 ha', i: Globe },
-                 { l: 'Active Sensors', v: '158 Units', i: Zap },
-                 { l: 'Patrol Strength', v: '4.2 Ops/D', i: ShieldCheck },
-                 { l: 'Reef Stability', v: '98.2%', i: Activity },
+                 { l: 'Total Coverage', lAr: 'التغطية الإجمالية', v: isAr ? '٩,٤٤٢ هكتار' : '9,442 ha', i: Globe },
+                 { l: 'Eco Rangers', lAr: 'حراس البيئة', v: isAr ? '٤٨ حارساً' : '48 Rangers', i: Users },
+                 { l: 'Patrol Strength', lAr: 'قوة الدوريات', v: isAr ? '٤.٢ عملية/يوم' : '4.2 Ops/D', i: ShieldCheck },
+                 { l: 'Reef Stability', lAr: 'استقرار الشعاب', v: '98.2%', i: Activity },
                ].map((stat, i) => (
                  <div key={i} className="space-y-4">
                     <div className="w-16 h-16 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mx-auto border border-teal-500/20 shadow-[0_0_30px_rgba(45,212,191,0.1)]">
                        <stat.i size={28} />
                     </div>
                     <div className="text-3xl font-black text-white font-mono tracking-tighter italic">{stat.v}</div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{stat.l}</div>
+                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? stat.lAr : stat.l}</div>
                  </div>
                ))}
             </div>

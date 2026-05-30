@@ -104,7 +104,7 @@ export default function HomeClient({ lang }: { lang: string }) {
             >
                <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="w-12 h-px bg-teal-500/50" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-400 italic">Red Sea Marine Authority</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-400 italic">{isAr ? 'جهاز محميات البحر الأحمر' : 'Red Sea Marine Authority'}</span>
                   <div className="w-12 h-px bg-teal-500/50" />
                </div>
                
@@ -176,7 +176,7 @@ export default function HomeClient({ lang }: { lang: string }) {
             <div className="w-full lg:w-1/2 space-y-10">
                <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                     <span className="text-[11px] font-black text-teal-500 uppercase tracking-[0.3em] italic">Protecting the Vision</span>
+                     <span className="text-[11px] font-black text-teal-500 uppercase tracking-[0.3em] italic">{isAr ? 'حماية الرؤية المستقبلية' : 'Protecting the Vision'}</span>
                   </div>
                   <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
                      {isAr ? 'مهمتنا هي صون التراث الطبيعي' : 'Commitment to the Blue Heritage'}
@@ -193,7 +193,7 @@ export default function HomeClient({ lang }: { lang: string }) {
                   <div className="space-y-4">
                      <div className="flex items-center gap-3 text-white font-black text-sm uppercase italic">
                         <CheckCircle2 className="text-teal-400" size={18} />
-                        {isAr ? 'رصد مستمر' : 'Continuous Monitoring'}
+                         {isAr ? 'دوريات بيئية' : 'Environmental Patrols'}
                      </div>
                      <div className="flex items-center gap-3 text-white font-black text-sm uppercase italic">
                         <CheckCircle2 className="text-teal-400" size={18} />
@@ -223,7 +223,7 @@ export default function HomeClient({ lang }: { lang: string }) {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent opacity-60" />
                   <div className="absolute bottom-4 left-4 p-5 sm:bottom-8 sm:left-8 sm:p-8 rounded-3xl bg-slate-900/80 backdrop-blur-xl border border-white/10 max-w-xs">
                      <Zap size={24} className="text-teal-400 mb-4" />
-                     <p className="text-xs font-black uppercase tracking-widest text-[#94a3b8] mb-1 italic">Current Status</p>
+                     <p className="text-xs font-black uppercase tracking-widest text-[#94a3b8] mb-1 italic">{isAr ? 'الوضع الحالي' : 'Current Status'}</p>
                      <p className="text-lg font-black italic tracking-tighter uppercase">{isAr ? 'أعلى مستويات الصحة البيئية' : 'Peak Ecological Health Index'}</p>
                   </div>
                </div>
@@ -236,7 +236,7 @@ export default function HomeClient({ lang }: { lang: string }) {
          <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
                <div className="space-y-3">
-                  <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.3em] italic">Explore the Arcana</span>
+                  <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.3em] italic">{isAr ? 'اكتشف روائع الطبيعة' : 'Explore the Arcana'}</span>
                   <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">{isAr ? 'عجائب المحميات' : 'Reserve Highlights'}</h2>
                </div>
                <Link href={`/${lang}/reserves`} className="group flex items-center gap-3 text-[12px] font-black text-teal-400 uppercase tracking-widest italic no-underline">

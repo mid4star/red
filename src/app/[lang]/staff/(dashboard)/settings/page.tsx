@@ -204,7 +204,7 @@ export default function SettingsPage({ params }: { params: { lang: string } }) {
                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-8 space-y-8">
                         <div className="border-b border-white/5 pb-4">
                            <h2 className="text-xl font-black text-white tracking-tighter uppercase italic">{isArabic ? 'الإعدادات العامة والاتصال' : 'General & Contact Info'}</h2>
-                           <p className="text-sm text-slate-400 mt-1">{isArabic ? 'تعديل بيانات التواصل الرئيسية للقرية والإحداثيات الجغرافية للمقر الرئيسي.' : 'Configure default contact details and HQ geographic telemetry.'}</p>
+                           <p className="text-sm text-slate-400 mt-1">{isArabic ? 'تعديل بيانات التواصل الرئيسية للقرية والإحداثيات الجغرافية للمقر الرئيسي.' : 'Configure default contact details and HQ geographic coordinates.'}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

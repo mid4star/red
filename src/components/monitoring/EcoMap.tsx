@@ -261,6 +261,7 @@ export default function EcoMap({ items, activeItem, onItemSelect, onMapClick, la
             zoom={defaultZoom}
             scrollWheelZoom={true}
             style={{ width: '100%', height: '100%', background: '#0a1628' }}
+            attributionControl={false}
           >
             {/* Dynamic Tile Layer based on selected style */}
             <TileLayer

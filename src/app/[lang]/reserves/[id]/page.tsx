@@ -229,7 +229,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
         <div className="flex-1 flex flex-col items-center justify-center gap-4 py-40">
           <Loader2 className="animate-spin text-teal-400" size={40} />
           <span className="text-sm font-black uppercase tracking-widest text-slate-400 font-mono">
-            {isAr ? 'جاري استدعاء البيانات الجغرافية للمحمية...' : 'Retrieving reserves spatial telemetry...'}
+            {isAr ? 'جاري استدعاء البيانات الجغرافية للمحمية...' : 'Retrieving reserve geographic data...'}
           </span>
         </div>
         <PublicFooter lang={lang} />
@@ -244,7 +244,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
         <div className="flex-1 flex flex-col items-center justify-center gap-6 py-40 max-w-xl mx-auto text-center px-6">
           <Shield className="text-rose-500 scale-125" size={48} />
           <h2 className="text-3xl font-black uppercase italic tracking-tighter">
-            {isAr ? 'المحمية غير موجودة' : 'Telemetry Block Out'}
+            {isAr ? 'المحمية غير موجودة' : 'Reserve Profile Not Found'}
           </h2>
           <p className="text-slate-400 italic font-medium leading-relaxed">
             {isAr 
@@ -589,7 +589,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
               
               <h3 className="text-sm font-black uppercase tracking-[0.2em] text-teal-400 italic font-mono flex items-center gap-2">
                 <Globe size={16} className="animate-spin-slow" />
-                {isAr ? 'القياسات الفنية والبيانات' : 'Telemetry Specs'}
+                {isAr ? 'القياسات والبيانات الفنية' : 'Technical Specifications'}
               </h3>
               
               <div className="space-y-4">
@@ -719,7 +719,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
               <div className="space-y-6">
                 <div>
                   <span className="text-[9px] font-black text-teal-400 uppercase tracking-widest block mb-1 font-mono">
-                    {isAr ? 'استمارة الانتشار الميداني' : 'Access Permit request'}
+                    {isAr ? 'استمارة الانتشار الميداني' : 'Field Access Permit'}
                   </span>
                   <h3 className="text-2xl font-black uppercase italic tracking-tighter text-white">
                     {isAr ? 'تصريح دخول إلكتروني' : 'Entry Permit Request'}

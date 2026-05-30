@@ -350,7 +350,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                            {activeSection === 'permit' && (
                               <div className="space-y-8">
                                  <div>
-                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">SECTION_01: DEPLOYMENT CLEARANCE</span>
+                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">{isAr ? 'القسم الأول: تصريح الدخول الميداني' : 'SECTION_01: DEPLOYMENT CLEARANCE'}</span>
                                     <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
                                        {isAr ? 'إصدار تصريح زيارة رقمي' : 'Permit Application'}
                                     </h2>
@@ -551,7 +551,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                            {activeSection === 'seasonal' && (
                               <div className="space-y-8">
                                  <div>
-                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">SECTION_02: SEASONAL TELEMETRY</span>
+                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">{isAr ? 'القسم الثاني: البيانات المناخية والموسمية' : 'SECTION_02: SEASONAL METRICS'}</span>
                                     <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
                                        {isAr ? 'البيانات الموسمية والمناخية للغوص' : 'Seasonal Dive Intelligence'}
                                     </h2>
@@ -657,7 +657,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                            {activeSection === 'etiquette' && (
                               <div className="space-y-8">
                                  <div>
-                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">SECTION_03: ENGAGEMENT PROTOCOLS</span>
+                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">{isAr ? 'القسم الثالث: قواعد السلوك الميداني' : 'SECTION_03: ENGAGEMENT PROTOCOLS'}</span>
                                     <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
                                        {isAr ? 'آداب التعامل مع البيئة البحرية' : 'Marine Engagement Etiquette'}
                                     </h2>
@@ -720,7 +720,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                            {activeSection === 'security' && (
                               <div className="space-y-8">
                                  <div>
-                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">SECTION_04: EMERGENCY COMMUNICATIONS</span>
+                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">{isAr ? 'القسم الرابع: اتصالات الطوارئ البحرية' : 'SECTION_04: EMERGENCY COMMUNICATIONS'}</span>
                                     <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
                                        {isAr ? 'البروتوكولات الأمنية والطوارئ البحرية' : 'Security & Emergency Protocols'}
                                     </h2>
@@ -905,7 +905,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                            {activeSection === 'checklist' && (
                               <div className="space-y-8">
                                  <div>
-                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">SECTION_05: COMPLIANCE GEARCHECK</span>
+                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">{isAr ? 'القسم الخامس: فحص معدات السلامة' : 'SECTION_05: COMPLIANCE GEARCHECK'}</span>
                                     <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
                                        {isAr ? 'قائمة مراجعة المعدات الإلزامية' : 'Equipment Checklist'}
                                     </h2>
@@ -964,7 +964,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                            {activeSection === 'prohibited' && (
                               <div className="space-y-8">
                                  <div>
-                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">SECTION_06: BANNED FIELD EQUIPMENTS</span>
+                                    <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest block mb-1">{isAr ? 'القسم السادس: المعدات الميدانية المحظورة' : 'SECTION_06: BANNED FIELD EQUIPMENTS'}</span>
                                     <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
                                        {isAr ? 'المعدات والأدوات المحظورة بيئياً' : 'Prohibited Field Gear'}
                                     </h2>
