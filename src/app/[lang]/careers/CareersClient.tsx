@@ -64,8 +64,8 @@ export default function CareersClient({ lang }: { lang: string }) {
       locAr: 'المقر الرئيسي بالغردقة',
       type: 'Full-time',
       typeAr: 'دوام كامل',
-      desc: 'Process satellite and mapping data, monitor vessel positioning, visualize reserve zones, and maintain GIS monitoring databases.',
-      descAr: 'معالجة صور الأقمار الصناعية البيئية، والمساعدة في رسم الخرائط التفاعلية للمحميات وتحديث قواعد البيانات الجغرافية.'
+      desc: 'Process geographic map data, assist in reserve zone mapping, and maintain spatial database records.',
+      descAr: 'معالجة البيانات الجغرافية للمحميات، وتحديث الخرائط الرقمية التفاعلية وقواعد البيانات المكانية.'
     }
   ];
 

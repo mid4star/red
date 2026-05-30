@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -178,7 +178,7 @@ export default function ContactClient({ lang }: { lang: string }) {
 
               <div className="space-y-6">
                 <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.3em] italic">
-                  {isAr ? 'ط¨ظˆط§ط¨ط© ط¥ط±ط³ط§ظ„ ط§ظ„ط¨ط±ظ‚ظٹط§طھ ظˆط§ظ„ظ…ط±ط§ط³ظ„ط§طھ' : 'Secure Transmission Terminal'}
+                  {isAr ? 'نموذج التواصل والاستفسار' : 'Contact & Inquiry Form'}
                 </h3>
 
                 <AnimatePresence mode="wait">
@@ -193,21 +193,21 @@ export default function ContactClient({ lang }: { lang: string }) {
                     >
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'ط§ظ„ط§ط³ظ… ط¨ط§ظ„ظƒط§ظ…ظ„' : 'Sender Identity'}
+                          {isAr ? 'الاسم بالكامل' : 'Full Name'}
                         </label>
                         <input 
                           type="text" 
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          placeholder={isAr ? 'ط£ط¯ط®ظ„ ط§ط³ظ…ظƒ ط§ظ„ظƒط±ظٹظ…...' : 'Enter your name...'}
+                          placeholder={isAr ? 'أدخل اسمك الكريم...' : 'Enter your name...'}
                           className="w-full bg-[#081220]/80 border border-white/10 rounded-xl py-3.5 px-4 text-white text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium"
                         />
                       </div>
 
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ' : 'Return Address (Email)'}
+                          {isAr ? 'البريد الإلكتروني' : 'Email Address'}
                         </label>
                         <input 
                           type="email" 
@@ -221,7 +221,7 @@ export default function ContactClient({ lang }: { lang: string }) {
 
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'ط·ط¨ظٹط¹ط© ط§ظ„ط¨ط±ظ‚ظٹط© (ط§ظ„ظ…ظˆط¶ظˆط¹)' : 'Transmission Type (Subject)'}
+                          {isAr ? 'موضوع الرسالة' : 'Subject'}
                         </label>
                         <select
                           value={formData.subject}
@@ -229,27 +229,27 @@ export default function ContactClient({ lang }: { lang: string }) {
                           className="w-full bg-[#081220]/80 border border-white/10 rounded-xl py-3.5 px-4 text-white text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium"
                         >
                           <option value="Inquiry" className="bg-[#081220] text-white">
-                            {isAr ? 'ط§ط³طھظپط³ط§ط± ط¨ظٹط¦ظٹ ط¹ط§ظ…' : 'General Inquiry'}
+                            {isAr ? 'استفسار بيئي عام' : 'General Inquiry'}
                           </option>
                           <option value="Permit" className="bg-[#081220] text-white">
-                            {isAr ? 'ط·ظ„ط¨ طھطµط±ظٹط­ ط²ظٹط§ط±ط© ظ‚ط·ط§ط¹' : 'Permit Excursion Request'}
+                            {isAr ? 'طلب تصريح زيارة المحمية' : 'Permit Request'}
                           </option>
                           <option value="Violation" className="bg-[#081220] text-white">
-                            {isAr ? 'ط¨ظ„ط§ط؛ ط¹ظ† ظ…ط®ط§ظ„ظپط© ط¨ظٹط¦ظٹط©' : 'Ecological Violation Report'}
+                            {isAr ? 'بلاغ عن مخالفة بيئية' : 'Ecological Violation Report'}
                           </option>
                         </select>
                       </div>
 
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono block">
-                          {isAr ? 'ط§ظ„ط±ط³ط§ظ„ط© / ط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„طھظˆط¶ظٹط­ظٹط©' : 'Transmission Content (Message)'}
+                          {isAr ? 'محتوى الرسالة' : 'Message Content'}
                         </label>
                         <textarea
                           rows={6}
                           required
                           value={formData.message}
                           onChange={(e) => setFormData({...formData, message: e.target.value})}
-                          placeholder={isAr ? 'ط§ظƒطھط¨ طھظپط§طµظٹظ„ ط§ط³طھظپط³ط§ط±ظƒ ط£ظˆ ط§ظ„ط¨ظ„ط§ط؛ ط¨ط§ظ„طھظپطµظٹظ„...' : 'Type your details or reports explicitly...'}
+                          placeholder={isAr ? 'اكتب تفاصيل استفسارك أو البلاغ بالتفصيل...' : 'Type your details or reports explicitly...'}
                           className="w-full bg-[#081220]/80 border border-white/10 rounded-xl py-3.5 px-4 text-white text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium resize-none"
                         />
                       </div>
@@ -258,7 +258,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                         type="submit"
                         className="w-full py-4 rounded-xl bg-teal-500 hover:bg-teal-400 text-[#001529] font-black text-sm tracking-tighter uppercase italic transition-all flex items-center justify-center gap-3 shadow-[0_15px_30px_rgba(20,184,166,0.15)]"
                       >
-                        {isAr ? 'ط¨ط« ط§ظ„ط¥ط±ط³ط§ظ„' : 'Transmit Message'}
+                        {isAr ? 'إرسال الرسالة' : 'Send Message'}
                         <Send size={16} />
                       </button>
                     </motion.form>
@@ -270,11 +270,11 @@ export default function ContactClient({ lang }: { lang: string }) {
                       className="py-24 text-center space-y-4"
                     >
                       <CheckCircle2 className="mx-auto text-teal-400" size={56} />
-                      <h4 className="text-xl font-black text-white italic">{isAr ? 'طھظ… ط§ظ„ط¥ط±ط³ط§ظ„ ظˆط§ظ„طھط´ظ‡ظٹط± ط¨ظ†ط¬ط§ط­' : 'Transmission Confirmed'}</h4>
+                      <h4 className="text-xl font-black text-white italic">{isAr ? 'تم إرسال رسالتك بنجاح' : 'Message Sent Successfully'}</h4>
                       <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto italic">
                         {isAr 
-                          ? 'طھط£ظƒظٹط¯ ط§ظ„ط¨ط« ط§ظ„ظ…ط³طھظ„ظ…. ظ„ظ‚ط¯ طھظ… ط§ط³طھظ‚ط¨ط§ظ„ ط¨ط±ظ‚ظٹطھظƒ ظˆطھظˆط¬ظٹظ‡ظ‡ط§ ظ„ظ„ظ…ظƒطھط¨ ط§ظ„طھظ†ظپظٹط°ظٹ ط§ظ„ظ…ط®طھطµ.' 
-                          : 'Transmission acknowledged. Your telegram has been received and routed to the corresponding command office.'}
+                          ? 'تم استلام رسالتك بنجاح وسيقوم فريقنا بمراجعتها والتواصل معك في أقرب وقت.' 
+                          : 'We have received your message successfully. Our team will review it and get back to you shortly.'}
                       </p>
                       <button
                         onClick={() => {

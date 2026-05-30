@@ -185,8 +185,8 @@ export default function HomeClient({ lang }: { lang: string }) {
                
                <p className="text-xl text-slate-400 font-medium leading-relaxed italic">
                   {isAr 
-                    ? 'نعمل على تطبيق أعلى المعايير الدولية في إدارة المحميات من خلال حلول ذكية وتقنيات رصد متطورة تضمن استدامة الموارد.' 
-                    : 'Implementing cutting-edge ecosystem preservation practices through intelligent solutions and regular ecological monitoring, ensuring resource sustainability.'}
+                    ? 'نعمل على تطبيق أعلى المعايير الدولية في إدارة المحميات من خلال إشراك المجتمع المحلي والمسوحات الميدانية المستمرة لضمان استدامة الموارد.' 
+                    : 'Implementing standard ecosystem preservation practices through community engagement and regular field surveys, ensuring resource sustainability.'}
                </p>
 
                <div className="flex gap-8">

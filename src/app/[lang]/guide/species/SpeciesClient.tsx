@@ -132,8 +132,8 @@ export default function SpeciesClient({ lang }: { lang: string }) {
             </h1>
             <p className="text-lg text-slate-400 font-medium italic leading-relaxed">
               {isAr 
-                ? 'استكشف الفهرس البيئي التكتيكي لجميع الكائنات البحرية الخاضعة للحماية الوطنية والاتفاقيات الدولية في إقليم البحر الأحمر.' 
-                : 'Explore the tactical ecological index of all marine creatures protected under national mandates and international treaties in the Red Sea territory.'}
+                ? 'استكشف الدليل المعرفي لجميع الكائنات البحرية الخاضعة للحماية والاتفاقيات الدولية في البحر الأحمر.' 
+                : 'Explore the ecological directory of all marine creatures protected under national mandates and international treaties in the Red Sea.'}
             </p>
           </div>
         </section>
@@ -349,8 +349,8 @@ export default function SpeciesClient({ lang }: { lang: string }) {
                 </div>
 
                 <div className="pt-4 flex items-center justify-between text-[9px] font-mono text-slate-500">
-                  <span>{isAr ? 'رمز النظام: ' : 'SYSTEM_CODE: '}{selectedSpecies.id?.toUpperCase() || 'N/A'}</span>
-                  <span>{isAr ? 'القطاع الرئيسي: المقر الرئيسي للبحر الأحمر' : 'HQ_SECTOR: RED_SEA_HQ'}</span>
+                  <span>ID: {selectedSpecies.id?.toUpperCase() || 'N/A'}</span>
+                  <span>REGION: RED_SEA</span>
                 </div>
               </div>
             </motion.div>

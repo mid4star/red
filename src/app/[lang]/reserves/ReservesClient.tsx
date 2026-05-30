@@ -248,7 +248,7 @@ export default function ReservesClient({ lang }: { lang: string }) {
          <div className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
             <div className="space-y-4 max-w-2xl mx-auto">
                <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none">
-                  {isAr ? 'ذكاء الشبكة الموحد' : 'Unified Network Intelligence'}
+                  {isAr ? 'شبكة المحميات الموحدة' : 'Unified Reserve Network'}
                </h2>
                <p className="text-lg text-slate-400 font-medium italic italic">
                   {isAr 

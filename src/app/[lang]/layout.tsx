@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
       },
       description: isAr 
          ? 'البوابة الرسمية لهيئة محميات البحر الأحمر لجمهورية مصر العربية - رصد البيئة البحرية والتصاريح والبيانات المفتوحة.'
-         : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit dispatch, and open environmental data.',
+         : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit application, and open environmental data.',
       alternates: {
          canonical: `/${params.lang}`,
          languages: {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
          title: isAr ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority',
          description: isAr 
             ? 'البوابة الرسمية لهيئة محميات البحر الأحمر لجمهورية مصر العربية - رصد البيئة البحرية والتصاريح والبيانات المفتوحة.'
-            : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit dispatch, and open environmental data.',
+            : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit application, and open environmental data.',
          url: `${baseUrl}/${params.lang}`,
          siteName: isAr ? 'محميات البحر الأحمر' : 'RED',
          locale: isAr ? 'ar_EG' : 'en_US',
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
          title: isAr ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority',
          description: isAr 
             ? 'البوابة الرسمية لهيئة محميات البحر الأحمر لجمهورية مصر العربية - رصد البيئة البحرية والتصاريح والبيانات المفتوحة.'
-            : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit dispatch, and open environmental data.',
+            : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit application, and open environmental data.',
          images: ['/red_sea_hero_aerial_1774790601114.png']
       },
       robots: {
