@@ -280,14 +280,60 @@ model VisitorGuideSection {
 }
 
 model HomepageSettings {
-  id             String   @id @default("home-config")
-  heroTitle      String
-  heroTitleAr    String
-  heroSubtitle   String
-  heroSubtitleAr String
-  announcements  String   // JSON string
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                    String   @id @default("home-config")
+  heroTitle             String
+  heroTitleAr           String
+  heroSubtitle          String
+  heroSubtitleAr        String
+  heroAuthority         String   @default("Red Sea Marine Authority")
+  heroAuthorityAr       String   @default("جهاز محميات البحر الأحمر")
+  heroBgUrl             String   @default("/red_sea_aerial_hd.png")
+  heroBtn1Text          String   @default("Begin Exploration")
+  heroBtn1TextAr        String   @default("ابدأ الاستكشاف")
+  heroBtn1Link          String   @default("/guide")
+  heroBtn2Text          String   @default("Interactive Map")
+  heroBtn2TextAr        String   @default("خريطة المحميات")
+  heroBtn2Link          String   @default("/reserves")
+  
+  statsJson             String   @default("[]") // JSON string of stats
+  
+  missionTag            String   @default("Protecting the Vision")
+  missionTagAr          String   @default("حماية الرؤية المستقبلية")
+  missionTitle          String   @default("Commitment to the Blue Heritage")
+  missionTitleAr        String   @default("مهمتنا هي صون التراث الطبيعي")
+  missionDesc           String   @default("Implementing standard ecosystem preservation practices through community engagement and regular field surveys, ensuring resource sustainability.")
+  missionDescAr         String   @default("نعمل على تطبيق أعلى المعايير الدولية في إدارة المحميات من خلال إشراك المجتمع المحلي والمسوحات الميدانية المستمرة لضمان استدامة الموارد.")
+  missionChecklistJson  String   @default("[]") // JSON string
+  missionImgUrl         String   @default("/sea_turtle_close_up_1774790619989.png")
+  missionCardTag        String   @default("Current Status")
+  missionCardTagAr      String   @default("الوضع الحالي")
+  missionCardTitle      String   @default("Peak Ecological Health Index")
+  missionCardTitleAr    String   @default("أعلى مستويات الصحة البيئية")
+
+  highlightsTag         String   @default("Explore the Arcana")
+  highlightsTagAr       String   @default("اكتشف روائع الطبيعة")
+  highlightsTitle       String   @default("Reserve Highlights")
+  highlightsTitleAr     String   @default("عجائب المحميات")
+  highlightsLinkText    String   @default("Explore All Reserves")
+  highlightsLinkTextAr  String   @default("تصفح جميع المحميات")
+  highlightsLinkUrl     String   @default("/reserves")
+  highlightsJson        String   @default("[]") // JSON string of highlighted items
+
+  ctaBgUrl              String   @default("/red_sea_sunset_mountains_1774790636632.png")
+  ctaTitle              String   @default("Elevate Your Marine Perspective")
+  ctaTitleAr            String   @default("ابدأ رحلتك نحو الرقي البيئي")
+  ctaSubtitle           String   @default("Join the guardianship. Experience the world’s most precious marine territories.")
+  ctaSubtitleAr         String   @default("انضم إلينا في حماية وتجربة أغلى الكنوز البحرية على وجه الأرض.")
+  ctaBtn1Text           String   @default("Book a Visit")
+  ctaBtn1TextAr         String   @default("احجز زيارة الآن")
+  ctaBtn1Link           String   @default("#")
+  ctaBtn2Text           String   @default("Support Conservation")
+  ctaBtn2TextAr         String   @default("دعم جهود الصون")
+  ctaBtn2Link           String   @default("#")
+
+  announcements         String   // JSON string
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
 
 model Observation {

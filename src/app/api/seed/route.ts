@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { collection, writeBatch, doc, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { prisma } from '@/lib/prisma';
+import { hashPassword } from '@/lib/auth-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,8 +17,16 @@ async function clearCollection(collectionName: string) {
   await batch.commit();
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const key = searchParams.get('key');
+    const expectedKey = process.env.SEED_SECRET_KEY || 'red_sea_command_seed_secret_auth_2026_xyz';
+
+    if (!key || key !== expectedKey) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid seed secret key' }, { status: 401 });
+    }
+
     console.log("Starting unified database seeding...");
 
     // 1. Clear SQLite Database via Prisma
@@ -73,7 +82,7 @@ export async function GET() {
         employeeId: "ADMIN-01",
         name: "Ahmed Ali",
         nameAr: "أحمد علي",
-        passwordHash: "hashed_admin_password", // In production use bcrypt
+        passwordHash: hashPassword("admin"),
         role: "ADMIN",
         reserveId: "reserve_ras_mohammed",
         reserve: "Ras Mohammed",
@@ -87,7 +96,7 @@ export async function GET() {
         employeeId: "MON-102",
         name: "Sarah Hassan",
         nameAr: "سارة حسن",
-        passwordHash: "hashed_monitor_password",
+        passwordHash: hashPassword("password"),
         role: "MONITOR",
         reserveId: "reserve_wadi_el_gemal",
         reserve: "Wadi El Gemal",
@@ -449,10 +458,107 @@ export async function GET() {
     // --- HOMEPAGE SETTINGS ---
     const homepageData = {
       id: "home-config",
-      heroTitle: "Protecting the Red Sea Treasures",
-      heroTitleAr: "حماية كنوز البحر الأحمر",
-      heroSubtitle: "Active field monitoring and environmental impact management",
-      heroSubtitleAr: "رصد ميداني مستمر وإدارة الأثر البيئي",
+      heroTitle: "Protect. Explore. Marvel.",
+      heroTitleAr: "احمِ.. استكشف.. انبهر",
+      heroSubtitle: "Discover the majesty of the world’s most enchanting marine ecosystem, where turquoise horizons meet untamed biodiversity.",
+      heroSubtitleAr: "اكتشف روعة أحد أكثر النظم البيئية البحرية سحراً في الكوكب، حيث تلتقي المياه الفيروزية بالطبيعة الخلابة.",
+      heroAuthority: "Red Sea Marine Authority",
+      heroAuthorityAr: "جهاز محميات البحر الأحمر",
+      heroBgUrl: "/red_sea_aerial_hd.png",
+      heroBtn1Text: "Begin Exploration",
+      heroBtn1TextAr: "ابدأ الاستكشاف",
+      heroBtn1Link: "/guide",
+      heroBtn2Text: "Interactive Map",
+      heroBtn2TextAr: "خريطة المحميات",
+      heroBtn2Link: "/reserves",
+      
+      statsJson: JSON.stringify([
+        { value: "35,000", label: "km² Protected Area", labelAr: "كيلومتر مربع من المحميات", icon: "Globe" },
+        { value: "1,200+", label: "Protected Species", labelAr: "من الأنواع المحمية", icon: "Microscope" },
+        { value: "40", label: "Marine Reservoirs", labelAr: "محمية بحرية وبرية", icon: "Shield" },
+        { value: "2.5M", label: "Annual Visitors", labelAr: "زائر سنوي للمحميات", icon: "Eye" }
+      ]),
+
+      missionTag: "Protecting the Vision",
+      missionTagAr: "حماية الرؤية المستقبلية",
+      missionTitle: "Commitment to the Blue Heritage",
+      missionTitleAr: "مهمتنا هي صون التراث الطبيعي",
+      missionDesc: "Implementing standard ecosystem preservation practices through community engagement and regular field surveys, ensuring resource sustainability.",
+      missionDescAr: "نعمل على تطبيق أعلى المعايير الدولية في إدارة المحميات من خلال إشراك المجتمع المحلي والمسوحات الميدانية المستمرة لضمان استدامة الموارد.",
+      missionChecklistJson: JSON.stringify([
+        { text: "Environmental Patrols", textAr: "دوريات بيئية" },
+        { text: "Biodiversity Protection", textAr: "صون التنوع" },
+        { text: "Environmental Awareness", textAr: "وعي بيئي" },
+        { text: "Smart Management", textAr: "إدارة ذكية" }
+      ]),
+      missionImgUrl: "/sea_turtle_close_up_1774790619989.png",
+      missionCardTag: "Current Status",
+      missionCardTagAr: "الوضع الحالي",
+      missionCardTitle: "Peak Ecological Health Index",
+      missionCardTitleAr: "أعلى مستويات الصحة البيئية",
+
+      highlightsTag: "Explore the Arcana",
+      highlightsTagAr: "اكتشف روائع الطبيعة",
+      highlightsTitle: "Reserve Highlights",
+      highlightsTitleAr: "عجائب المحميات",
+      highlightsLinkText: "Explore All Reserves",
+      highlightsLinkTextAr: "تصفح جميع المحميات",
+      highlightsLinkUrl: "/reserves",
+      highlightsJson: JSON.stringify([
+        {
+          id: "reserve_northern_islands",
+          title: "Northern Islands Protectorate",
+          titleAr: "محمية الجزر الشمالية",
+          desc: "A pristine archipelago serving as a critical sanctuary for marine turtles and migratory birds.",
+          descAr: "أرخبيل بكر يعد ملاذاً حرجاً للسلاحف البحرية والطيور المهاجرة.",
+          img: "/red_sea_hero_aerial_1774790601114.png",
+          tag: "PREMIUM DESTINATION",
+          tagAr: "وجهة استثنائية"
+        },
+        {
+          id: "reserve_wadi_el_gemal",
+          title: "Wadi El Gemal National Park",
+          titleAr: "محمية وادي الجمال",
+          desc: "A vast expanse of coastal lagoons and desert peaks, home to the ancient emerald mines.",
+          descAr: "مساحات شاسعة من المناطق الساحلية والجبلية، موطن لمناجم الزمرد القديمة.",
+          img: "/wadi_el_gemal_mangroves_aerial_1774861445577.png",
+          tag: "ECOLOGICAL HERITAGE",
+          tagAr: "تراث بيئي"
+        },
+        {
+          id: "reserve_gebel_elba",
+          title: "Gebel Elba Biosphere",
+          titleAr: "محمية جبل علبة",
+          desc: "An unparalleled mist oasis in the desert with unique biodiversity and lush green peaks.",
+          descAr: "واحة ضبابية فريدة في الصحراء تتميز بتنوع بيولوجي فريد وقمم جبلية خضراء.",
+          img: "/red_sea_sunset_mountains_1774790636632.png",
+          tag: "BIODIVERSITY HUB",
+          tagAr: "مركز التنوع البيولوجي"
+        },
+        {
+          id: "reserve_coral_reef",
+          title: "Coral Reef Protectorate",
+          titleAr: "محمية الحيد المرجاني",
+          desc: "Vibrant and resilient coral reef systems offering world-class diving experiences.",
+          descAr: "أنظمة شعاب مرجانية نابضة بالحياة ومرنة تقدم تجارب غوص بمستوى عالمي.",
+          img: "/brother_islands_reef_wall_1774861464852.png",
+          tag: "MARINE SANCTUARY",
+          tagAr: "ملاذ بحري"
+        }
+      ]),
+
+      ctaBgUrl: "/red_sea_sunset_mountains_1774790636632.png",
+      ctaTitle: "Elevate Your Marine Perspective",
+      ctaTitleAr: "ابدأ رحلتك نحو الرقي البيئي",
+      ctaSubtitle: "Join the guardianship. Experience the world’s most precious marine territories.",
+      ctaSubtitleAr: "انضم إلينا في حماية وتجربة أغلى الكنوز البحرية على وجه الأرض.",
+      ctaBtn1Text: "Book a Visit",
+      ctaBtn1TextAr: "احجز زيارة الآن",
+      ctaBtn1Link: "/reserves",
+      ctaBtn2Text: "Support Conservation",
+      ctaBtn2TextAr: "دعم جهود الصون",
+      ctaBtn2Link: "/guide",
+
       announcements: JSON.stringify([
         { id: "ann-01", text: "New patrol vessels added to fleet.", textAr: "تم إضافة زوارق دورية جديدة للأسطول.", active: true }
       ])
@@ -855,6 +961,47 @@ export async function GET() {
         heroTitleAr: homepageData.heroTitleAr,
         heroSubtitle: homepageData.heroSubtitle,
         heroSubtitleAr: homepageData.heroSubtitleAr,
+        heroAuthority: homepageData.heroAuthority,
+        heroAuthorityAr: homepageData.heroAuthorityAr,
+        heroBgUrl: homepageData.heroBgUrl,
+        heroBtn1Text: homepageData.heroBtn1Text,
+        heroBtn1TextAr: homepageData.heroBtn1TextAr,
+        heroBtn1Link: homepageData.heroBtn1Link,
+        heroBtn2Text: homepageData.heroBtn2Text,
+        heroBtn2TextAr: homepageData.heroBtn2TextAr,
+        heroBtn2Link: homepageData.heroBtn2Link,
+        stats: JSON.parse(homepageData.statsJson),
+        missionTag: homepageData.missionTag,
+        missionTagAr: homepageData.missionTagAr,
+        missionTitle: homepageData.missionTitle,
+        missionTitleAr: homepageData.missionTitleAr,
+        missionDesc: homepageData.missionDesc,
+        missionDescAr: homepageData.missionDescAr,
+        missionChecklist: JSON.parse(homepageData.missionChecklistJson),
+        missionImgUrl: homepageData.missionImgUrl,
+        missionCardTag: homepageData.missionCardTag,
+        missionCardTagAr: homepageData.missionCardTagAr,
+        missionCardTitle: homepageData.missionCardTitle,
+        missionCardTitleAr: homepageData.missionCardTitleAr,
+        highlightsTag: homepageData.highlightsTag,
+        highlightsTagAr: homepageData.highlightsTagAr,
+        highlightsTitle: homepageData.highlightsTitle,
+        highlightsTitleAr: homepageData.highlightsTitleAr,
+        highlightsLinkText: homepageData.highlightsLinkText,
+        highlightsLinkTextAr: homepageData.highlightsLinkTextAr,
+        highlightsLinkUrl: homepageData.highlightsLinkUrl,
+        highlights: JSON.parse(homepageData.highlightsJson),
+        ctaBgUrl: homepageData.ctaBgUrl,
+        ctaTitle: homepageData.ctaTitle,
+        ctaTitleAr: homepageData.ctaTitleAr,
+        ctaSubtitle: homepageData.ctaSubtitle,
+        ctaSubtitleAr: homepageData.ctaSubtitleAr,
+        ctaBtn1Text: homepageData.ctaBtn1Text,
+        ctaBtn1TextAr: homepageData.ctaBtn1TextAr,
+        ctaBtn1Link: homepageData.ctaBtn1Link,
+        ctaBtn2Text: homepageData.ctaBtn2Text,
+        ctaBtn2TextAr: homepageData.ctaBtn2TextAr,
+        ctaBtn2Link: homepageData.ctaBtn2Link,
         announcements: JSON.parse(homepageData.announcements)
       });
 

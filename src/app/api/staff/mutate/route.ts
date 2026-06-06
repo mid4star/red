@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { syncToFirebase, deleteFromFirebase } from '@/lib/db-sync';
+import { verifyAuth, hashPassword } from '@/lib/auth-utils';
 
 // Map collectionName to Prisma delegate
 const getModelDelegate = (collectionName: string) => {
@@ -88,9 +89,14 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
     if (mapped.allowedSections) {
       mapped.allowedSections = JSON.stringify(mapped.allowedSections);
     }
-    // Set default passwordHash if it is not provided
-    if (!mapped.passwordHash) {
-      mapped.passwordHash = 'default_hashed_password';
+    
+    if (mapped.passwordHash) {
+      // Hash password using PBKDF2 if it's not already in hash format (i.e. if it doesn't contain a colon)
+      if (!mapped.passwordHash.includes(':')) {
+        mapped.passwordHash = hashPassword(mapped.passwordHash);
+      }
+    } else if (action === 'ADD') {
+      mapped.passwordHash = hashPassword('default_hashed_password');
     }
   } else if (collectionName === 'patrols') {
     if (mapped.routeCoordinates) {
@@ -116,6 +122,18 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
     if (mapped.announcements) {
       mapped.announcements = JSON.stringify(mapped.announcements);
     }
+    if (mapped.stats) {
+      mapped.statsJson = JSON.stringify(mapped.stats);
+      delete mapped.stats;
+    }
+    if (mapped.missionChecklist) {
+      mapped.missionChecklistJson = JSON.stringify(mapped.missionChecklist);
+      delete mapped.missionChecklist;
+    }
+    if (mapped.highlights) {
+      mapped.highlightsJson = JSON.stringify(mapped.highlights);
+      delete mapped.highlights;
+    }
   } else if (collectionName === 'visitor_guide') {
     if (mapped.links) {
       mapped.links = JSON.stringify(mapped.links);
@@ -131,11 +149,21 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
 
 export async function POST(request: Request) {
   try {
+    const auth = await verifyAuth(request);
+    if (!auth) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { collectionName, action, id, data } = body;
 
     if (!collectionName || !action) {
       return NextResponse.json({ error: 'collectionName and action are required' }, { status: 400 });
+    }
+
+    // Role-based authorization check: Only ADMIN can modify users or system configuration
+    if ((collectionName === 'users' || collectionName === 'system_config') && auth.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
     const dbDelegate = getModelDelegate(collectionName);

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyAuth } from '@/lib/auth-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,25 @@ export async function GET(request: Request) {
 
     if (!collectionName) {
       return NextResponse.json({ error: 'collection parameter is required' }, { status: 400 });
+    }
+
+    // Public collections that do not require staff authentication
+    const publicCollections = [
+      'system_config',
+      'reserves',
+      'opendata',
+      'news',
+      'marine_species',
+      'map_locations',
+      'visitor_guide',
+      'homepage'
+    ];
+
+    if (!publicCollections.includes(collectionName)) {
+      const auth = await verifyAuth(request);
+      if (!auth) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
     }
 
     let data: any[] = [];
@@ -87,6 +107,9 @@ export async function GET(request: Request) {
         data = data.map((h: any) => ({
           ...h,
           announcements: h.announcements ? safeJsonParse(h.announcements, []) : [],
+          stats: h.statsJson ? safeJsonParse(h.statsJson, []) : [],
+          missionChecklist: h.missionChecklistJson ? safeJsonParse(h.missionChecklistJson, []) : [],
+          highlights: h.highlightsJson ? safeJsonParse(h.highlightsJson, []) : [],
         }));
         break;
       case 'marine_species':

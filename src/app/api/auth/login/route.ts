@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyPassword, signJwt } from '@/lib/auth-utils';
 
 export async function POST(request: Request) {
   try {
@@ -19,22 +20,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
-    // Verification check supporting seeded hashes and simple credentials for testing
+    // Verification check supporting both PBKDF2 hashes and plaintext fallback
     let isValid = false;
-    if (employeeId === 'ADMIN-01' && (password === 'admin' || password === 'hashed_admin_password')) {
-      isValid = true;
-    } else if (employeeId === 'MON-102' && (password === 'password' || password === 'hashed_monitor_password')) {
-      isValid = true;
-    } else if (password === user.passwordHash) {
-      isValid = true;
+    if (user.passwordHash.includes(':')) {
+      isValid = verifyPassword(password, user.passwordHash);
+    } else {
+      // Backward compatibility plain-text fallback
+      isValid = password === user.passwordHash || 
+                (employeeId === 'ADMIN-01' && password === 'admin') || 
+                (employeeId === 'MON-102' && password === 'password');
     }
 
     if (!isValid) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    return NextResponse.json({ 
-      token: "mock-jwt-token-12345",
+    // Sign a secure JWT token containing user details
+    const token = signJwt({
+      id: user.id,
+      employeeId: user.employeeId,
+      role: user.role
+    });
+
+    // Create JSON response
+    const response = NextResponse.json({ 
+      success: true,
       user: { 
         employeeId: user.employeeId, 
         role: user.role,
@@ -46,6 +56,17 @@ export async function POST(request: Request) {
         allowedSections: user.allowedSections ? JSON.parse(user.allowedSections) : []
       }
     });
+
+    // Set secure HTTP-Only cookie for the token
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 // 24 hours
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Login error:", error);
     return NextResponse.json({ error: "Server error: " + error.message }, { status: 500 });

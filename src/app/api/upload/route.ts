@@ -3,9 +3,15 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { app } from '@/lib/firebase/config';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { verifyAuth } from '@/lib/auth-utils';
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await verifyAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
 
@@ -13,11 +19,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
+    // Check file size (limit to 5MB)
+    const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSizeBytes) {
+      return NextResponse.json({ error: 'File size exceeds the 5MB limit.' }, { status: 400 });
+    }
+
+    // Check file extension (Whitelist validation)
+    const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png', '.docx'];
+    const ext = path.extname(file.name).toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+      return NextResponse.json({ error: 'Invalid file type. Only PDF, JPG, JPEG, PNG, and DOCX are allowed.' }, { status: 400 });
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     // Generate unique filename
-    const ext = path.extname(file.name);
     const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
     const uniqueName = `${baseName}_${Date.now()}${ext}`;
 

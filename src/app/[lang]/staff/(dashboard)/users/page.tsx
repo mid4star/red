@@ -27,7 +27,8 @@ import {
   Anchor,
   Megaphone,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 
 const RESERVES_LIST = [
@@ -89,6 +90,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const [userStatus, setUserStatus] = useState<'ACTIVE' | 'ON_LEAVE' | 'INACTIVE'>('ACTIVE');
   const [certificationsText, setCertificationsText] = useState('');
   const [allowedSections, setAllowedSections] = useState<string[]>(['patrols', 'monitoring']);
+  const [password, setPassword] = useState('');
 
   // Fetch users from API (reads from Turso/SQLite)
   const fetchUsers = async () => {
@@ -122,6 +124,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setUserStatus('ACTIVE');
     setCertificationsText('');
     setAllowedSections(['patrols', 'monitoring']);
+    setPassword('');
     setEditingUser(null);
   };
 
@@ -136,6 +139,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setUserStatus(user.status);
     setCertificationsText(user.certifications ? user.certifications.join(', ') : '');
     setAllowedSections(user.allowedSections || []);
+    setPassword('');
     setShowAddForm(true);
   };
 
@@ -160,6 +164,12 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         ? certificationsText.split(',').map(s => s.trim()).filter(Boolean)
         : [];
 
+      if (!editingUser && !password) {
+        alert(isArabic ? 'كلمة المرور مطلوبة للمستخدمين الجدد.' : 'Password is required for new users.');
+        setSubmitting(false);
+        return;
+      }
+
       const userData: any = {
         employeeId,
         name,
@@ -173,6 +183,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         allowedSections,
         updatedAt: new Date().toISOString()
       };
+
+      if (password) {
+        userData.passwordHash = password;
+      }
 
       if (editingUser?.id) {
         // Edit User
@@ -305,155 +319,199 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         /* ── ADMIN USER MANAGEMENT CONTROL PANEL ── */
         <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 pb-4 border-b border-white/10">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                 <div className="w-8 h-1 bg-teal-500 rounded-full" />
-                 <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
-                     {isArabic ? 'التحكم بالوصول والأعضاء' : 'Access Control & Members'}
-                 </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic">
-                {isArabic ? 'إدارة مستخدمي المنصة' : 'User Management'}
-              </h1>
-            </div>
-            
-            <Button 
-              onClick={() => { resetFormFields(); setShowAddForm(true); }}
-              intent="primary" 
-              className="w-full md:w-auto rounded-2xl py-3.5 px-6 flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic font-black"
-            >
-              <UserPlus size={16} />
-              {isArabic ? 'إضافة مستخدم جديد' : 'Add User'}
-            </Button>
-          </div>
-
-          {/* Form Modal (Add / Edit) */}
-          {showAddForm && (
-            <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-              <Card className="w-full max-w-[700px] p-5 sm:p-8 border border-white/10 bg-[#0c1628]/95 rounded-3xl shadow-2xl relative">
+          {showAddForm ? (
+            /* ── INLINE FORM VIEW (BORDERLESS REDESIGN) ── */
+            <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+              {/* Form Header with Back Button */}
+              <div className="flex items-center gap-4 pb-4 border-b border-white/10">
                 <button 
                   onClick={() => setShowAddForm(false)}
-                  className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors"
+                  type="button"
+                  className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
                 >
-                  <X size={20} />
+                  <ArrowRight size={20} className={isArabic ? '' : 'rotate-180'} />
                 </button>
+                <div>
+                  <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+                    {isArabic ? 'التحكم بالوصول والأعضاء' : 'Access Control & Members'}
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <UserPlus className="text-teal-400" size={20} />
+                    {editingUser 
+                      ? (isArabic ? 'تعديل صلاحيات وبيانات المستخدم' : 'Edit User Permissions')
+                      : (isArabic ? 'إضافة مستخدم جديد وصلاحياته' : 'Add New User & Permissions')
+                    }
+                  </h2>
+                </div>
+              </div>
 
-                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-4 sm:mb-6 flex items-center gap-2 pb-3 border-b border-white/5">
-                  <UserPlus className="text-teal-400" size={24} />
-                  {editingUser 
-                    ? (isArabic ? 'تعديل صلاحيات وبيانات المستخدم' : 'Edit User Permissions')
-                    : (isArabic ? 'إضافة مستخدم جديد وصلاحياته' : 'Add New User & Permissions')
-                  }
-                </h2>
-
-                <form onSubmit={handleFormSubmit} className="space-y-6">
+              {/* Form Content - Directly on page background, no card container */}
+              <div className="w-full max-w-5xl mx-auto pt-4">
+                <form onSubmit={handleFormSubmit} className="space-y-10">
                   
-                  {/* Basic details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الرقم الوظيفي (Employee ID)' : 'Employee ID'}</label>
-                      <Input 
-                        value={employeeId}
-                        onChange={(e) => setEmployeeId(e.target.value)}
-                        placeholder="e.g. EMP-902"
-                        className="bg-[#050b14] border-white/10 text-white rounded-xl"
-                        required
-                        disabled={!!editingUser}
-                      />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الاسم بالإنجليزية' : 'Name (EN)'}</label>
-                      <Input 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. John Doe"
-                        className="bg-[#050b14] border-white/10 text-white rounded-xl"
-                        required
-                      />
+                  {/* SECTION 1: BASIC INFORMATION */}
+                  <div className="space-y-4">
+                    <div className="border-b border-white/10 pb-2">
+                      <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.2em] italic flex items-center gap-2">
+                        <Users size={14} />
+                        {isArabic ? 'البيانات الأساسية للموظف' : 'Basic Operator Information'}
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        {isArabic ? 'أدخل تفاصيل الهوية والاسم الرسمي للموظف باللغتين.' : 'Enter operator identification and official name in both languages.'}
+                      </p>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الاسم بالعربية' : 'Name (AR)'}</label>
-                      <Input 
-                        value={nameAr}
-                        onChange={(e) => setNameAr(e.target.value)}
-                        placeholder="e.g. جون دو"
-                        className="bg-[#050b14] border-white/10 text-white rounded-xl"
-                        required
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'الرقم الوظيفي (Employee ID)' : 'Employee ID'}</label>
+                        <Input 
+                          value={employeeId}
+                          onChange={(e) => setEmployeeId(e.target.value)}
+                          placeholder="e.g. EMP-902"
+                          className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                          required
+                          disabled={!!editingUser}
+                        />
+                      </div>
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'الاسم بالإنجليزية' : 'Name (EN)'}</label>
+                        <Input 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="e.g. John Doe"
+                          className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'الاسم بالعربية' : 'Name (AR)'}</label>
+                        <Input 
+                          value={nameAr}
+                          onChange={(e) => setNameAr(e.target.value)}
+                          placeholder="e.g. جون دو"
+                          className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 2: ROLE & DEPLOYMENT */}
+                  <div className="space-y-4">
+                    <div className="border-b border-white/10 pb-2">
+                      <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.2em] italic flex items-center gap-2">
+                        <ShieldCheck size={14} />
+                        {isArabic ? 'الدور والتعيين الأمني' : 'Role & Security Deployment'}
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        {isArabic ? 'تحديد المسمى الوظيفي والمحمية المعين بها ورمز المرور.' : 'Define job level, assigned reserve station, and secure access code.'}
+                      </p>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'دور المستخدم' : 'User Role'}</label>
-                      <select 
-                        value={userRole}
-                        onChange={(e) => setUserRole(e.target.value as UserRole)}
-                        className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
-                      >
-                        <option value="RANGER">{isArabic ? 'حارس محمية (Ranger)' : 'Ranger'}</option>
-                        <option value="RESEARCHER">{isArabic ? 'باحث بيئي (Researcher)' : 'Researcher'}</option>
-                        <option value="MANAGER">{isArabic ? 'مشرف قسم (Manager)' : 'Manager'}</option>
-                        <option value="ADMIN">{isArabic ? 'مدير نظام (Admin)' : 'Admin'}</option>
-                      </select>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'دور المستخدم' : 'User Role'}</label>
+                        <select 
+                          value={userRole}
+                          onChange={(e) => setUserRole(e.target.value as UserRole)}
+                          className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:bg-[#050b14]/80 focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all text-xs font-bold cursor-pointer"
+                        >
+                          <option value="RANGER" className="bg-[#0a1628]">{isArabic ? 'حارس محمية (Ranger)' : 'Ranger'}</option>
+                          <option value="RESEARCHER" className="bg-[#0a1628]">{isArabic ? 'باحث بيئي (Researcher)' : 'Researcher'}</option>
+                          <option value="MANAGER" className="bg-[#0a1628]">{isArabic ? 'مشرف قسم (Manager)' : 'Manager'}</option>
+                          <option value="ADMIN" className="bg-[#0a1628]">{isArabic ? 'مدير نظام (Admin)' : 'Admin'}</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'المحمية المعين بها' : 'Assigned Reserve'}</label>
+                        <select 
+                          value={reserveId}
+                          onChange={(e) => setReserveId(e.target.value)}
+                          className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:bg-[#050b14]/80 focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all text-xs font-bold cursor-pointer"
+                        >
+                          {RESERVES_LIST.map(r => (
+                            <option key={r.id} value={r.id} className="bg-[#0a1628]">
+                              {isArabic ? r.nameAr : r.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'الحالة الوظيفية' : 'Status'}</label>
+                        <select 
+                          value={userStatus}
+                          onChange={(e) => setUserStatus(e.target.value as any)}
+                          className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:bg-[#050b14]/80 focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all text-xs font-bold cursor-pointer"
+                        >
+                          <option value="ACTIVE" className="bg-[#0a1628]">{isArabic ? 'نشط' : 'Active'}</option>
+                          <option value="ON_LEAVE" className="bg-[#0a1628]">{isArabic ? 'إجازة' : 'On Leave'}</option>
+                          <option value="INACTIVE" className="bg-[#0a1628]">{isArabic ? 'غير نشط' : 'Inactive'}</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          {isArabic ? 'كلمة المرور' : 'Access Password'}{' '}
+                          <span className="text-slate-500 lowercase font-medium text-[9px]">
+                            {editingUser 
+                              ? (isArabic ? '(اختياري للتغيير)' : '(Optional to change)') 
+                              : (isArabic ? '(مطلوب)' : '(Required)')}
+                          </span>
+                        </label>
+                        <Input 
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder={editingUser 
+                            ? (isArabic ? 'اتركها فارغة للاحتفاظ بالقديمة' : 'Leave blank to keep current') 
+                            : '••••••••'}
+                          className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                          required={!editingUser}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 3: QUALIFICATIONS */}
+                  <div className="space-y-4">
+                    <div className="border-b border-white/10 pb-2">
+                      <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.2em] italic flex items-center gap-2">
+                        <ClipboardList size={14} />
+                        {isArabic ? 'الشهادات والخبرات المهنية' : 'Certifications & Qualifications'}
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        {isArabic ? 'أدخل الشهادات المعتمدة أو الرخص التدريبية الحاصل عليها الموظف.' : 'List official certifications, qualifications, or training licenses.'}
+                      </p>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'المحمية المعين بها' : 'Assigned Reserve'}</label>
-                      <select 
-                        value={reserveId}
-                        onChange={(e) => setReserveId(e.target.value)}
-                        className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
-                      >
-                        {RESERVES_LIST.map(r => (
-                          <option key={r.id} value={r.id}>
-                            {isArabic ? r.nameAr : r.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الحالة الوظيفية' : 'Status'}</label>
-                      <select 
-                        value={userStatus}
-                        onChange={(e) => setUserStatus(e.target.value as any)}
-                        className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
-                      >
-                        <option value="ACTIVE">{isArabic ? 'نشط' : 'Active'}</option>
-                        <option value="ON_LEAVE">{isArabic ? 'إجازة' : 'On Leave'}</option>
-                        <option value="INACTIVE">{isArabic ? 'غير نشط' : 'Inactive'}</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-1 md:col-span-2">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الشهادات والتدريب (مفصولة بفاصلة)' : 'Certifications & Training (comma separated)'}</label>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{isArabic ? 'الشهادات والتدريب (مفصولة بفاصلة)' : 'Certifications & Training (comma separated)'}</label>
                       <Input 
                         value={certificationsText}
                         onChange={(e) => setCertificationsText(e.target.value)}
                         placeholder="e.g. Diving License, First Aid, GIS Professional"
-                        className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                        className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
                       />
                     </div>
                   </div>
 
-                  {/* Permissions Checklist Section */}
-                  <div className="space-y-3 pt-4 border-t border-white/5">
-                    <div>
-                      <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                        <Shield className="text-teal-400" size={16} />
+                  {/* SECTION 4: PERMISSIONS */}
+                  <div className="space-y-4">
+                    <div className="border-b border-white/10 pb-2">
+                      <h3 className="text-xs font-black text-teal-400 uppercase tracking-[0.2em] italic flex items-center gap-2">
+                        <Shield size={14} />
                         {isArabic ? 'إدارة صلاحيات الوصول للأقسام' : 'Manage Section Permissions'}
                       </h3>
                       <p className="text-[11px] text-slate-500">
-                        {isArabic 
-                          ? 'حدد الأقسام المسموح لهذا المستخدم بتصفحها أو إدخال البيانات إليها.' 
-                          : 'Select which modules this user has access to view or modify.'}
+                        {isArabic ? 'حدد الأقسام المسموح لهذا المستخدم بتصفحها أو إدخال البيانات إليها.' : 'Select which modules this user has access to view or modify.'}
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {SECTIONS_METADATA.map((section) => {
                         const Icon = section.icon;
                         const isChecked = allowedSections.includes(section.id);
@@ -461,13 +519,13 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                           <div 
                             key={section.id}
                             onClick={() => handleSectionToggle(section.id)}
-                            className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 relative group ${
+                            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 relative group ${
                               isChecked
-                                ? 'bg-teal-500/10 border-teal-500/40 text-white shadow-md'
-                                : 'bg-slate-900/40 border-white/5 text-slate-400 hover:text-white hover:border-white/10'
+                                ? 'bg-teal-500/10 border-teal-500/30 text-white shadow-md'
+                                : 'bg-[#050b14]/20 border-white/5 text-slate-400 hover:text-white hover:border-white/10 hover:bg-white/[0.02]'
                             }`}
                           >
-                            <div className={`p-2 rounded-xl shrink-0 ${section.bg} ${section.color}`}>
+                            <div className={`p-2.5 rounded-xl shrink-0 ${section.bg} ${section.color}`}>
                               <Icon size={16} />
                             </div>
                             <div className="min-w-0">
@@ -475,10 +533,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                                 {isArabic ? section.nameAr : section.name}
                               </p>
                             </div>
-                            <div className={`absolute top-2 ${isArabic ? 'left-2' : 'right-2'} w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                            <div className={`absolute top-3.5 ${isArabic ? 'left-3.5' : 'right-3.5'} w-4.5 h-4.5 rounded-full border flex items-center justify-center transition-all ${
                               isChecked ? 'bg-teal-500 border-teal-400 text-[#0c1628]' : 'border-white/20'
                             }`}>
-                              {isChecked && <Check size={10} strokeWidth={4} />}
+                              {isChecked && <Check size={11} strokeWidth={4} />}
                             </div>
                           </div>
                         );
@@ -486,12 +544,12 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-4 sm:pt-6 border-t border-white/5">
+                  {/* SECTION 5: ACTION CONTROLS */}
+                  <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-white/10">
                     <button 
                       type="button" 
                       onClick={() => setShowAddForm(false)}
-                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors text-center"
+                      className="w-full sm:w-auto px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors text-center cursor-pointer"
                       disabled={submitting}
                     >
                       {isArabic ? 'إلغاء' : 'Cancel'}
@@ -500,7 +558,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                     <Button 
                       type="submit" 
                       disabled={submitting}
-                      className="w-full sm:w-auto bg-teal-600 hover:bg-teal-500 text-[#0c1628] font-black rounded-xl py-2.5 px-6 flex justify-center items-center"
+                      className="w-full sm:w-auto bg-teal-500 hover:bg-teal-400 text-[#001529] font-black rounded-2xl py-3 px-8 flex justify-center items-center shadow-[0_0_20px_rgba(45,212,191,0.15)] uppercase italic"
                     >
                       {submitting 
                         ? <Loader2 className="animate-spin" size={16} /> 
@@ -510,12 +568,37 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                   </div>
 
                 </form>
-              </Card>
+              </div>
             </div>
-          )}
+          ) : (
+            /* ── USER LIST VIEW ── */
+            <>
+              {/* Header */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 pb-4 border-b border-white/10">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                     <div className="w-8 h-1 bg-teal-500 rounded-full" />
+                     <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+                         {isArabic ? 'التحكم بالوصول والأعضاء' : 'Access Control & Members'}
+                     </span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic">
+                    {isArabic ? 'إدارة مستخدمي المنصة' : 'User Management'}
+                  </h1>
+                </div>
+                
+                <Button 
+                  onClick={() => { resetFormFields(); setShowAddForm(true); }}
+                  intent="primary" 
+                  className="w-full md:w-auto rounded-2xl py-3.5 px-6 flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic font-black"
+                >
+                  <UserPlus size={16} />
+                  {isArabic ? 'إضافة مستخدم جديد' : 'Add User'}
+                </Button>
+              </div>
 
-          {/* Users Table / Grid Controls */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl">
+              {/* Users Table / Grid Controls */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl sm:rounded-3xl">
             
             {/* Search Input */}
             <div className="relative flex items-center w-full sm:max-w-md">
@@ -665,10 +748,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
               ))}
             </div>
           )}
-
-        </div>
+        </>
       )}
-
+      </div>
+      )}
     </div>
   );
 }

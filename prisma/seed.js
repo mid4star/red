@@ -1,3 +1,34 @@
+const fs = require('fs');
+const path = require('path');
+
+// Helper to load env files
+function loadEnvFile(filePath) {
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    content.split(/\r?\n/).forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const eqIndex = trimmed.indexOf('=');
+        if (eqIndex > 0) {
+          const key = trimmed.substring(0, eqIndex).trim();
+          let value = trimmed.substring(eqIndex + 1).trim();
+          // Remove optional quotes around values
+          if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.substring(1, value.length - 1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = value;
+          }
+        }
+      }
+    });
+  }
+}
+
+// Load env files
+loadEnvFile(path.join(__dirname, '..', '.env.local'));
+loadEnvFile(path.join(__dirname, '..', '.env'));
+
 process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:./prisma/dev.db';
 
 const { PrismaClient } = require('@prisma/client');
@@ -586,10 +617,107 @@ async function main() {
   await prisma.homepageSettings.create({
     data: {
       id: "home-config",
-      heroTitle: "Protecting the Red Sea Treasures",
-      heroTitleAr: "حماية كنوز البحر الأحمر",
-      heroSubtitle: "Real-time monitoring and environmental impact management",
-      heroSubtitleAr: "مراقبة فورية وإدارة الأثر البيئي",
+      heroTitle: "Protect. Explore. Marvel.",
+      heroTitleAr: "احمِ.. استكشف.. انبهر",
+      heroSubtitle: "Discover the majesty of the world’s most enchanting marine ecosystem, where turquoise horizons meet untamed biodiversity.",
+      heroSubtitleAr: "اكتشف روعة أحد أكثر النظم البيئية البحرية سحراً في الكوكب، حيث تلتقي المياه الفيروزية بالطبيعة الخلابة.",
+      heroAuthority: "Red Sea Marine Authority",
+      heroAuthorityAr: "جهاز محميات البحر الأحمر",
+      heroBgUrl: "/red_sea_aerial_hd.png",
+      heroBtn1Text: "Begin Exploration",
+      heroBtn1TextAr: "ابدأ الاستكشاف",
+      heroBtn1Link: "/guide",
+      heroBtn2Text: "Interactive Map",
+      heroBtn2TextAr: "خريطة المحميات",
+      heroBtn2Link: "/reserves",
+      
+      statsJson: JSON.stringify([
+        { value: "35,000", label: "km² Protected Area", labelAr: "كيلومتر مربع من المحميات", icon: "Globe" },
+        { value: "1,200+", label: "Protected Species", labelAr: "من الأنواع المحمية", icon: "Microscope" },
+        { value: "40", label: "Marine Reservoirs", labelAr: "محمية بحرية وبرية", icon: "Shield" },
+        { value: "2.5M", label: "Annual Visitors", labelAr: "زائر سنوي للمحميات", icon: "Eye" }
+      ]),
+
+      missionTag: "Protecting the Vision",
+      missionTagAr: "حماية الرؤية المستقبلية",
+      missionTitle: "Commitment to the Blue Heritage",
+      missionTitleAr: "مهمتنا هي صون التراث الطبيعي",
+      missionDesc: "Implementing standard ecosystem preservation practices through community engagement and regular field surveys, ensuring resource sustainability.",
+      missionDescAr: "نعمل على تطبيق أعلى المعايير الدولية في إدارة المحميات من خلال إشراك المجتمع المحلي والمسوحات الميدانية المستمرة لضمان استدامة الموارد.",
+      missionChecklistJson: JSON.stringify([
+        { text: "Environmental Patrols", textAr: "دوريات بيئية" },
+        { text: "Biodiversity Protection", textAr: "صون التنوع" },
+        { text: "Environmental Awareness", textAr: "وعي بيئي" },
+        { text: "Smart Management", textAr: "إدارة ذكية" }
+      ]),
+      missionImgUrl: "/sea_turtle_close_up_1774790619989.png",
+      missionCardTag: "Current Status",
+      missionCardTagAr: "الوضع الحالي",
+      missionCardTitle: "Peak Ecological Health Index",
+      missionCardTitleAr: "أعلى مستويات الصحة البيئية",
+
+      highlightsTag: "Explore the Arcana",
+      highlightsTagAr: "اكتشف روائع الطبيعة",
+      highlightsTitle: "Reserve Highlights",
+      highlightsTitleAr: "عجائب المحميات",
+      highlightsLinkText: "Explore All Reserves",
+      highlightsLinkTextAr: "تصفح جميع المحميات",
+      highlightsLinkUrl: "/reserves",
+      highlightsJson: JSON.stringify([
+        {
+          id: "reserve_northern_islands",
+          title: "Northern Islands Protectorate",
+          titleAr: "محمية الجزر الشمالية",
+          desc: "A pristine archipelago serving as a critical sanctuary for marine turtles and migratory birds.",
+          descAr: "أرخبيل بكر يعد ملاذاً حرجاً للسلاحف البحرية والطيور المهاجرة.",
+          img: "/red_sea_hero_aerial_1774790601114.png",
+          tag: "PREMIUM DESTINATION",
+          tagAr: "وجهة استثنائية"
+        },
+        {
+          id: "reserve_wadi_el_gemal",
+          title: "Wadi El Gemal National Park",
+          titleAr: "محمية وادي الجمال",
+          desc: "A vast expanse of coastal lagoons and desert peaks, home to the ancient emerald mines.",
+          descAr: "مساحات شاسعة من المناطق الساحلية والجبلية، موطن لمناجم الزمرد القديمة.",
+          img: "/wadi_el_gemal_mangroves_aerial_1774861445577.png",
+          tag: "ECOLOGICAL HERITAGE",
+          tagAr: "تراث بيئي"
+        },
+        {
+          id: "reserve_gebel_elba",
+          title: "Gebel Elba Biosphere",
+          titleAr: "محمية جبل علبة",
+          desc: "An unparalleled mist oasis in the desert with unique biodiversity and lush green peaks.",
+          descAr: "واحة ضبابية فريدة في الصحراء تتميز بتنوع بيولوجي فريد وقمم جبلية خضراء.",
+          img: "/red_sea_sunset_mountains_1774790636632.png",
+          tag: "BIODIVERSITY HUB",
+          tagAr: "مركز التنوع البيولوجي"
+        },
+        {
+          id: "reserve_coral_reef",
+          title: "Coral Reef Protectorate",
+          titleAr: "محمية الحيد المرجاني",
+          desc: "Vibrant and resilient coral reef systems offering world-class diving experiences.",
+          descAr: "أنظمة شعاب مرجانية نابضة بالحياة ومرنة تقدم تجارب غوص بمستوى عالمي.",
+          img: "/brother_islands_reef_wall_1774861464852.png",
+          tag: "MARINE SANCTUARY",
+          tagAr: "ملاذ بحري"
+        }
+      ]),
+
+      ctaBgUrl: "/red_sea_sunset_mountains_1774790636632.png",
+      ctaTitle: "Elevate Your Marine Perspective",
+      ctaTitleAr: "ابدأ رحلتك نحو الرقي البيئي",
+      ctaSubtitle: "Join the guardianship. Experience the world’s most precious marine territories.",
+      ctaSubtitleAr: "انضم إلينا في حماية وتجربة أغلى الكنوز البحرية على وجه الأرض.",
+      ctaBtn1Text: "Book a Visit",
+      ctaBtn1TextAr: "احجز زيارة الآن",
+      ctaBtn1Link: "/reserves",
+      ctaBtn2Text: "Support Conservation",
+      ctaBtn2TextAr: "دعم جهود الصون",
+      ctaBtn2Link: "/guide",
+
       announcements: JSON.stringify([
         { id: "ann-01", text: "New patrol vessels added to fleet.", textAr: "تم إضافة زوارق دورية جديدة للأسطول.", active: true }
       ])

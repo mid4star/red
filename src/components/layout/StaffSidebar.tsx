@@ -40,9 +40,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
 
   const [session, setSession] = useState<{ role: string; allowedSections: string[]; name?: string; nameAr?: string } | null>(null);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem('active_user_session');
     window.dispatchEvent(new Event('user-session-changed'));
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(err => console.error(err));
     router.push(`/${lang}/staff/login`);
   };
   const [screenMode, setScreenMode] = useState<ScreenMode>('desktop');

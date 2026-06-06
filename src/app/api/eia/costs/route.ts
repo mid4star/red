@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyAuth } from '@/lib/auth-utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await verifyAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const costs = await prisma.eiaCost.findMany({
       include: { files: true },
       orderBy: { date: 'desc' },
@@ -18,6 +23,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await verifyAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const body = await req.json();
     const { subject, details, date, status, files, createdBy } = body;
 
@@ -51,6 +60,10 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const auth = await verifyAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const body = await req.json();
     const { id, action, status, subject, details, date, files, user, reason } = body;
 
@@ -67,6 +80,9 @@ export async function PATCH(req: NextRequest) {
         updatedBy: user || 'مصطفى لايق'
       };
     } else if (action === 'APPROVE_DELETE') {
+      if (auth.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+      }
       await prisma.eiaCost.delete({ where: { id } });
       return NextResponse.json({ success: true, deleted: true });
     } else if (action === 'REJECT_DELETE') {

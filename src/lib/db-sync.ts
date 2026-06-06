@@ -53,6 +53,12 @@ export function mapSqlToFirebase(collectionName: string, sqlData: any): any {
     mapped.indicators = safeJsonParse(mapped.indicators, []);
   } else if (collectionName === 'homepage') {
     mapped.announcements = safeJsonParse(mapped.announcements, []);
+    mapped.stats = safeJsonParse(mapped.statsJson, []);
+    mapped.missionChecklist = safeJsonParse(mapped.missionChecklistJson, []);
+    mapped.highlights = safeJsonParse(mapped.highlightsJson, []);
+    delete mapped.statsJson;
+    delete mapped.missionChecklistJson;
+    delete mapped.highlightsJson;
   } else if (collectionName === 'visitor_guide') {
     mapped.links = safeJsonParse(mapped.links, []);
   }

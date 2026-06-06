@@ -156,6 +156,52 @@ export interface HomepageSettings {
   heroTitleAr: string;
   heroSubtitle: string;
   heroSubtitleAr: string;
+  heroAuthority?: string;
+  heroAuthorityAr?: string;
+  heroBgUrl?: string;
+  heroBtn1Text?: string;
+  heroBtn1TextAr?: string;
+  heroBtn1Link?: string;
+  heroBtn2Text?: string;
+  heroBtn2TextAr?: string;
+  heroBtn2Link?: string;
+  
+  stats?: { value: string; label: string; labelAr: string; icon: string }[];
+  
+  missionTag?: string;
+  missionTagAr?: string;
+  missionTitle?: string;
+  missionTitleAr?: string;
+  missionDesc?: string;
+  missionDescAr?: string;
+  missionChecklist?: { text: string; textAr: string }[];
+  missionImgUrl?: string;
+  missionCardTag?: string;
+  missionCardTagAr?: string;
+  missionCardTitle?: string;
+  missionCardTitleAr?: string;
+
+  highlightsTag?: string;
+  highlightsTagAr?: string;
+  highlightsTitle?: string;
+  highlightsTitleAr?: string;
+  highlightsLinkText?: string;
+  highlightsLinkTextAr?: string;
+  highlightsLinkUrl?: string;
+  highlights?: { id: string; title: string; titleAr: string; desc: string; descAr: string; img: string; tag: string; tagAr: string }[];
+
+  ctaBgUrl?: string;
+  ctaTitle?: string;
+  ctaTitleAr?: string;
+  ctaSubtitle?: string;
+  ctaSubtitleAr?: string;
+  ctaBtn1Text?: string;
+  ctaBtn1TextAr?: string;
+  ctaBtn1Link?: string;
+  ctaBtn2Text?: string;
+  ctaBtn2TextAr?: string;
+  ctaBtn2Link?: string;
+
   announcements: { id: string; text: string; textAr: string; link?: string; active: boolean }[];
 }
 

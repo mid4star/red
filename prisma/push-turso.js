@@ -1,7 +1,37 @@
 const { createClient } = require('@libsql/client');
 const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+// Helper to load env files
+function loadEnvFile(filePath) {
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    content.split(/\r?\n/).forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const eqIndex = trimmed.indexOf('=');
+        if (eqIndex > 0) {
+          const key = trimmed.substring(0, eqIndex).trim();
+          let value = trimmed.substring(eqIndex + 1).trim();
+          // Remove optional quotes around values
+          if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.substring(1, value.length - 1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = value;
+          }
+        }
+      }
+    });
+  }
+}
 
 async function main() {
+  // Load .env.local first (takes precedence), then .env
+  loadEnvFile(path.join(__dirname, '..', '.env.local'));
+  loadEnvFile(path.join(__dirname, '..', '.env'));
+
   const url = process.env.DATABASE_URL;
   const authToken = process.env.DATABASE_AUTH_TOKEN;
 
@@ -28,23 +58,31 @@ async function main() {
   }
 
   console.log('Applying schema to Turso database...');
+  console.log('sqlSchema length:', sqlSchema ? sqlSchema.length : 0);
   // Split statements by semicolon and filter out comments and empty statements
   const statements = sqlSchema
     .split(';')
     .map(s => s.trim())
     .filter(s => s.length > 0);
+  
+  console.log('Number of statements parsed:', statements.length);
 
   for (let i = 0; i < statements.length; i++) {
     const stmt = statements[i];
-    const cleanStmt = stmt.replace(/\s+/g, ' ');
-    if (cleanStmt.startsWith('--') || !cleanStmt) continue;
     
-    console.log(`Executing SQL ${i + 1}/${statements.length}: ${cleanStmt.substring(0, 80)}...`);
+    // Strip comment lines starting with '--'
+    const lines = stmt.split(/\r?\n/).map(line => line.trim());
+    const sqlLines = lines.filter(line => !line.startsWith('--') && line.length > 0);
+    const actualQuery = sqlLines.join(' ').trim();
+    
+    if (!actualQuery) continue;
+    
+    console.log(`Executing SQL ${i + 1}/${statements.length}: ${actualQuery.substring(0, 80)}...`);
     try {
-      await client.execute(stmt);
+      await client.execute(actualQuery);
       console.log(`  ✅ Success`);
     } catch (err) {
-      if (err.message.includes('already exists')) {
+      if (err.message.includes('already exists') || err.message.includes('duplicate column name')) {
         console.log(`  ⏭️  Already exists (skipped)`);
       } else {
         console.warn(`  ❌ Error running statement ${i + 1}:`, err.message);
