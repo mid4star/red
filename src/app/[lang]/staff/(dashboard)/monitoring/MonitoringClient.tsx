@@ -32,6 +32,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import ReportModal from './ReportModal';
 
 // Import type from EcoMap
 import type { EcoMapItem } from '@/components/monitoring/EcoMap';
@@ -60,6 +61,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   // Toast notification state for coordinate capture feedback (F5)
   const [coordsToast, setCoordsToast] = useState<{ lat: string; lng: string } | null>(null);
@@ -1483,7 +1485,13 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                 {currentRecordsList.map((item) => (
                   <Card 
                     key={item.id}
-                    className={`p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-300 relative border-l-4 ${
+                    onClick={() => {
+                      // Find the exact item from allMapItems to get latitude/longitude perfectly parsed
+                      const mapItem = allMapItems.find(m => m.id === item.id) || item;
+                      setActiveItem(mapItem as EcoMapItem);
+                      setIsReportModalOpen(true);
+                    }}
+                    className={`p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-300 relative border-l-4 cursor-pointer ${
                       activeItem?.id === item.id ? 'ring-1 ring-teal-500 bg-slate-900/80' : ''
                     } ${
                       activeTab === 'eco_programs' ? 'border-l-teal-500' :
@@ -1647,6 +1655,12 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
         </div>
       </div>
 
+      <ReportModal 
+        isOpen={isReportModalOpen} 
+        onClose={() => setIsReportModalOpen(false)} 
+        item={activeItem} 
+        lang={lang} 
+      />
     </div>
   );
 }

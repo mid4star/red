@@ -303,3 +303,81 @@ html:not(.dark) main .dark * {
   &.text-slate-400 { color: #94a3b8 !important; }
   &.text-slate-500 { color: #64748b !important; }
 }
+
+@media print {
+  /* Hide all generic elements by default that shouldn't be printed */
+  body > * {
+    display: none !important;
+  }
+  
+  /* We show the Next.js root, but hide the sidebar and topnav */
+  #__next, body {
+    display: block !important;
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Hide everything we marked as no-print */
+  .no-print {
+    display: none !important;
+  }
+  
+  .no-print-bg {
+    background: transparent !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Make the modal take over the entire screen */
+  .print-modal-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .print-content {
+    overflow: visible !important;
+    padding: 2rem !important;
+    height: auto !important;
+    color: black !important;
+  }
+
+  /* Force dark text for printing */
+  .text-slate-900, .text-slate-700, .text-slate-500, .text-slate-400, .text-white {
+    color: black !important;
+  }
+
+  .text-teal-600, .text-rose-600, .text-indigo-600, .text-amber-600, .text-teal-400 {
+    color: #1e293b !important; /* Dark slate for icons */
+  }
+
+  /* Borders */
+  .border-slate-900, .border-slate-400, .border-slate-200 {
+    border-color: #cbd5e1 !important;
+  }
+
+  /* Format for A4 */
+  @page {
+    size: A4 portrait;
+    margin: 1.5cm;
+  }
+
+  .print-footer {
+    display: flex !important;
+    break-inside: avoid;
+  }
+
+  .hidden-on-screen {
+    display: flex !important;
+  }
+}

@@ -173,7 +173,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
       <>
         {/* Mobile Bottom Navigation Bar */}
         <nav
-          className="fixed bottom-0 left-0 right-0 z-[200] safe-area-bottom"
+          className="no-print fixed bottom-0 left-0 right-0 z-[200] safe-area-bottom"
           dir={isArabic ? 'rtl' : 'ltr'}
         >
           <div className="bg-[#0a1628]/90 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.5)]">
@@ -355,7 +355,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
         </AnimatePresence>
 
         <aside
-          className={`bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-300 ease-in-out border-none ${
+          className={`no-print bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-300 ease-in-out border-none ${
             tabletExpanded ? 'w-64' : 'w-[72px]'
           } ${isArabic ? 'right-0' : 'left-0'}`}
           dir={isArabic ? 'rtl' : 'ltr'}
@@ -528,7 +528,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
   // ───────────── DESKTOP: Full Sidebar (Original) ─────────────
   return (
     <aside
-      className={`w-72 bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${isArabic ? 'right-0' : 'left-0'}`}
+      className={`no-print w-72 bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${isArabic ? 'right-0' : 'left-0'}`}
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* ── Header / Branding ────────────────────────────────────────────────── */}
