@@ -63,70 +63,80 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
     <div className={`p-4 md:p-8 space-y-8 max-w-7xl mx-auto ${isArabic ? 'text-right' : 'text-left'}`} dir={isArabic ? 'rtl' : 'ltr'}>
       
       {/* ── Cover & Header ────────────────────────────────────────────── */}
-      <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#0a1628]/80 shadow-2xl border border-slate-200 dark:border-white/5 backdrop-blur-xl">
-        {/* Abstract Gradient Cover */}
-        <div className="h-48 md:h-64 w-full bg-gradient-to-br from-teal-600 via-emerald-700 to-[#0a1628] relative overflow-hidden">
+      <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#0a1628]/80 shadow-2xl border border-slate-200 dark:border-white/5 backdrop-blur-xl pb-8">
+        {/* Abstract Gradient Cover (Fixed for all users) */}
+        <div className="h-40 md:h-56 w-full bg-gradient-to-r from-teal-900 via-[#0a1628] to-teal-900 relative overflow-hidden">
+           {/* Subtle pattern */}
            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
-           <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-teal-400 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse" />
-           <div className="absolute -top-24 -left-24 w-72 h-72 bg-emerald-300 rounded-full mix-blend-screen filter blur-[80px] opacity-20" />
+           {/* Glows */}
+           <div className="absolute -bottom-24 right-1/4 w-96 h-96 bg-teal-500 rounded-full mix-blend-screen filter blur-[120px] opacity-40 animate-pulse" />
+           <div className="absolute -top-24 left-1/4 w-72 h-72 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20" />
         </div>
 
         {/* Profile Info Wrapper */}
-        <div className="px-6 pb-8 md:px-10 relative flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-end -mt-20 md:-mt-24">
+        <div className="px-6 md:px-10 relative">
           
-          {/* Avatar */}
-          <div className="relative shrink-0 z-10">
-            <div className="w-40 h-40 md:w-48 md:h-48 rounded-full border-4 md:border-8 border-white dark:border-[#0a1628] bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-2xl flex items-center justify-center">
-              {profile.profilePictureUrl ? (
-                <img src={profile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <UserIcon size={80} className="text-slate-400" />
+          {/* Avatar (Overlapping cover) */}
+          <div className="flex justify-between items-end -mt-16 md:-mt-20 mb-4 md:mb-6">
+            <div className="relative shrink-0 z-10">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] border-white dark:border-[#0f1c2e] bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-xl flex items-center justify-center">
+                {profile.profilePictureUrl ? (
+                  <img src={profile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <UserIcon size={64} className="text-slate-400" />
+                )}
+              </div>
+              {isOnline && (
+                <div 
+                  className={`absolute bottom-3 ${isArabic ? 'left-3' : 'right-3'} w-6 h-6 bg-emerald-500 border-4 border-white dark:border-[#0f1c2e] rounded-full z-20 shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-pulse`} 
+                  title={isArabic ? 'متصل الآن' : 'Online Now'}
+                />
               )}
             </div>
-            {isOnline && (
-              <div 
-                className={`absolute bottom-4 ${isArabic ? 'left-4' : 'right-4'} w-7 h-7 bg-emerald-500 border-4 border-white dark:border-[#0a1628] rounded-full z-20 shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-pulse`} 
-                title={isArabic ? 'متصل الآن' : 'Online Now'}
-              />
-            )}
+            
+            {/* Action buttons could go here on the right/left */}
           </div>
 
           {/* Name & Title */}
-          <div className="flex-1 text-center md:text-start pt-4 md:pt-0 z-10 md:mb-4">
-            <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2 justify-center md:justify-start">
-              <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight drop-shadow-sm">
-                {isArabic ? profile.nameAr || profile.name : profile.name}
-              </h1>
-              {profile.role === 'ADMIN' && (
-                <div className="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 px-3 py-1 rounded-full flex items-center gap-1.5 mx-auto md:mx-0 w-max border border-amber-200 dark:border-amber-500/20 shadow-sm">
-                  <ShieldCheck size={16} />
-                  <span className="text-xs font-bold uppercase tracking-wider">{isArabic ? 'مسؤول المنصة' : 'System Admin'}</span>
-                </div>
-              )}
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 z-10">
+            <div className="space-y-3 flex-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                  {isArabic ? profile.nameAr || profile.name : profile.name}
+                </h1>
+                {profile.role === 'ADMIN' && (
+                  <div className="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 px-3 py-1 rounded-lg flex items-center gap-1.5 border border-amber-200 dark:border-amber-500/20 shadow-sm mt-1">
+                    <ShieldCheck size={16} />
+                    <span className="text-xs font-bold uppercase tracking-wider">{isArabic ? 'مسؤول المنصة' : 'System Admin'}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium">
+                <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/5">
+                  <Key size={14} className="text-teal-500" /> 
+                  <span className="opacity-70 text-xs mr-1 uppercase">ID:</span> {profile.employeeId}
+                </span>
+                
+                {profile.customDomainEmail && (
+                  <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-teal-500 transition-colors cursor-pointer">
+                    <Mail size={16} className="text-teal-500/70" /> {profile.customDomainEmail}
+                  </span>
+                )}
+                {profile.email && !profile.customDomainEmail && (
+                  <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-teal-500 transition-colors cursor-pointer">
+                    <Mail size={16} className="text-slate-400" /> {profile.email}
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-slate-600 dark:text-slate-400 font-medium">
-              <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-lg">
-                <Key size={14} className="text-teal-500" /> ID: {profile.employeeId}
-              </span>
-              {profile.email && (
-                <span className="flex items-center gap-1.5 hover:text-teal-500 transition-colors cursor-pointer">
-                  <Mail size={14} /> {profile.email}
-                </span>
-              )}
-              {profile.customDomainEmail && (
-                <span className="flex items-center gap-1.5 text-teal-600 dark:text-teal-400 hover:text-teal-500 transition-colors cursor-pointer">
-                  <Mail size={14} /> {profile.customDomainEmail}
-                </span>
-              )}
-            </div>
-
-            {/* Badges */}
+            {/* Badges on the side */}
             {badgesArray.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-5">
+              <div className="flex flex-wrap md:justify-end gap-2 shrink-0 md:max-w-[300px]">
                 {badgesArray.map((badge: string, i: number) => (
-                  <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-teal-500/10 to-emerald-500/10 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/20 text-xs font-black uppercase tracking-wider shadow-sm">
-                    <Award size={14} />
+                  <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-br from-teal-50 dark:from-teal-900/30 to-emerald-50 dark:to-emerald-900/30 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 text-xs font-black uppercase tracking-wider shadow-sm">
+                    <Award size={14} className="opacity-70" />
                     {badge}
                   </div>
                 ))}
