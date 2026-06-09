@@ -27,6 +27,14 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<'patrols' | 'violations' | 'surveys'>('patrols');
 
+  // Password state
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+
   useEffect(() => {
     fetch('/api/staff/profile')
       .then(res => res.json())
@@ -74,6 +82,51 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
       alert(err.message);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setPasswordError(isArabic ? 'يرجى تعبئة جميع الحقول' : 'Please fill all fields');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError(isArabic ? 'كلمة المرور الجديدة غير متطابقة' : 'New passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError(isArabic ? 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل' : 'Password must be at least 6 characters');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const res = await fetch('/api/staff/profile/password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldPassword, newPassword })
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Failed to update password');
+
+      setPasswordSuccess(isArabic ? 'تم تحديث كلمة المرور بنجاح' : 'Password updated successfully');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setPasswordSuccess(null), 3000);
+    } catch (err: any) {
+      setPasswordError(err.message);
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
@@ -297,6 +350,75 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
               </div>
             </Card>
           )}
+
+          {/* Password Update Card */}
+          <Card className="p-6 bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-xl rounded-3xl">
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+              <Key className="text-teal-500" size={20} />
+              {isArabic ? 'تغيير كلمة المرور' : 'Update Password'}
+            </h3>
+            
+            <form onSubmit={handlePasswordUpdate} className="space-y-4">
+              {passwordError && (
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs font-bold flex items-center gap-2">
+                  <AlertTriangle size={14} /> {passwordError}
+                </div>
+              )}
+              {passwordSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle2 size={14} /> {passwordSuccess}
+                </div>
+              )}
+              
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  {isArabic ? 'كلمة المرور الحالية' : 'Current Password'}
+                </label>
+                <input 
+                  type="password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 outline-none"
+                  placeholder={isArabic ? 'أدخل كلمة المرور الحالية' : 'Enter current password'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  {isArabic ? 'كلمة المرور الجديدة' : 'New Password'}
+                </label>
+                <input 
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 outline-none"
+                  placeholder={isArabic ? 'أدخل كلمة المرور الجديدة' : 'Enter new password'}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  {isArabic ? 'تأكيد كلمة المرور الجديدة' : 'Confirm New Password'}
+                </label>
+                <input 
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 outline-none"
+                  placeholder={isArabic ? 'أعد كتابة كلمة المرور الجديدة' : 'Re-enter new password'}
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={passwordLoading}
+                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+              >
+                {passwordLoading ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
+                {isArabic ? 'تحديث كلمة المرور' : 'Update Password'}
+              </button>
+            </form>
+          </Card>
         </div>
 
         {/* Right Column (Stats & Activity) */}
