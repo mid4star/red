@@ -18,7 +18,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const [employeeId, setEmployeeId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedReserve, setSelectedReserve] = useState(RESERVES[0].id);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +26,8 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!employeeId || !password) {
-      setError(isAr ? 'يرجى إدخال رقم الموظف ورمز الدخول' : 'Please enter Employee ID and Access Code');
+    if (!email || !password) {
+      setError(isAr ? 'يرجى إدخال البريد الإلكتروني وكلمة المرور' : 'Please enter Email and Password');
       return;
     }
 
@@ -40,7 +40,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ employeeId, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
@@ -70,8 +70,8 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
     }
   };
 
-  const triggerQuickLogin = async (empId: string, accessCode: string) => {
-    setEmployeeId(empId);
+  const triggerQuickLogin = async (empEmail: string, accessCode: string) => {
+    setEmail(empEmail);
     setPassword(accessCode);
     setError(null);
     setLoading(true);
@@ -82,7 +82,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ employeeId: empId, password: accessCode }),
+        body: JSON.stringify({ email: empEmail, password: accessCode }),
       });
 
       const data = await response.json();
@@ -227,22 +227,22 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                 </motion.div>
               )}
               
-              {/* Employee ID */}
+              {/* Email */}
               <div className="space-y-2">
                 <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                  {isAr ? 'رقم الموظف' : 'Operator ID'}
+                  {isAr ? 'البريد الإلكتروني' : 'Email Address'}
                 </label>
                 <div className="relative group">
                   <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors`}>
                     <User size={18} />
                   </div>
                   <input 
-                    type="text" 
-                    value={employeeId}
-                    disabled={loading}
-                    onChange={(e) => setEmployeeId(e.target.value)}
-                    placeholder={isAr ? 'أدخل رقم هويتك الوظيفية' : 'Enter your staff ID'}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={isAr ? 'user@rsmp-eg.com' : 'user@rsmp-eg.com'}
                     className={`w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
+                    dir="ltr"
                   />
                 </div>
               </div>

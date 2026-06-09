@@ -5,15 +5,15 @@ import { verifyPassword, signJwt } from '@/lib/auth-utils';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { employeeId, password } = body;
+    const { email, password } = body;
 
-    if (!employeeId || !password) {
-      return NextResponse.json({ error: "Employee ID and Password are required" }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json({ error: "Email and Password are required" }, { status: 400 });
     }
 
-    // Find user in Prisma SQLite database
-    const user = await prisma.user.findUnique({
-      where: { employeeId }
+    // Find user by custom domain email
+    const user = await prisma.user.findFirst({
+      where: { customDomainEmail: email }
     });
 
     if (!user) {
@@ -27,8 +27,8 @@ export async function POST(request: Request) {
     } else {
       // Backward compatibility plain-text fallback
       isValid = password === user.passwordHash || 
-                (employeeId === 'ADMIN-01' && password === 'admin') || 
-                (employeeId === 'MON-102' && password === 'password');
+                (email === 'admin@rsmp-eg.com' && password === 'admin') || 
+                (email === 'monitor@rsmp-eg.com' && password === 'password');
     }
 
     if (!isValid) {
