@@ -312,10 +312,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
 
                   {/* User Info Footer */}
                   <div className="px-5 pb-5 pt-2 border-t border-white/5 mt-1">
-                    <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/5">
+                    <Link href={`/${lang}/staff/profile`} onClick={() => setMoreDrawerOpen(false)} className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] transition-all cursor-pointer no-underline">
                       <div className="w-9 h-9 rounded-full bg-[#1e293b] border-2 border-white/10 overflow-hidden shrink-0">
                         <img
-                          src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                          src={session?.profilePictureUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
                           alt="User Avatar"
                           className="w-full h-full object-cover"
                         />
@@ -329,13 +329,13 @@ export function StaffSidebar({ lang }: { lang: string }) {
                         </p>
                       </div>
                       <button 
-                        onClick={handleLogout} 
-                        className="text-slate-500 hover:text-red-400 transition-colors p-2 cursor-pointer"
+                        onClick={(e) => { e.preventDefault(); handleLogout(); }} 
+                        className="text-slate-500 hover:text-red-400 transition-colors p-2 cursor-pointer z-10"
                         title={isArabic ? 'تسجيل الخروج' : 'Log Out'}
                       >
                         <LogOut size={16} />
                       </button>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -454,10 +454,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
 
         {/* Tablet Footer */}
         <div className="mt-auto p-2 border-t border-white/5 bg-white/[0.02]">
-          <div className={`flex items-center gap-2 p-2 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer ${tabletExpanded ? '' : 'justify-center'}`}>
+          <Link href={`/${lang}/staff/profile`} className={`flex items-center gap-2 p-2 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer no-underline ${tabletExpanded ? '' : 'justify-center'}`}>
             <div className="w-8 h-8 rounded-full bg-[#1e293b] border-2 border-white/10 overflow-hidden shrink-0">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                src={session?.profilePictureUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
                 alt="User Avatar"
                 className="w-full h-full object-cover"
               />
@@ -473,15 +473,15 @@ export function StaffSidebar({ lang }: { lang: string }) {
                   </p>
                 </motion.div>
                 <button 
-                  onClick={handleLogout} 
-                  className="text-slate-500 hover:text-red-400 transition-colors p-1 cursor-pointer shrink-0"
+                  onClick={(e) => { e.preventDefault(); handleLogout(); }} 
+                  className="text-slate-500 hover:text-red-400 transition-colors p-1 cursor-pointer shrink-0 z-10"
                   title={isArabic ? 'تسجيل الخروج' : 'Log Out'}
                 >
                   <LogOut size={14} />
                 </button>
               </>
             )}
-          </div>
+          </Link>
           <div className={`mt-3 pt-2 border-t border-white/5 flex items-center justify-between px-1 ${tabletExpanded ? '' : 'justify-center'}`}>
             <button
               onClick={toggleTheme}
@@ -605,16 +605,16 @@ export function StaffSidebar({ lang }: { lang: string }) {
 
       {/* ── User Session / Bottom Footer ────────────────────────────────────── */}
       <div className="mt-auto p-5 border-t border-white/5 bg-white/[0.02]">
-        <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer">
+        <Link href={`/${lang}/staff/profile`} className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer no-underline">
           <div className="w-10 h-10 rounded-full bg-[#1e293b] border-2 border-white/10 overflow-hidden shrink-0">
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              src={session?.profilePictureUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
               alt="User Avatar"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-[12px] font-bold text-white line-clamp-2 leading-tight">
+            <h4 className="text-[12px] font-bold text-white line-clamp-2 leading-tight group-hover:text-teal-400 transition-colors">
               {session ? (isArabic ? session.nameAr || 'مصطفى لايق' : session.name || 'M. Layaq') : (isArabic ? 'مصطفى لايق' : ' M. Layaq')}
             </h4>
             <p className="text-[10px] text-slate-500 font-medium line-clamp-2 leading-tight uppercase tracking-tighter mt-0.5">
@@ -622,13 +622,13 @@ export function StaffSidebar({ lang }: { lang: string }) {
             </p>
           </div>
           <button 
-            onClick={handleLogout} 
-            className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+            onClick={(e) => { e.preventDefault(); handleLogout(); }} 
+            className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer z-10 p-2"
             title={isArabic ? 'تسجيل الخروج' : 'Log Out'}
           >
             <LogOut size={16} />
           </button>
-        </div>
+        </Link>
 
         <div className="mt-4 flex justify-between items-center px-2 border-t border-white/5 pt-3">
           <button
