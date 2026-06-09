@@ -305,30 +305,15 @@ html:not(.dark) main .dark * {
 }
 
 @media print {
-  /* Hide all generic elements by default that shouldn't be printed */
-  body > * {
-    display: none !important;
-  }
-  
-  /* We show the Next.js root, but hide the sidebar and topnav */
-  #__next, body {
-    display: block !important;
+  /* Hide everything using visibility to maintain document structure but hide content */
+  body {
+    visibility: hidden !important;
     background: white !important;
-    color: black !important;
-  }
-  
-  /* Hide everything we marked as no-print */
-  .no-print {
-    display: none !important;
-  }
-  
-  .no-print-bg {
-    background: transparent !important;
-    backdrop-filter: none !important;
   }
 
-  /* Make the modal take over the entire screen */
+  /* Make the modal take over the entire screen and be visible */
   .print-modal-container {
+    visibility: visible !important;
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -342,28 +327,40 @@ html:not(.dark) main .dark * {
     border: none !important;
     background: white !important;
     overflow: visible !important;
-    display: block !important;
   }
 
   .print-content {
+    visibility: visible !important;
     overflow: visible !important;
-    padding: 2rem !important;
+    padding: 0 !important;
     height: auto !important;
     color: black !important;
+    background: white !important;
   }
 
-  /* Force dark text for printing */
-  .text-slate-900, .text-slate-700, .text-slate-500, .text-slate-400, .text-white {
+  /* Hide specific elements within the visible modal that shouldn't print */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Force dark text for printing inside the modal */
+  .print-modal-container * {
     color: black !important;
   }
 
-  .text-teal-600, .text-rose-600, .text-indigo-600, .text-amber-600, .text-teal-400 {
-    color: #1e293b !important; /* Dark slate for icons */
+  .text-teal-600, .text-rose-600, .text-indigo-600, .text-amber-600, .text-teal-500, .text-rose-500, .text-indigo-500, .text-amber-500 {
+    color: #1e293b !important;
   }
 
-  /* Borders */
-  .border-slate-900, .border-slate-400, .border-slate-200 {
+  .print-modal-container .border-slate-800, 
+  .print-modal-container .border-white\/20,
+  .print-modal-container .border-slate-200 {
     border-color: #cbd5e1 !important;
+  }
+
+  .print-modal-container .bg-slate-50, 
+  .print-modal-container .bg-white\/\[0\.02\] {
+    background: transparent !important;
   }
 
   /* Format for A4 */

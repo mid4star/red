@@ -61,7 +61,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
   );
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 no-print-bg backdrop-blur-md bg-slate-900/60 dark:bg-[#050b14]/80 transition-all duration-300">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 no-print-bg backdrop-blur-md bg-black/60 dark:bg-[#050b14]/80 transition-all duration-300">
       
       {/* Background click to close (no-print) */}
       <div className="absolute inset-0 no-print cursor-pointer" onClick={onClose} />
@@ -101,7 +101,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
         </div>
 
         {/* Scrollable Printable Content */}
-        <div className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 w-full h-full custom-scrollbar bg-white dark:bg-transparent">
+        <div className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 flex-1 min-h-0 w-full custom-scrollbar bg-white dark:bg-transparent">
            
            {/* Report Header for Print */}
            <div className="border-b-2 border-slate-800 dark:border-white/20 pb-6 mb-8 print-header">
