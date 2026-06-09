@@ -166,7 +166,7 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
                   <tr key={route.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
                     <td className="p-4">
                       <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        {route.alias}@redsea.gov.eg
+                        {route.alias}@rsmp-eg.com
                       </div>
                       <div className="text-xs text-slate-500">{route.description || '--'}</div>
                     </td>
@@ -260,7 +260,7 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
                         dir="ltr"
                       />
                       <span className="absolute right-4 text-slate-400 font-mono text-sm pointer-events-none">
-                        @redsea.gov.eg
+                        @rsmp-eg.com
                       </span>
                     </div>
                   </div>
