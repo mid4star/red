@@ -22,10 +22,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const routes = await prisma.emailRoute.findMany({
-      where: { userId: auth.id },
-      orderBy: { createdAt: 'desc' }
-    });
+    let routes;
+    if (auth.role === 'ADMIN') {
+      routes = await prisma.emailRoute.findMany({
+        orderBy: { createdAt: 'desc' }
+      });
+    } else {
+      routes = await prisma.emailRoute.findMany({
+        where: { userId: auth.id },
+        orderBy: { createdAt: 'desc' }
+      });
+    }
 
     return NextResponse.json({ success: true, data: routes });
   } catch (error: any) {

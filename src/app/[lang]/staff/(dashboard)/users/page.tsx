@@ -262,9 +262,9 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
       // Automatically create or attempt to create Email Routing Alias
       if (email && customDomainEmail && customDomainEmail.includes('@rsmp-eg.com')) {
-        const aliasStr = customDomainEmail.split('@')[0];
+        const aliasStr = customDomainEmail.split('@')[0].toLowerCase();
         try {
-          await fetch('/api/staff/email-routing', {
+          const cfRes = await fetch('/api/staff/email-routing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -273,8 +273,12 @@ export default function UserManagementPage({ params }: { params: { lang: string 
               description: `صندوق بريد تلقائي للموظف ${employeeId} - ${nameAr}`
             })
           });
+          const cfData = await cfRes.json();
+          if (!cfRes.ok) {
+             console.error('Email routing alias auto-creation API error:', cfData);
+          }
         } catch (cfErr) {
-          console.error('Email routing alias auto-creation failed:', cfErr);
+          console.error('Email routing alias auto-creation network failed:', cfErr);
         }
       }
 
