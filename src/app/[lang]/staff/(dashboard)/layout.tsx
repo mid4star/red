@@ -60,6 +60,20 @@ export default function StaffLayout({ children, params }: { children: React.Reac
     };
   }, []);
 
+  // Presence Heartbeat
+  useEffect(() => {
+    if (!session) return;
+    
+    // Ping immediately on mount if session exists
+    fetch('/api/staff/presence', { method: 'POST' }).catch(console.error);
+
+    const interval = setInterval(() => {
+      fetch('/api/staff/presence', { method: 'POST' }).catch(console.error);
+    }, 60 * 1000); // every 1 minute
+
+    return () => clearInterval(interval);
+  }, [session]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-th-bg flex items-center justify-center">

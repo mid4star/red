@@ -45,6 +45,7 @@ model User {
   badges            String?  // JSON or comma-separated
   certifications    String?  // Comma-separated or JSON
   allowedSections   String?  // JSON
+  lastActive        DateTime?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

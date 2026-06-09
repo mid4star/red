@@ -18,6 +18,7 @@ export interface User {
   status: 'ACTIVE' | 'ON_LEAVE' | 'INACTIVE';
   certifications: string[];
   allowedSections?: string[];
+  lastActive?: string | Date | Timestamp;
   createdAt: Timestamp;
 }
 

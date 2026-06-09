@@ -550,7 +550,9 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                             ) : (
                               user.role === 'ADMIN' ? <ShieldCheck size={24} className="text-teal-500" /> : <UserIcon size={24} className="text-slate-400" />
                             )}
-                            {user.status === 'ACTIVE' && <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#0a1628] rounded-full z-10" />}
+                            {user.lastActive && (Date.now() - new Date(user.lastActive).getTime() < 2 * 60 * 1000) && (
+                              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#0a1628] rounded-full z-10 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" title={isArabic ? 'متصل الآن' : 'Online Now'} />
+                            )}
                           </div>
                           
                           <div className="min-w-0 flex-1">
