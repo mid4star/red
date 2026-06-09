@@ -447,6 +447,15 @@ model BeachSurvey {
 
 model SystemConfig {
   id              String   @id @default("global")
+  siteName        String?  @default("Red Sea Reserves")
+  siteNameAr      String?  @default("محميات البحر الأحمر")
+  siteSlogan      String?  @default("Strategic Protectorate")
+  siteSloganAr    String?  @default("مركز الحماية والأبحاث")
+  siteTabTitle    String?  @default("Red Sea Marine Reserves Authority")
+  siteTabTitleAr  String?  @default("هيئة محميات البحر الأحمر")
+  siteStatus      String?  @default("Global Ops: ONLINE")
+  siteStatusAr    String?  @default("حالة العمليات: نشط")
+  siteLogoUrl     String?  @default("")
   phone           String   @default("+20 65 354 8400")
   email           String   @default("info@redsea.gov.sa")
   address         String   @default("El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt")

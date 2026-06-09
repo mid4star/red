@@ -12,12 +12,15 @@ import {
    CheckCircle2,
    Loader2,
    ExternalLink,
-   Navigation
+   Navigation,
+   Palette,
+   Type
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
 const TABS = [
+   { id: 'identity', icon: Palette, label: 'Site Identity', labelAr: 'هوية الموقع' },
    { id: 'general', icon: Globe, label: 'General & Contacts', labelAr: 'العامة والتواصل' },
    { id: 'social', icon: Navigation, label: 'Social Channels', labelAr: 'قنوات التواصل' },
    { id: 'rescue', icon: Shield, label: 'Distress & Rescue', labelAr: 'الطوارئ والإنقاذ' }
@@ -31,6 +34,15 @@ export default function SettingsPage({ params }: { params: { lang: string } }) {
    const [showSaved, setShowSaved] = useState(false);
 
    const [settings, setSettings] = useState({
+      siteName: 'Red Sea Reserves',
+      siteNameAr: 'محميات البحر الأحمر',
+      siteSlogan: 'Strategic Protectorate',
+      siteSloganAr: 'مركز الحماية والأبحاث',
+      siteTabTitle: 'Red Sea Marine Reserves Authority',
+      siteTabTitleAr: 'هيئة محميات البحر الأحمر',
+      siteStatus: 'Global Ops: ONLINE',
+      siteStatusAr: 'حالة العمليات: نشط',
+      siteLogoUrl: '',
       phone: '+20 65 354 8400',
       email: 'info@redsea.gov.sa',
       address: 'El Corniche St., Hurghada, Red Sea Governorate, Arab Republic of Egypt',
@@ -57,6 +69,15 @@ export default function SettingsPage({ params }: { params: { lang: string } }) {
                const globalConfig = json.data.find((item: any) => item.id === 'global') || json.data[0];
                if (globalConfig) {
                   setSettings({
+                     siteName: globalConfig.siteName || 'Red Sea Reserves',
+                     siteNameAr: globalConfig.siteNameAr || 'محميات البحر الأحمر',
+                     siteSlogan: globalConfig.siteSlogan || 'Strategic Protectorate',
+                     siteSloganAr: globalConfig.siteSloganAr || 'مركز الحماية والأبحاث',
+                     siteTabTitle: globalConfig.siteTabTitle || 'Red Sea Marine Reserves Authority',
+                     siteTabTitleAr: globalConfig.siteTabTitleAr || 'هيئة محميات البحر الأحمر',
+                     siteStatus: globalConfig.siteStatus || 'Global Ops: ONLINE',
+                     siteStatusAr: globalConfig.siteStatusAr || 'حالة العمليات: نشط',
+                     siteLogoUrl: globalConfig.siteLogoUrl || '',
                      phone: globalConfig.phone || '',
                      email: globalConfig.email || '',
                      address: globalConfig.address || '',
@@ -198,6 +219,133 @@ export default function SettingsPage({ params }: { params: { lang: string } }) {
             {/* ── Settings Content ─────────────────────────────────────────────────── */}
             <div className="lg:col-span-3">
                <Card className="bg-slate-900/40 backdrop-blur-xl border border-white/5 overflow-hidden">
+                  
+                  {/* Site Identity Settings */}
+                  {activeTab === 'identity' && (
+                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-8 space-y-8">
+                        <div className="border-b border-white/5 pb-4">
+                           <h2 className="text-xl font-black text-white tracking-tighter uppercase italic">{isArabic ? 'هوية الموقع والمظهر' : 'Site Identity & Appearance'}</h2>
+                           <p className="text-sm text-slate-400 mt-1">{isArabic ? 'تعديل اسم الموقع، الشعار، والنصوص التي تظهر للزوار.' : 'Configure the site name, logo, and public-facing text.'}</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <div className="space-y-2 md:col-span-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                 <Palette size={14} className="text-teal-400" />
+                                 {isArabic ? 'رابط صورة الشعار (Logo URL)' : 'Logo Image URL'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteLogoUrl}
+                                 onChange={(e) => setSettings({ ...settings, siteLogoUrl: e.target.value })}
+                                 placeholder={isArabic ? 'اترك الحقل فارغاً لاستخدام الشعار الافتراضي (R)' : 'Leave empty for default (R) logo'}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                 {isArabic ? 'اسم الموقع (بالعربية)' : 'Site Name (Arabic)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteNameAr}
+                                 onChange={(e) => setSettings({ ...settings, siteNameAr: e.target.value })}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                 {isArabic ? 'اسم الموقع (بالإنجليزية)' : 'Site Name (English)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteName}
+                                 onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                 {isArabic ? 'الشعار النصي (Slogan) (بالعربية)' : 'Site Slogan (Arabic)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteSloganAr}
+                                 onChange={(e) => setSettings({ ...settings, siteSloganAr: e.target.value })}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                 {isArabic ? 'الشعار النصي (Slogan) (بالإنجليزية)' : 'Site Slogan (English)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteSlogan}
+                                 onChange={(e) => setSettings({ ...settings, siteSlogan: e.target.value })}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                 {isArabic ? 'عنوان التبويب (Tab Title) (بالعربية)' : 'Tab Title (Arabic)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteTabTitleAr}
+                                 onChange={(e) => setSettings({ ...settings, siteTabTitleAr: e.target.value })}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                                 {isArabic ? 'عنوان التبويب (Tab Title) (بالإنجليزية)' : 'Tab Title (English)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteTabTitle}
+                                 onChange={(e) => setSettings({ ...settings, siteTabTitle: e.target.value })}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+                           
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                 <Shield size={14} className="text-teal-400" />
+                                 {isArabic ? 'حالة الموقع في التذييل (بالعربية)' : 'Site Status Footer (Arabic)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteStatusAr}
+                                 onChange={(e) => setSettings({ ...settings, siteStatusAr: e.target.value })}
+                                 placeholder={isArabic ? 'مثال: حالة العمليات: نشط' : ''}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                 <Shield size={14} className="text-teal-400" />
+                                 {isArabic ? 'حالة الموقع في التذييل (بالإنجليزية)' : 'Site Status Footer (English)'}
+                              </label>
+                              <input
+                                 type="text"
+                                 value={settings.siteStatus}
+                                 onChange={(e) => setSettings({ ...settings, siteStatus: e.target.value })}
+                                 placeholder={isArabic ? '' : 'e.g. Global Ops: ONLINE'}
+                                 className="w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white outline-none focus:border-teal-500/50"
+                              />
+                           </div>
+
+                        </div>
+                     </motion.div>
+                  )}
                   
                   {/* General & Contacts Settings */}
                   {activeTab === 'general' && (

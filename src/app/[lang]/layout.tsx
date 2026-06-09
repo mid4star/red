@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '../globals.css';
 import { Inter, Cairo } from 'next/font/google';
 import { ThemeProvider } from '../../components/layout/ThemeProvider';
+import { prisma } from '@/lib/prisma';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const cairo = Cairo({ weight: ['300', '400', '500', '600', '700', '800', '900'], subsets: ['arabic'], variable: '--font-cairo' });
@@ -9,12 +10,19 @@ const cairo = Cairo({ weight: ['300', '400', '500', '600', '700', '800', '900'],
 export async function generateMetadata({ params }: { params: { lang: string } }) {
    const isAr = params.lang === 'ar';
    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://red-sea-authority.eg';
-   
+   let globalConfig: any = {};
+   try {
+      globalConfig = await (prisma as any).systemConfig.findUnique({ where: { id: 'global' } }) || {};
+   } catch(e) {}
+
+   const siteName = (isAr ? globalConfig.siteNameAr : globalConfig.siteName) || (isAr ? 'محميات البحر الأحمر' : 'Red Sea Reserves');
+   const tabTitle = (isAr ? globalConfig.siteTabTitleAr : globalConfig.siteTabTitle) || (isAr ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority');
+
    return {
       metadataBase: new URL(baseUrl),
       title: {
-         default: isAr ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority',
-         template: isAr ? '%s | هيئة محميات البحر الأحمر' : '%s | Red Sea Marine Reserves'
+         default: tabTitle,
+         template: `%s | ${siteName}`
       },
       description: isAr 
          ? 'البوابة الرسمية لهيئة محميات البحر الأحمر لجمهورية مصر العربية - رصد البيئة البحرية والتصاريح والبيانات المفتوحة.'
@@ -27,12 +35,12 @@ export async function generateMetadata({ params }: { params: { lang: string } })
          }
       },
       openGraph: {
-         title: isAr ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority',
+         title: tabTitle,
          description: isAr 
             ? 'البوابة الرسمية لهيئة محميات البحر الأحمر لجمهورية مصر العربية - رصد البيئة البحرية والتصاريح والبيانات المفتوحة.'
             : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit application, and open environmental data.',
          url: `${baseUrl}/${params.lang}`,
-         siteName: isAr ? 'محميات البحر الأحمر' : 'RED',
+         siteName: siteName,
          locale: isAr ? 'ar_EG' : 'en_US',
          type: 'website',
          images: [
@@ -46,7 +54,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
       },
       twitter: {
          card: 'summary_large_image',
-         title: isAr ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority',
+         title: tabTitle,
          description: isAr 
             ? 'البوابة الرسمية لهيئة محميات البحر الأحمر لجمهورية مصر العربية - رصد البيئة البحرية والتصاريح والبيانات المفتوحة.'
             : 'Official portal of the Red Sea Marine Reserves Authority of Egypt - Marine monitoring, permit application, and open environmental data.',
@@ -70,7 +78,7 @@ export async function generateStaticParams() {
   return [{ lang: 'ar' }, { lang: 'en' }];
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
 }: {
@@ -80,11 +88,19 @@ export default function RootLayout({
   const isArabic = params.lang === 'ar';
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://red-sea-authority.eg';
 
+  let globalConfig: any = {};
+  try {
+     globalConfig = await (prisma as any).systemConfig.findUnique({ where: { id: 'global' } }) || {};
+  } catch(e) {}
+
+  const siteName = (isArabic ? globalConfig.siteNameAr : globalConfig.siteName) || (isArabic ? 'محميات البحر الأحمر' : 'Red Sea Reserves');
+  const tabTitle = (isArabic ? globalConfig.siteTabTitleAr : globalConfig.siteTabTitle) || (isArabic ? 'هيئة محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority');
+
   const jsonLd = {
      '@context': 'https://schema.org',
      '@type': 'GovernmentOrganization',
-     'name': isArabic ? 'جهاز محميات البحر الأحمر البحرية' : 'Red Sea Marine Reserves Authority',
-     'alternateName': isArabic ? 'هيئة محميات البحر الأحمر' : 'RED',
+     'name': tabTitle,
+     'alternateName': siteName,
      'url': `${baseUrl}/${params.lang}`,
      'logo': `${baseUrl}/favicon.ico`,
      'contactPoint': {

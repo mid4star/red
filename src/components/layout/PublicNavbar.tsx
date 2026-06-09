@@ -14,6 +14,27 @@ export function PublicNavbar({ lang }: { lang: string }) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [config, setConfig] = useState<any>({
+    siteName: 'Red Sea Reserves',
+    siteNameAr: 'محميات البحر الأحمر',
+    siteSlogan: 'Strategic Protectorate',
+    siteSloganAr: 'Strategic Protectorate',
+    siteLogoUrl: '',
+  });
+
+  useEffect(() => {
+     fetch('/api/staff/query?collection=system_config')
+        .then(r => r.json())
+        .then(json => {
+           if (json.success && json.data && json.data.length > 0) {
+              const globalConfig = json.data.find((item: any) => item.id === 'global') || json.data[0];
+              if (globalConfig) {
+                 setConfig(globalConfig);
+              }
+           }
+        })
+        .catch(err => console.error(err));
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,14 +65,22 @@ export function PublicNavbar({ lang }: { lang: string }) {
         <div className="flex justify-between items-center">
           {/* ── Logo ────────────────────────────────────────────────────────── */}
           <Link href={`/${lang}`} className="flex items-center gap-3.5 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_0_20px_rgba(45,212,191,0.3)] group-hover:scale-110 transition-transform duration-500">
-              <span className="text-white font-black text-xl italic uppercase tracking-tighter">R</span>
-            </div>
+            {config.siteLogoUrl ? (
+               <div className="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-[0_0_20px_rgba(45,212,191,0.3)] group-hover:scale-110 transition-transform duration-500">
+                  <img src={config.siteLogoUrl} alt="Logo" className="w-full h-full object-cover" />
+               </div>
+            ) : (
+               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_0_20px_rgba(45,212,191,0.3)] group-hover:scale-110 transition-transform duration-500">
+                 <span className="text-white font-black text-xl italic uppercase tracking-tighter">R</span>
+               </div>
+            )}
             <div className="flex flex-col">
               <span className="text-lg font-black text-th-text italic leading-none tracking-tighter uppercase transition-colors group-hover:text-teal-400">
-                {isAr ? 'محميات البحر الأحمر' : 'Red Sea Reserves'}
+                {isAr ? config.siteNameAr : config.siteName}
               </span>
-              <span className="text-[9px] font-black text-teal-500 uppercase tracking-[0.3em] mt-1">Strategic Protectorate</span>
+              <span className="text-[9px] font-black text-teal-500 uppercase tracking-[0.3em] mt-1">
+                {isAr ? config.siteSloganAr : config.siteSlogan}
+              </span>
             </div>
           </Link>
  
@@ -108,7 +137,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
               {isAr ? 'English' : 'عربي'}
             </Link>
 
-            <Link href={`/${lang}/staff/login`} className="no-underline">
+            <Link href={`/${lang}/staff/login`} className="hidden md:block no-underline">
                <button className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl bg-teal-500 text-[#001529] font-black text-[12px] tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
                   <User size={16} strokeWidth={3} />
                   {isAr ? 'بوابة الموظفين' : 'Staff Portal'}
@@ -132,7 +161,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-th-surface/95 backdrop-blur-2xl border-b border-th-border py-8 px-6 flex flex-col gap-6 lg:hidden"
+            className="absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-b border-th-border py-8 px-6 flex flex-col gap-6 lg:hidden"
           >
             {navItems.map((item) => (
               <Link 
@@ -144,7 +173,13 @@ export function PublicNavbar({ lang }: { lang: string }) {
                 {item.name}
               </Link>
             ))}
-            <div className="pt-6 border-t border-white/5 flex flex-col gap-4">
+            <div className="pt-6 border-t border-th-border flex flex-col gap-6">
+               <Link href={`/${lang}/staff/login`} onClick={() => setMobileMenuOpen(false)} className="no-underline">
+                  <button className="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-teal-500 text-[#001529] font-black text-[14px] tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
+                     <User size={18} strokeWidth={3} />
+                     {isAr ? 'بوابة الموظفين' : 'Staff Portal'}
+                  </button>
+               </Link>
                <Link 
                  href={(() => {
                    if (!pathname) return `/${isAr ? 'en' : 'ar'}`;

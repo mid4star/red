@@ -23,7 +23,14 @@ export function PublicFooter({ lang }: { lang: string }) {
      facebookUrl: '#',
      twitterUrl: '#',
      youtubeUrl: '#',
-     instagramUrl: '#'
+     instagramUrl: '#',
+     siteName: 'Red Sea Reserves',
+     siteNameAr: 'محميات البحر الأحمر',
+     siteSlogan: 'Conservation & Research Hub',
+     siteSloganAr: 'مركز الحماية والأبحاث',
+     siteStatus: 'Global Ops: ONLINE',
+     siteStatusAr: 'حالة العمليات: نشط',
+     siteLogoUrl: '',
   });
 
   React.useEffect(() => {
@@ -81,14 +88,20 @@ export function PublicFooter({ lang }: { lang: string }) {
           {/* ── Authority Info ────────────────────────────────────────────────── */}
           <div className="lg:col-span-5 space-y-8">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_20px_40px_rgba(45,212,191,0.2)]">
-                <span className="text-white font-black text-2xl italic tracking-tighter">R</span>
-              </div>
+              {config.siteLogoUrl ? (
+                 <div className="w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center shadow-[0_20px_40px_rgba(45,212,191,0.2)] bg-[#050b14]">
+                    <img src={config.siteLogoUrl} alt="Logo" className="w-full h-full object-cover" />
+                 </div>
+              ) : (
+                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_20px_40px_rgba(45,212,191,0.2)]">
+                   <span className="text-white font-black text-2xl italic tracking-tighter">R</span>
+                 </div>
+              )}
               <div className="flex flex-col">
                 <h2 className="text-2xl font-black text-white italic leading-tight tracking-tighter uppercase">
-                  {isAr ? 'محميات البحر الأحمر' : 'Red Sea Reserves'}
+                  {isAr ? config.siteNameAr : config.siteName}
                 </h2>
-                <span className="text-[10px] font-black text-teal-500 uppercase tracking-[0.2em] mt-1 italic">{isAr ? 'مركز الحماية والأبحاث' : 'Conservation & Research Hub'}</span>
+                <span className="text-[10px] font-black text-teal-500 uppercase tracking-[0.2em] mt-1 italic">{isAr ? config.siteSloganAr : config.siteSlogan}</span>
               </div>
             </div>
             
@@ -158,7 +171,7 @@ export function PublicFooter({ lang }: { lang: string }) {
           
           <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-teal-900/10 border border-teal-500/10">
              <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-             <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest">Global Ops: ONLINE</span>
+             <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest">{isAr ? config.siteStatusAr : config.siteStatus}</span>
           </div>
         </div>
       </div>

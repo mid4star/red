@@ -340,7 +340,7 @@ export default function HomeClient({ lang }: { lang: string }) {
                     className="w-full h-full object-cover grayscale-[0.2] group-hover:scale-105 transition-transform duration-1000"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent opacity-60" />
-                  <div className="absolute bottom-4 left-4 p-5 sm:bottom-8 sm:left-8 sm:p-8 rounded-3xl bg-th-bg/85 backdrop-blur-xl border border-white/10 max-w-xs">
+                  <div className="absolute bottom-4 left-4 p-5 sm:bottom-8 sm:left-8 sm:p-8 rounded-3xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border border-white/10 max-w-xs">
                      <Zap size={24} className="text-teal-400 mb-4" />
                      <p className="text-xs font-bold uppercase tracking-widest text-th-dim mb-1 italic">{missionCardTagVal}</p>
                      <p className="text-lg font-black italic tracking-tighter uppercase text-th-text">{missionCardTitleVal}</p>
