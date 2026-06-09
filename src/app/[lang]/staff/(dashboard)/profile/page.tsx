@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { 
   ShieldCheck, User as UserIcon, Mail, MapPin, Calendar, CheckCircle2, 
   AlertTriangle, Waves, Microscope, Activity, LayoutDashboard, Anchor, 
-  Megaphone, Clock, Award, Key, Target, Camera, Loader2
+  Megaphone, Clock, Award, Key, Target, Camera, Loader2, Map
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -16,6 +16,7 @@ const SECTIONS_METADATA: Record<string, { icon: any, label: string, labelAr: str
   monitoring: { icon: Microscope, label: 'Monitoring', labelAr: 'الرصد البيئي' },
   violations: { icon: AlertTriangle, label: 'Violations', labelAr: 'المخالفات' },
   fleet: { icon: Anchor, label: 'Fleet', labelAr: 'الأسطول' },
+  gis: { icon: Map, label: 'GIS', labelAr: 'الخرائط الجغرافية' },
   media: { icon: Megaphone, label: 'Media', labelAr: 'الإعلام' }
 };
 

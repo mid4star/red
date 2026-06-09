@@ -98,6 +98,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
       eia: { nameEn: 'Environmental Assessment', nameAr: 'تقييم الأثر البيئي' },
       violations: { nameEn: 'Violations Log', nameAr: 'سجل المخالفات' },
       fleet: { nameEn: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات' },
+      gis: { nameEn: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية' },
       media: { nameEn: 'Media Center', nameAr: 'المركز الإعلامي' },
       users: { nameEn: 'User Management', nameAr: 'إدارة المستخدمين' },
       settings: { nameEn: 'System Settings', nameAr: 'إعدادات النظام' },
