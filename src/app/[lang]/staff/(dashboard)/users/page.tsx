@@ -544,12 +544,14 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                       <div>
                         {/* Header: Pic & Info */}
                         <div className="flex items-start gap-4 mb-4">
-                          <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-slate-100 dark:border-white/10 shrink-0 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
-                            {user.profilePictureUrl ? (
-                              <Image src={user.profilePictureUrl} alt={user.name} fill className="object-cover" />
-                            ) : (
-                              user.role === 'ADMIN' ? <ShieldCheck size={24} className="text-teal-500" /> : <UserIcon size={24} className="text-slate-400" />
-                            )}
+                          <div className="relative shrink-0">
+                            <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
+                              {user.profilePictureUrl ? (
+                                <Image src={user.profilePictureUrl} alt={user.name} fill className="object-cover" />
+                              ) : (
+                                user.role === 'ADMIN' ? <ShieldCheck size={24} className="text-teal-500" /> : <UserIcon size={24} className="text-slate-400" />
+                              )}
+                            </div>
                             {user.lastActive && (Date.now() - new Date(user.lastActive).getTime() < 2 * 60 * 1000) && (
                               <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#0a1628] rounded-full z-10 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" title={isArabic ? 'متصل الآن' : 'Online Now'} />
                             )}
