@@ -261,8 +261,8 @@ export default function UserManagementPage({ params }: { params: { lang: string 
       }
 
       // Automatically create or attempt to create Email Routing Alias
-      if (email && customDomainEmail && customDomainEmail.includes('@rsmp-eg.com')) {
-        const aliasStr = customDomainEmail.split('@')[0].toLowerCase();
+      if (email && customDomainEmail && customDomainEmail.toLowerCase().includes('@rsmp-eg.com')) {
+        const aliasStr = customDomainEmail.split('@')[0].toLowerCase().trim();
         try {
           const cfRes = await fetch('/api/staff/email-routing', {
             method: 'POST',
@@ -276,10 +276,18 @@ export default function UserManagementPage({ params }: { params: { lang: string 
           const cfData = await cfRes.json();
           if (!cfRes.ok) {
              console.error('Email routing alias auto-creation API error:', cfData);
+             alert(isArabic ? `تم حفظ المستخدم بنجاح، لكن فشل إنشاء البريد الوهمي: ${cfData.error}` : `User saved, but failed to create email alias: ${cfData.error}`);
+          } else {
+             alert(isArabic ? `تم حفظ المستخدم وإنشاء صندوق البريد (${aliasStr}@rsmp-eg.com) بنجاح!` : `User saved and email alias (${aliasStr}@rsmp-eg.com) created successfully!`);
           }
-        } catch (cfErr) {
+        } catch (cfErr: any) {
           console.error('Email routing alias auto-creation network failed:', cfErr);
+          alert(isArabic ? `حدث خطأ في الشبكة أثناء محاولة إنشاء البريد الوهمي.` : `Network error while creating email alias.`);
         }
+      } else if (!email && customDomainEmail && customDomainEmail.toLowerCase().includes('@rsmp-eg.com')) {
+         alert(isArabic ? 'تم حفظ المستخدم، لكن لم يتم إنشاء البريد الوهمي لعدم إدخال البريد الشخصي (المستقبل).' : 'User saved, but email alias skipped because personal email was not provided.');
+      } else {
+         alert(isArabic ? 'تم حفظ المستخدم بنجاح!' : 'User saved successfully!');
       }
 
       resetFormFields();
