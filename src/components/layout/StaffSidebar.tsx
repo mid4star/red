@@ -43,6 +43,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
   const router = useRouter();
 
   const [session, setSession] = useState<{ role: string; allowedSections: string[]; name?: string; nameAr?: string } | null>(null);
+  const [config, setConfig] = useState<any>({
+    siteName: 'Red Sea Reserves',
+    siteNameAr: 'محميات البحر الأحمر',
+    siteLogoUrl: '',
+  });
 
   const handleLogout = async () => {
     localStorage.removeItem('active_user_session');
@@ -99,6 +104,20 @@ export function StaffSidebar({ lang }: { lang: string }) {
       window.removeEventListener('storage', checkSession);
       window.removeEventListener('user-session-changed', checkSession);
     };
+  }, []);
+
+  useEffect(() => {
+     fetch('/api/staff/query?collection=system_config')
+        .then(r => r.json())
+        .then(json => {
+           if (json.success && json.data && json.data.length > 0) {
+              const globalConfig = json.data.find((item: any) => item.id === 'global') || json.data[0];
+              if (globalConfig) {
+                 setConfig(globalConfig);
+              }
+           }
+        })
+        .catch(err => console.error(err));
   }, []);
 
   // Close more drawer when pathname changes
@@ -345,9 +364,15 @@ export function StaffSidebar({ lang }: { lang: string }) {
         <div className="p-3 pb-3 border-b border-white/5 flex flex-col items-center">
           <button
             onClick={() => setTabletExpanded(prev => !prev)}
-            className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] shrink-0 transition-transform hover:scale-105"
+            className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] shrink-0 transition-transform hover:scale-105 overflow-hidden"
           >
-            <span className="text-white font-black text-lg">R</span>
+            {config.siteLogoUrl ? (
+               <img src={config.siteLogoUrl} alt="Logo" className="w-full h-full object-cover" />
+            ) : (
+               <div className="w-full h-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+                 <span className="text-white font-black text-lg">R</span>
+               </div>
+            )}
           </button>
           {tabletExpanded && (
             <motion.div
@@ -356,10 +381,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
               className="mt-2 text-center"
             >
               <h1 className="text-[11px] font-bold tracking-tight text-white leading-tight">
-                {isArabic ? 'بوابة المساهمين' : 'Staff Portal'}
+                {isArabic ? 'بوابة الموظفين' : 'Staff Portal'}
               </h1>
-              <p className="text-[8px] uppercase tracking-[0.1em] text-teal-400/80 font-bold">
-                {isArabic ? 'محميات البحر الأحمر' : 'Red Sea Authority'}
+              <p className="text-[8px] uppercase tracking-[0.1em] text-teal-400/80 font-bold mt-1 line-clamp-1 px-1">
+                {isArabic ? config.siteNameAr : config.siteName}
               </p>
             </motion.div>
           )}
@@ -509,15 +534,21 @@ export function StaffSidebar({ lang }: { lang: string }) {
       {/* ── Header / Branding ────────────────────────────────────────────────── */}
       <div className="p-8 pb-6 border-b border-white/5 flex flex-col gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] shrink-0">
-            <span className="text-white font-black text-lg">R</span>
-          </div>
+          {config.siteLogoUrl ? (
+             <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] bg-white/5 shrink-0">
+                <img src={config.siteLogoUrl} alt="Logo" className="w-full h-full object-cover" />
+             </div>
+          ) : (
+             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] shrink-0">
+               <span className="text-white font-black text-lg">R</span>
+             </div>
+          )}
           <div className="flex flex-col">
             <h1 className="text-md font-bold tracking-tight text-white leading-tight">
-              {isArabic ? 'بوابة المساهمين' : 'Staff Portal'}
+              {isArabic ? 'بوابة الموظفين' : 'Staff Portal'}
             </h1>
-            <p className="text-[10px] uppercase tracking-[0.1em] text-teal-400/80 font-bold">
-              {isArabic ? 'محميات البحر الأحمر' : 'Red Sea Authority'}
+            <p className="text-[10px] uppercase tracking-[0.1em] text-teal-400/80 font-bold mt-1 line-clamp-1">
+              {isArabic ? config.siteNameAr : config.siteName}
             </p>
           </div>
         </div>
