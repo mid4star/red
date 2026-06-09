@@ -124,7 +124,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
   };
 
   return (
-    <div className={`flex min-h-screen bg-th-bg text-th-text ${isArabic ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div className={`no-print-layout flex min-h-screen bg-th-bg text-th-text ${isArabic ? 'flex-row-reverse' : 'flex-row'}`}>
       <StaffSidebar lang={params.lang} />
       <main className={`flex-1 min-h-screen transition-all duration-300 bg-th-bg ${getMainClasses()}`}>
         {hasAccess ? (

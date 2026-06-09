@@ -305,15 +305,14 @@ html:not(.dark) main .dark * {
 }
 
 @media print {
-  /* Hide all direct children of body EXCEPT the portal root */
-  body > *:not(.print-portal-root) {
+  /* Hide the main application layout to isolate the portal for printing */
+  .no-print-layout {
     display: none !important;
   }
 
   /* Reset body styles for print */
   body {
     background: white !important;
-    visibility: visible !important;
     margin: 0 !important;
     padding: 0 !important;
   }
