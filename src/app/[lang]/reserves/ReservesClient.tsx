@@ -120,8 +120,10 @@ export default function ReservesClient({ lang }: { lang: string }) {
   }, [isAr]);
 
   return (
-    <div className="bg-[#0a1628] text-white min-h-screen" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="bg-th-bg text-th-text min-h-screen transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       <PublicNavbar lang={lang} />
+
+      <main className="transition-colors duration-300">
 
       {/* ── Hero Section ─────────────────────────────────────────────────── */}
       <section className="relative pt-40 pb-20 px-6 overflow-hidden">
@@ -133,7 +135,7 @@ export default function ReservesClient({ lang }: { lang: string }) {
                <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
                   <Compass size={24} strokeWidth={2.5} />
                </div>
-               <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">{isAr ? 'الذكاء المكاني الاستراتيجي' : 'Strategic Spatial Intelligence'}</span>
+               <span className="text-xs font-bold uppercase tracking-widest text-teal-400 italic">{isAr ? 'الذكاء المكاني الاستراتيجي' : 'Strategic Spatial Intelligence'}</span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-[6rem] font-black leading-tight lg:leading-[1.1] tracking-tighter uppercase italic drop-shadow-2xl">
@@ -169,19 +171,19 @@ export default function ReservesClient({ lang }: { lang: string }) {
                     {/* Visual HUD Container */}
                     <div className="w-full lg:w-3/5 relative group">
                        <div className="absolute -inset-4 bg-teal-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                       <div className="aspect-[16/10] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative">
+                       <div className="dark aspect-[16/10] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative">
                           <img 
                             src={item.img} 
                             alt={item.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent opacity-60" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/40 to-transparent opacity-90" />
                           
                           {/* Floating HUD Elements */}
                           <div className="absolute top-4 left-4 sm:top-8 sm:left-8 flex flex-col gap-4">
                              <div className="px-3 py-1.5 rounded-xl sm:px-5 sm:py-2.5 sm:rounded-2xl bg-[#0a1628]/80 backdrop-blur-xl border border-white/10 flex items-center gap-3">
                                 <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-                                <span className="text-[9px] sm:text-[10px] font-black text-white/90 uppercase tracking-widest">{isAr ? item.statusAr : item.status}</span>
+                                <span className="text-[10px] sm:text-xs font-bold text-white uppercase tracking-widest drop-shadow-md">{isAr ? item.statusAr : item.status}</span>
                              </div>
                           </div>
 
@@ -207,23 +209,25 @@ export default function ReservesClient({ lang }: { lang: string }) {
                     {/* Information Briefing */}
                     <div className="w-full lg:w-2/5 space-y-6 lg:space-y-10">
                        <div className="space-y-4">
-                          <span className="text-[11px] font-black text-teal-500 uppercase tracking-[0.3em] font-mono">{item.id}</span>
+                          <span className="text-xs font-bold text-teal-500 uppercase tracking-widest font-mono">{item.id}</span>
                           <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
                              {isAr ? item.nameAr : item.name}
                           </h2>
                        </div>
 
-                       <p className="text-xl text-slate-400 font-medium leading-relaxed italic border-l-2 border-teal-500/30 pl-6 rtl:border-l-0 rtl:border-r-2 rtl:pl-0 rtl:pr-6">
-                          {isAr ? item.descAr : item.desc}
-                       </p>
+                        <p className="text-xl text-slate-400 font-medium leading-relaxed italic border-l-2 border-teal-500/30 pl-6 rtl:border-l-0 rtl:border-r-2 rtl:pl-0 rtl:pr-6">
+                           {isAr 
+                              ? (item.descAr || '').replace(/<[^>]*>/g, '') 
+                              : (item.desc || '').replace(/<[^>]*>/g, '')}
+                        </p>
 
                        <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-2">
-                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'درجة الحماية' : 'Protection Type'}</h4>
+                             <h4 className="text-xs font-bold text-th-dim uppercase tracking-widest italic">{isAr ? 'درجة الحماية' : 'Protection Type'}</h4>
                              <p className="text-sm font-bold text-white uppercase italic">{isAr ? 'محمية طبيعية' : 'Type I Sanctuary'}</p>
                           </div>
                           <div className="space-y-2">
-                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'نطاق الانتشار' : 'Deployment Area'}</h4>
+                             <h4 className="text-xs font-bold text-th-dim uppercase tracking-widest italic">{isAr ? 'نطاق الانتشار' : 'Deployment Area'}</h4>
                              <p className="text-sm font-bold text-white uppercase italic">{isAr ? 'منطقة مركزية (ألفا)' : 'Core Alpha Zone'}</p>
                           </div>
                        </div>
@@ -244,7 +248,7 @@ export default function ReservesClient({ lang }: { lang: string }) {
       </section>
 
       {/* ── Global Network Stats ─────────────────────────────────────────── */}
-      <section className="py-40 bg-slate-900/40 relative">
+      <section className="py-40 bg-th-surface relative">
          <div className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
             <div className="space-y-4 max-w-2xl mx-auto">
                <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none">
@@ -269,12 +273,14 @@ export default function ReservesClient({ lang }: { lang: string }) {
                        <stat.i size={28} />
                     </div>
                     <div className="text-3xl font-black text-white font-mono tracking-tighter italic">{stat.v}</div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? stat.lAr : stat.l}</div>
+                    <div className="text-xs font-bold text-th-dim uppercase tracking-widest italic">{isAr ? stat.lAr : stat.l}</div>
                  </div>
                ))}
             </div>
          </div>
       </section>
+
+      </main>
 
       <PublicFooter lang={lang} />
     </div>

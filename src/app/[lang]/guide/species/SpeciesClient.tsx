@@ -91,7 +91,7 @@ export default function SpeciesClient({ lang }: { lang: string }) {
   };
 
   return (
-    <div className="bg-[#0a1628] text-white min-h-screen flex flex-col" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="bg-th-bg text-th-text min-h-screen flex flex-col transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       <PublicNavbar lang={lang} />
 
       {/* Main Container */}
@@ -149,7 +149,7 @@ export default function SpeciesClient({ lang }: { lang: string }) {
                 placeholder={isAr ? 'ابحث عن كائن أو نوع...' : 'Search species or type...'} 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full bg-[#081220]/80 border border-white/10 rounded-2xl py-4 pr-4 ${isAr ? 'pl-4 pr-12' : 'pl-12 pr-4'} text-white placeholder-slate-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium text-sm`}
+                className={`w-full bg-th-surface border border-th-border rounded-2xl py-4 pr-4 ${isAr ? 'pl-4 pr-12' : 'pl-12 pr-4'} text-th-text placeholder-th-muted focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium text-sm shadow-sm`}
               />
             </div>
 
@@ -236,7 +236,9 @@ export default function SpeciesClient({ lang }: { lang: string }) {
                           {isAr ? spec.nameAr : spec.name}
                         </h3>
                         <p className="text-sm text-slate-400 font-medium italic leading-relaxed line-clamp-3">
-                          {isAr ? spec.descriptionAr || spec.description : spec.description}
+                          {isAr 
+                            ? (spec.descriptionAr || '').replace(/<[^>]*>/g, '') 
+                            : (spec.description || '').replace(/<[^>]*>/g, '')}
                         </p>
                       </div>
 

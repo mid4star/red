@@ -120,7 +120,7 @@ export default function DashboardPage({ params }: { params: { lang: string } }) 
         <div className="space-y-1">
           <div className="flex items-center gap-2">
              <span className="w-8 h-1 bg-teal-500 rounded-full" />
-             <span className="text-[10px] font-black tracking-[0.2em] text-teal-600 uppercase italic">
+             <span className="text-[10px] font-black tracking-[0.2em] text-teal-500 uppercase italic">
                  {isArabic ? 'نظام القيادة الاستراتيجي' : 'Strategic Command System'}
              </span>
           </div>
@@ -161,13 +161,14 @@ export default function DashboardPage({ params }: { params: { lang: string } }) 
                <div className="p-2.5 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 text-white shadow-2xl">
                   <MapIcon size={20} />
                </div>
-               <div className="flex flex-col">
+                <div className="flex flex-col">
                   <h3 className="text-white font-bold text-sm tracking-tight">{isArabic ? 'خريطة الملاحظات الميدانية' : 'Field Observations Map'}</h3>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 mt-0.5">
                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
                      <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Active Ops</span>
+                     <span className="text-[9px] font-black text-slate-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded uppercase tracking-wide">{isArabic ? 'عرض فقط' : 'Read-only'}</span>
                   </div>
-               </div>
+                </div>
             </div>
             
             {/* GIS Integration Preview UI */}
@@ -329,15 +330,15 @@ export default function DashboardPage({ params }: { params: { lang: string } }) 
                    <div className="absolute top-0 -left-[5px] rtl:-left-auto rtl:-right-[5px] w-2.5 h-2.5 rounded-full bg-teal-500 border-2 border-slate-900 shadow-[0_0_8px_rgba(20,184,166,0.6)]" />
                    <div className="flex flex-col gap-1.5">
                       <div className="flex items-center justify-between">
-                         <span className="text-[10px] font-black text-teal-400 uppercase tracking-wider italic">COMMAND EXEC</span>
-                         <span className="text-[9px] text-white/40 uppercase">14:2{i} PM</span>
+                         <span className="text-[10px] font-black text-teal-500 uppercase tracking-wider italic">COMMAND EXEC</span>
+                         <span className="text-[9px] text-white/60 uppercase">14:2{i} PM</span>
                       </div>
                       <p className="text-[12px] font-medium leading-relaxed text-slate-300">
                          {isArabic ? 'تم تمرير أمر صيانة دورية للمركبة Amwaj 2' : `Staff ID-0${i} authorized new patrol mission at Wadi El Gemal.`}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                          <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[10px]">👮</div>
-                         <span className="text-[10px] font-bold text-white/60">Col. S. Hassan</span>
+                         <span className="text-[10px] font-bold text-white/70">Col. S. Hassan</span>
                       </div>
                    </div>
                 </div>

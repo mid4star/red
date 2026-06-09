@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Globe, User, ChevronDown } from 'lucide-react';
+import { Menu, X, Globe, User, ChevronDown, Sun, Moon } from 'lucide-react';
+import { useTheme } from './ThemeProvider';
 import { Button } from '@/components/ui/Button';
 
 export function PublicNavbar({ lang }: { lang: string }) {
+  const { theme, toggleTheme } = useTheme();
   const isAr = lang === 'ar';
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,7 +35,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
     <nav 
       className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-500 border-b ${
         isScrolled 
-          ? 'bg-[#0a1628]/90 backdrop-blur-xl border-white/10 py-3 shadow-2xl' 
+          ? 'bg-th-surface/90 backdrop-blur-xl border-th-border py-3 shadow-2xl' 
           : 'bg-transparent border-transparent py-6'
       }`}
       dir={isAr ? 'rtl' : 'ltr'}
@@ -46,13 +48,13 @@ export function PublicNavbar({ lang }: { lang: string }) {
               <span className="text-white font-black text-xl italic uppercase tracking-tighter">R</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-black text-white italic leading-none tracking-tighter uppercase transition-colors group-hover:text-teal-400">
+              <span className="text-lg font-black text-th-text italic leading-none tracking-tighter uppercase transition-colors group-hover:text-teal-400">
                 {isAr ? 'محميات البحر الأحمر' : 'Red Sea Reserves'}
               </span>
               <span className="text-[9px] font-black text-teal-500 uppercase tracking-[0.3em] mt-1">Strategic Protectorate</span>
             </div>
           </Link>
-
+ 
           {/* ── Desktop Navigation ──────────────────────────────────────────── */}
           <div className="hidden lg:flex items-center gap-10">
             {navItems.map((item) => {
@@ -63,7 +65,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
                   href={item.href}
                   className="relative group no-underline"
                 >
-                  <span className={`text-[13px] font-black uppercase italic tracking-widest transition-all duration-300 ${isActive ? 'text-teal-400' : 'text-white/70 group-hover:text-white'}`}>
+                  <span className={`text-[14px] font-bold uppercase tracking-wider transition-all duration-300 ${isActive ? 'text-teal-400' : 'text-th-text/70 group-hover:text-th-text'}`}>
                     {item.name}
                   </span>
                   {isActive && (
@@ -79,6 +81,17 @@ export function PublicNavbar({ lang }: { lang: string }) {
 
           {/* ── Action Buttons ─────────────────────────────────────────────── */}
           <div className="flex items-center gap-4">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-th-input border border-th-border text-th-text/80 hover:text-th-text hover:bg-th-input/80 transition-all flex items-center justify-center shrink-0 cursor-pointer"
+              title={isAr ? 'تغيير المظهر' : 'Toggle Theme'}
+              aria-label="Toggle Theme"
+              aria-pressed={theme === 'dark'}
+            >
+              {theme === 'dark' ? <Sun size={15} className="text-yellow-400" /> : <Moon size={15} className="text-blue-400" />}
+            </button>
+
             <Link 
               href={(() => {
                 if (!pathname) return `/${isAr ? 'en' : 'ar'}`;
@@ -89,7 +102,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
                 }
                 return `/${isAr ? 'en' : 'ar'}`;
               })()}
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/80 hover:text-white hover:bg-white/10 transition-all text-[11px] font-black uppercase tracking-widest"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-th-input border border-th-border text-th-text/80 hover:text-th-text hover:bg-th-input/80 transition-all text-[11px] font-black uppercase tracking-widest"
             >
               <Globe size={14} className="text-teal-400" />
               {isAr ? 'English' : 'عربي'}
@@ -103,7 +116,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
             </Link>
 
             <button 
-              className="lg:hidden p-2 text-white/70 hover:text-white transition-colors"
+              className="lg:hidden p-2 text-th-text/70 hover:text-th-text transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -119,14 +132,14 @@ export function PublicNavbar({ lang }: { lang: string }) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-[#0a1628]/95 backdrop-blur-2xl border-b border-white/10 py-8 px-6 flex flex-col gap-6 lg:hidden"
+            className="absolute top-full left-0 right-0 bg-th-surface/95 backdrop-blur-2xl border-b border-th-border py-8 px-6 flex flex-col gap-6 lg:hidden"
           >
             {navItems.map((item) => (
               <Link 
                 key={item.href} 
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-2xl font-black text-white italic uppercase tracking-tighter hover:text-teal-400 transition-all"
+                className="text-2xl font-black text-th-text italic uppercase tracking-tighter hover:text-teal-400 transition-all"
               >
                 {item.name}
               </Link>

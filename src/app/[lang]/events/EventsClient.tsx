@@ -77,8 +77,10 @@ export default function EventsClient({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
 
   return (
-    <div className="bg-[#0a1628] text-white min-h-screen" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="bg-th-bg text-th-text min-h-screen transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       <PublicNavbar lang={lang} />
+
+      <main className="transition-colors duration-300">
 
       {/* ── Strategic Mission Header ────────────────────────────────────────── */}
       <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-10">
@@ -191,6 +193,8 @@ export default function EventsClient({ lang }: { lang: string }) {
            </motion.div>
          ))}
       </section>
+
+      </main>
 
       <PublicFooter lang={lang} />
     </div>

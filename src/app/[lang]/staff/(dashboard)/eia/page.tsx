@@ -896,8 +896,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الموضوع' : 'Subject'}</label>
+                    <label htmlFor="edit-cost-subject" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الموضوع' : 'Subject'}</label>
                     <Input 
+                      id="edit-cost-subject"
                       value={editSubject}
                       onChange={(e) => setEditSubject(e.target.value)}
                       className="bg-[#0b1329] border-white/10 text-white rounded-xl"
@@ -905,8 +906,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
+                    <label htmlFor="edit-cost-date" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
                     <Input 
+                      id="edit-cost-date"
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
@@ -916,8 +918,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التفاصيل' : 'Details'}</label>
+                  <label htmlFor="edit-cost-details" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التفاصيل' : 'Details'}</label>
                   <textarea 
+                    id="edit-cost-details"
                     value={editDetails}
                     onChange={(e) => setEditDetails(e.target.value)}
                     rows={4}
@@ -926,8 +929,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الحالة' : 'Status'}</label>
+                  <label htmlFor="edit-cost-status" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الحالة' : 'Status'}</label>
                   <select
+                    id="edit-cost-status"
                     value={editCostStatus}
                     onChange={(e) => setEditCostStatus(e.target.value as any)}
                     className="w-full h-11 bg-[#0b1329] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
@@ -976,8 +980,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الموقع' : 'Location Name'}</label>
+                    <label htmlFor="edit-insp-locname" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الموقع' : 'Location Name'}</label>
                     <Input 
+                      id="edit-insp-locname"
                       value={editLocationName}
                       onChange={(e) => setEditLocationName(e.target.value)}
                       className="bg-[#0b1329] border-white/10 text-white rounded-xl"
@@ -985,8 +990,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
+                    <label htmlFor="edit-insp-date" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
                     <Input 
+                      id="edit-insp-date"
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
@@ -995,8 +1001,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'خط العرض (Latitude)' : 'Latitude'}</label>
+                    <label htmlFor="edit-insp-lat" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'خط العرض (Latitude)' : 'Latitude'}</label>
                     <Input 
+                      id="edit-insp-lat"
                       type="number"
                       step="any"
                       value={editLatitude}
@@ -1006,8 +1013,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'خط الطول (Longitude)' : 'Longitude'}</label>
+                    <label htmlFor="edit-insp-lng" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'خط الطول (Longitude)' : 'Longitude'}</label>
                     <Input 
+                      id="edit-insp-lng"
                       type="number"
                       step="any"
                       value={editLongitude}
@@ -1017,8 +1025,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     />
                   </div>
                   <div className="space-y-1 md:col-span-2">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'القائم بالمعاينة' : 'Inspector Name'}</label>
+                    <label htmlFor="edit-insp-inspector" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'القائم بالمعاينة' : 'Inspector Name'}</label>
                     <Input 
+                      id="edit-insp-inspector"
                       value={editInspectorName}
                       onChange={(e) => setEditInspectorName(e.target.value)}
                       className="bg-[#0b1329] border-white/10 text-white rounded-xl"
@@ -1961,14 +1970,13 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     </Button>
                   </div>
                 </form>
-              )}
-
-              {activeTab === 'inspections' && (
+              )}              {activeTab === 'inspections' && (
                 <form onSubmit={handleInspectionSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الموقع' : 'Location Name'}</label>
+                      <label htmlFor="add-insp-locname" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الموقع' : 'Location Name'}</label>
                       <Input 
+                        id="add-insp-locname"
                         value={inspLocName}
                         onChange={(e) => setInspLocName(e.target.value)}
                         placeholder={isArabic ? 'مثال: أبو دباب، شعاب الفانوس' : 'e.g. Abu Dabab, Fanous Reef'}
@@ -1977,8 +1985,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
+                      <label htmlFor="add-insp-date" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
                       <Input 
+                        id="add-insp-date"
                         type="date"
                         value={inspDate}
                         onChange={(e) => setInspDate(e.target.value)}
@@ -1987,8 +1996,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط العرض (Latitude)' : 'Latitude'}</label>
+                      <label htmlFor="add-insp-lat" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط العرض (Latitude)' : 'Latitude'}</label>
                       <Input 
+                        id="add-insp-lat"
                         type="number"
                         step="any"
                         value={inspLat}
@@ -1999,8 +2009,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط الطول (Longitude)' : 'Longitude'}</label>
+                      <label htmlFor="add-insp-lng" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط الطول (Longitude)' : 'Longitude'}</label>
                       <Input 
+                        id="add-insp-lng"
                         type="number"
                         step="any"
                         value={inspLng}
@@ -2011,8 +2022,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1 md:col-span-2">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'القائم بالمعاينة (الباحث)' : 'Inspector Name'}</label>
+                      <label htmlFor="add-insp-inspector" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'القائم بالمعاينة (الباحث)' : 'Inspector Name'}</label>
                       <Input 
+                        id="add-insp-inspector"
                         value={inspInspector}
                         onChange={(e) => setInspInspector(e.target.value)}
                         placeholder={isArabic ? 'مثال: د. أحمد علي' : 'e.g. Dr. Ahmed Ali'}
@@ -2079,8 +2091,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                 <form onSubmit={handleViolationSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{isArabic ? 'تصنيف المخالفة' : 'Violation Category'}</label>
+                      <label htmlFor="add-viol-type" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{isArabic ? 'تصنيف المخالفة' : 'Violation Category'}</label>
                       <select
+                        id="add-viol-type"
                         value={violType}
                         onChange={(e) => setViolType(e.target.value)}
                         className="w-full h-11 bg-[#0b1329] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
@@ -2092,8 +2105,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       </select>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
+                      <label htmlFor="add-viol-date" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'التاريخ' : 'Date'}</label>
                       <Input 
+                        id="add-viol-date"
                         type="date"
                         value={violDate}
                         onChange={(e) => setViolDate(e.target.value)}
@@ -2102,8 +2116,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الموقع' : 'Location Name'}</label>
+                      <label htmlFor="add-viol-locname" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الموقع' : 'Location Name'}</label>
                       <Input 
+                        id="add-viol-locname"
                         value={violLocName}
                         onChange={(e) => setViolLocName(e.target.value)}
                         placeholder={isArabic ? 'مثال: ساحل الجونة' : 'e.g. El Gouna Beach'}
@@ -2112,8 +2127,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الجهة التابعة لها المخالفة' : 'Responsible Entity Type'}</label>
+                      <label htmlFor="add-viol-entitytype" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'الجهة التابعة لها المخالفة' : 'Responsible Entity Type'}</label>
                       <select
+                        id="add-viol-entitytype"
                         value={violEntityType}
                         onChange={(e) => setViolEntityType(e.target.value as any)}
                         className="w-full h-11 bg-[#0b1329] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
@@ -2124,8 +2140,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       </select>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط العرض (Latitude)' : 'Latitude'}</label>
+                      <label htmlFor="add-viol-lat" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط العرض (Latitude)' : 'Latitude'}</label>
                       <Input 
+                        id="add-viol-lat"
                         type="number"
                         step="any"
                         value={violLat}
@@ -2136,8 +2153,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط الطول (Longitude)' : 'Longitude'}</label>
+                      <label htmlFor="add-viol-lng" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'إحداثي خط الطول (Longitude)' : 'Longitude'}</label>
                       <Input 
+                        id="add-viol-lng"
                         type="number"
                         step="any"
                         value={violLng}
@@ -2148,8 +2166,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       />
                     </div>
                     <div className="space-y-1 md:col-span-2">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الجهة / الشخص المخالف' : 'Responsible Entity Name'}</label>
+                      <label htmlFor="add-viol-entityname" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{isArabic ? 'اسم الجهة / الشخص المخالف' : 'Responsible Entity Name'}</label>
                       <Input 
+                        id="add-viol-entityname"
                         value={violEntityName}
                         onChange={(e) => setViolEntityName(e.target.value)}
                         placeholder={isArabic ? 'مثال: شركة التطوير السياحي الكبرى' : 'e.g. Grand Tourism Development Co.'}

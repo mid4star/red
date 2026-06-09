@@ -3,8 +3,8 @@
 import React from 'react';
 
 const variantMap: Record<string, string> = {
-  default: 'bg-white/5 border-white/10',
-  dark: 'bg-[#1a1a2e] text-white/90 border-white/10',
+  default: 'bg-th-surface border-th-border text-th-text',
+  dark: 'bg-th-surface2 text-th-text border-th-border',
 };
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {

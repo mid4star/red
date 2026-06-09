@@ -60,8 +60,10 @@ export default function StatisticsClient({ lang }: { lang: string }) {
   }, []);
 
   return (
-    <div className="bg-[#0a1628] text-white min-h-screen" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="bg-th-bg text-th-text min-h-screen transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       <PublicNavbar lang={lang} />
+
+      <main className="transition-colors duration-300">
 
       {/* ── Intelligence Header ─────────────────────────────────────────── */}
       <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto space-y-8">
@@ -250,6 +252,8 @@ export default function StatisticsClient({ lang }: { lang: string }) {
             </div>
          </div>
       </section>
+
+      </main>
 
       <PublicFooter lang={lang} />
     </div>

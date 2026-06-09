@@ -96,7 +96,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
 
    if (loading) {
       return (
-         <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+         <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
             <PublicNavbar lang={lang} />
             <div className="flex-1 flex flex-col items-center justify-center gap-4 py-40">
                <Loader2 className="animate-spin text-teal-400" size={40} />
@@ -111,7 +111,7 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
 
    if (!article) {
       return (
-         <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+         <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
             <PublicNavbar lang={lang} />
             <div className="flex-1 flex flex-col items-center justify-center gap-6 py-40 max-w-xl mx-auto text-center px-6">
                <BookOpen className="text-rose-500 scale-125" size={48} />
@@ -136,8 +136,10 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
    }
 
    return (
-      <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
          <PublicNavbar lang={lang} />
+
+         <main className="transition-colors duration-300">
 
          {/* ── Breadcrumb and Header Details ────────────────────────────────────── */}
          <section className="relative pt-40 pb-12 px-6 max-w-7xl mx-auto w-full">
@@ -380,6 +382,8 @@ export default function NewsArticlePage({ params }: { params: { lang: string; id
                </div>
             </section>
          )}
+
+         </main>
 
          <PublicFooter lang={lang} />
       </div>

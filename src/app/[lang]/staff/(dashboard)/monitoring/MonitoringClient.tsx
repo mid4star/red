@@ -59,7 +59,11 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // Toast notification state for coordinate capture feedback (F5)
+  const [coordsToast, setCoordsToast] = useState<{ lat: string; lng: string } | null>(null);
+  const toastTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Database Collections State
   const [ecoPrograms, setEcoPrograms] = useState<any[]>([]);
@@ -245,6 +249,11 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
     } else if (activeTab === 'beach_surveys') {
       setBsForm(prev => ({ ...prev, latitude: latStr, longitude: lngStr }));
     }
+
+    // Show toast notification (F5: map coordinate feedback)
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setCoordsToast({ lat: latStr, lng: lngStr });
+    toastTimerRef.current = setTimeout(() => setCoordsToast(null), 3500);
   }, [activeTab]);
 
   // Handle report files upload
@@ -556,7 +565,33 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
 
   return (
     <div className="space-y-4 md:space-y-8 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
-      
+
+      {/* Coordinate Capture Toast (F5) */}
+      <AnimatePresence>
+        {coordsToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[500] flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-teal-500/90 backdrop-blur-xl shadow-[0_0_30px_rgba(20,184,166,0.4)] border border-teal-400/30"
+            dir="ltr"
+          >
+            <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+              <MapPin size={14} className="text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-teal-900/80 uppercase tracking-widest">
+                {isAr ? 'تم التقاط الإحداثيات' : 'Coordinates Captured'}
+              </p>
+              <p className="text-xs font-bold text-white font-mono">
+                {coordsToast.lat}, {coordsToast.lng}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 pb-1 md:pb-2">
         <div className="space-y-1 md:space-y-1.5">

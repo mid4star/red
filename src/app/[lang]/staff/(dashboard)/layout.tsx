@@ -62,7 +62,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a1628] flex items-center justify-center">
+      <div className="min-h-screen bg-th-bg flex items-center justify-center">
         <div className="animate-spin text-teal-400 w-10 h-10 border-4 border-teal-400 border-t-transparent rounded-full" />
       </div>
     );
@@ -124,9 +124,9 @@ export default function StaffLayout({ children, params }: { children: React.Reac
   };
 
   return (
-    <div className={`flex min-h-screen bg-[#0a1628] text-white ${isArabic ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div className={`flex min-h-screen bg-th-bg text-th-text ${isArabic ? 'flex-row-reverse' : 'flex-row'}`}>
       <StaffSidebar lang={params.lang} />
-      <main className={`flex-1 transition-all duration-500 bg-[#0a1628] ${getMainClasses()}`}>
+      <main className={`flex-1 min-h-screen transition-all duration-300 bg-th-bg ${getMainClasses()}`}>
         {hasAccess ? (
           children
         ) : (

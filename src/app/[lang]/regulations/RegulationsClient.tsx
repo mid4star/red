@@ -89,7 +89,7 @@ export default function RegulationsClient({ lang }: { lang: string }) {
   };
 
   return (
-    <div className="bg-[#0a1628] text-white min-h-screen flex flex-col" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="bg-th-bg text-th-text min-h-screen flex flex-col transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       <PublicNavbar lang={lang} />
 
       <main className="flex-grow pt-40 pb-24 px-6 max-w-7xl mx-auto w-full space-y-12">

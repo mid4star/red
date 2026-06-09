@@ -4,10 +4,10 @@ import React from 'react';
 
 const intentMap: Record<string, string> = {
   primary: 'bg-teal-500 text-[#0a1628] hover:bg-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.3)]',
-  secondary: 'bg-white/10 text-white hover:bg-white/20',
+  secondary: 'bg-slate-200 text-slate-800 hover:bg-slate-300 dark:bg-white/10 dark:text-white dark:hover:bg-white/20',
   accent: 'bg-rose-500 text-white hover:bg-rose-400',
-  outline: 'bg-transparent border border-white/20 text-white hover:bg-white/10',
-  ghost: 'bg-transparent text-slate-300 hover:bg-white/10 hover:text-white',
+  outline: 'bg-transparent border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-white/20 dark:text-white dark:hover:bg-white/10',
+  ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white',
 };
 
 const sizeMap: Record<string, string> = {

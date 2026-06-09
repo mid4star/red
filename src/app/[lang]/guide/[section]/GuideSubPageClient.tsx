@@ -252,9 +252,10 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
    }, [checkedGears]);
 
    return (
-      <div className="bg-[#0a1628] text-white min-h-screen font-sans flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="bg-th-bg text-th-text min-h-screen font-sans flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
          <PublicNavbar lang={lang} />
 
+         <main className="transition-colors duration-300">
          {/* ── Immersive Breadcrumbs Header ───────────────────────────────── */}
          <section className="pt-40 pb-12 px-6 max-w-7xl mx-auto w-full">
             <div className="flex flex-col gap-4 border-b border-white/5 pb-8">
@@ -1018,6 +1019,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
 
             </div>
          </section>
+         </main>
 
          <PublicFooter lang={lang} />
       </div>

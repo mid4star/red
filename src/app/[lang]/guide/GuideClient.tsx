@@ -73,8 +73,10 @@ export default function GuideClient({ lang }: { lang: string }) {
    }, []);
 
    return (
-      <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
          <PublicNavbar lang={lang} />
+
+         <main className="transition-colors duration-300">
 
          {/* ── Page Header ─────────────────────────────────────────────────── */}
          <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto w-full">
@@ -152,7 +154,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                                        href={getLinkHref(link.n)}
                                        className="flex justify-between items-center group/link cursor-pointer"
                                     >
-                                       <span className="text-[11px] font-black text-slate-500 group-hover/link:text-teal-400 uppercase tracking-[0.2em] italic transition-colors">
+                                       <span className="text-xs font-bold text-slate-500 group-hover/link:text-teal-400 uppercase tracking-widest italic transition-colors">
                                           {isAr ? link.nAr : link.n}
                                        </span>
                                        <ArrowRight size={14} className={`text-slate-700 group-hover/link:text-teal-500 transition-all ${isAr ? 'rotate-180 group-hover/link:-translate-x-1' : 'group-hover/link:translate-x-1'}`} />
@@ -168,11 +170,11 @@ export default function GuideClient({ lang }: { lang: string }) {
          </section>
 
          {/* ── Species Encyclopedia ─────────────────────────────────── */}
-         <section className="py-40 bg-slate-900/40 relative overflow-hidden">
+         <section className="py-40 bg-th-surface relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row gap-20 items-center">
-               <div className="lg:w-2/5 space-y-10">
+               <div className="w-full lg:w-2/5 space-y-10">
                   <div className="space-y-4">
-                     <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic leading-tight">
+                     <span className="text-xs font-bold text-teal-400 uppercase tracking-widest italic leading-tight">
                         {isAr ? 'دليل الكائنات البحرية' : 'Species Information Hub'}
                      </span>
                      <h2 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
@@ -193,7 +195,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                   </Link>
                </div>
 
-               <div className="lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-8">
+               <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-8">
                   {loading ? (
                      <div className="col-span-2 text-center text-slate-500 font-mono py-20 flex flex-col items-center justify-center gap-3">
                         <Loader2 className="animate-spin text-teal-400" size={24} />
@@ -208,7 +210,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                         <div
                            key={spec.id || i}
                            onClick={() => setSelectedSpecies(spec)}
-                           className="group relative h-80 sm:h-96 rounded-2xl sm:rounded-[3rem] overflow-hidden border border-white/5 cursor-pointer shadow-xl"
+                           className="dark group relative h-80 sm:h-96 rounded-2xl sm:rounded-[3rem] overflow-hidden border border-white/5 cursor-pointer shadow-xl"
                         >
                            <img
                               src={spec.imageUrl || '/marsa_alam_dugong_underwater_1774861424689.png'}
@@ -238,11 +240,11 @@ export default function GuideClient({ lang }: { lang: string }) {
             </div>
          </section>
 
-         {/* ── Interactive Site Map Preview Title ─────────────────────────────── */}
-         <section className="pt-40 pb-12 px-6 max-w-7xl mx-auto text-center space-y-4">
-            <span className="text-[11px] font-black text-teal-400 uppercase tracking-[0.4em] italic">
-               {isAr ? 'خريطة مواقع المحميات' : 'RESERVE LOCATIONS MAP'}
-            </span>
+          {/* ── Interactive Site Map Preview Title ─────────────────────────────── */}
+          <section className="pt-40 pb-12 px-6 max-w-7xl mx-auto text-center space-y-4">
+             <span className="text-xs font-bold text-teal-400 uppercase tracking-widest italic">
+                {isAr ? 'خريطة مواقع المحميات' : 'RESERVE LOCATIONS MAP'}
+             </span>
             <h2 className="text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none opacity-20">
                {isAr ? 'استكشف التضاريس' : 'Explore the Topography'}
             </h2>
@@ -276,7 +278,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                      initial={{ opacity: 0, scale: 0.95, y: 20 }}
                      animate={{ opacity: 1, scale: 1, y: 0 }}
                      exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                     className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-[#081220]/95 border border-teal-500/30 rounded-[2.5rem] shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col md:flex-row z-10 text-white"
+                     className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-th-surface/95 backdrop-blur-2xl border border-teal-500/30 rounded-[2.5rem] shadow-[0_0_80px_rgba(45,212,191,0.2)] flex flex-col md:flex-row z-10 text-th-text"
                   >
                      {/* Decorative Corner Brackets */}
                      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-teal-400 rounded-tl-2xl pointer-events-none"></div>
@@ -287,7 +289,8 @@ export default function GuideClient({ lang }: { lang: string }) {
                      {/* Close Button */}
                      <button
                         onClick={() => setSelectedSpecies(null)}
-                        className="absolute top-6 right-6 z-20 p-2.5 rounded-xl bg-black/50 border border-white/10 hover:border-teal-500/50 hover:bg-teal-500/10 hover:scale-105 text-white transition-all"
+                        className="absolute top-6 right-6 z-20 p-2.5 rounded-xl bg-th-surface border border-white/10 hover:border-teal-500/50 hover:bg-teal-500/10 hover:scale-105 text-th-text transition-all"
+                        aria-label="Close details"
                      >
                         <X size={20} />
                      </button>
@@ -303,7 +306,7 @@ export default function GuideClient({ lang }: { lang: string }) {
 
                         {/* Status Indicator */}
                         <div className="absolute top-6 left-6">
-                           <span className="px-4 py-1.5 rounded-xl bg-orange-500/25 backdrop-blur-md border border-orange-500/40 text-[9px] font-black text-orange-400 uppercase tracking-widest italic shadow-lg">
+                           <span className="px-4 py-1.5 rounded-xl bg-orange-500/25 backdrop-blur-md border border-orange-500/40 text-xs font-bold text-orange-400 uppercase tracking-widest italic shadow-lg">
                               {isAr ? selectedSpecies.statusAr || selectedSpecies.status : selectedSpecies.status}
                            </span>
                         </div>
@@ -313,10 +316,10 @@ export default function GuideClient({ lang }: { lang: string }) {
                      <div className="md:w-1/2 p-6 md:p-12 flex flex-col justify-between space-y-6">
                         <div className="space-y-6">
                            <div>
-                              <span className="text-[10px] font-black text-teal-400 uppercase tracking-[0.3em] italic block mb-1">
+                              <span className="text-xs font-bold text-teal-400 uppercase tracking-widest italic block mb-1">
                                  {isAr ? selectedSpecies.typeAr || selectedSpecies.type : selectedSpecies.type}
                               </span>
-                              <h3 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter text-white">
+                              <h3 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter text-th-text">
                                  {isAr ? selectedSpecies.nameAr : selectedSpecies.name}
                               </h3>
                            </div>
@@ -328,7 +331,7 @@ export default function GuideClient({ lang }: { lang: string }) {
                            </p>
                         </div>
 
-                        <div className="pt-6 border-t border-teal-500/10 flex items-center justify-between text-[10px] font-mono text-slate-500">
+                        <div className="pt-6 border-t border-teal-500/10 flex items-center justify-between text-xs font-mono text-th-dim">
                            <span>SPECIES_ID: {selectedSpecies.id?.slice(0, 8).toUpperCase() || 'N/A'}</span>
                            <span>REGION: RED_SEA</span>
                         </div>
@@ -337,6 +340,8 @@ export default function GuideClient({ lang }: { lang: string }) {
                </div>
             )}
          </AnimatePresence>
+
+         </main>
 
          <PublicFooter lang={lang} />
       </div>

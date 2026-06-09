@@ -18,8 +18,11 @@ import {
   MoreHorizontal,
   X,
   Grid3X3,
-  ChevronDown
+  ChevronDown,
+  Sun,
+  Moon
 } from 'lucide-react';
+import { useTheme } from './ThemeProvider';
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -34,6 +37,7 @@ interface NavItem {
 type ScreenMode = 'mobile' | 'tablet' | 'desktop';
 
 export function StaffSidebar({ lang }: { lang: string }) {
+  const { theme, toggleTheme } = useTheme();
   const isArabic = lang === 'ar';
   const pathname = usePathname();
   const router = useRouter();
@@ -101,6 +105,18 @@ export function StaffSidebar({ lang }: { lang: string }) {
   useEffect(() => {
     setMoreDrawerOpen(false);
   }, [pathname]);
+
+  // Handle body scroll lock for mobile more drawer
+  useEffect(() => {
+    if (moreDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [moreDrawerOpen]);
 
   const allNavItems: NavItem[] = [
     { name: 'Dashboard', nameAr: 'لوحة التحكم', href: `/${lang}/staff`, icon: LayoutDashboard, sectionKey: '' },
@@ -229,16 +245,27 @@ export function StaffSidebar({ lang }: { lang: string }) {
                     <h3 className="text-sm font-black text-white uppercase tracking-wider">
                       {isArabic ? 'جميع الأقسام' : 'All Sections'}
                     </h3>
-                    <button
-                      onClick={() => setMoreDrawerOpen(false)}
-                      className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
-                    >
-                      <X size={16} />
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={toggleTheme}
+                        className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                        title={isArabic ? 'تغيير المظهر' : 'Toggle Theme'}
+                        aria-label="Toggle Theme"
+                        aria-pressed={theme === 'dark'}
+                      >
+                        {theme === 'dark' ? <Sun size={16} className="text-yellow-400" /> : <Moon size={16} className="text-blue-400" />}
+                      </button>
+                      <button
+                        onClick={() => setMoreDrawerOpen(false)}
+                        className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Grid of Secondary Items */}
-                  <div className="grid grid-cols-3 gap-3 p-5">
+                  <div className="grid grid-cols-2 gap-4 p-5">
                     {secondaryMobileItems.map((item) => {
                       const Icon = item.icon;
                       const active = isActive(item.href);
@@ -256,7 +283,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
                           <div className={`p-2.5 rounded-xl ${active ? 'bg-teal-500/15' : 'bg-white/5'}`}>
                             <Icon size={22} strokeWidth={active ? 2.5 : 1.8} />
                           </div>
-                          <span className="text-[10px] font-bold text-center leading-tight">
+                          <span className="text-[12px] font-bold text-center leading-tight">
                             {isArabic ? item.nameAr : item.name}
                           </span>
                         </Link>
@@ -275,10 +302,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-[11px] font-bold text-white truncate">
+                        <h4 className="text-[11px] font-bold text-white line-clamp-2 leading-tight">
                           {session ? (isArabic ? session.nameAr || 'مصطفى لايق' : session.name || 'M. Layaq') : (isArabic ? 'مصطفى لايق' : 'M. Layaq')}
                         </h4>
-                        <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wide truncate">
+                        <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wide line-clamp-2 leading-tight mt-0.5">
                           {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
                         </p>
                       </div>
@@ -303,12 +330,17 @@ export function StaffSidebar({ lang }: { lang: string }) {
   // ───────────── TABLET: Compact Icon-Only Rail ─────────────
   if (screenMode === 'tablet') {
     return (
-      <aside
-        className={`bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${
-          tabletExpanded ? 'w-64' : 'w-[72px]'
-        } ${isArabic ? 'right-0' : 'left-0'}`}
-        dir={isArabic ? 'rtl' : 'ltr'}
-      >
+      <>
+        {/* Backdrop overlay removed for UX improvement */}
+        <AnimatePresence>
+        </AnimatePresence>
+
+        <aside
+          className={`bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-300 ease-in-out border-none ${
+            tabletExpanded ? 'w-64' : 'w-[72px]'
+          } ${isArabic ? 'right-0' : 'left-0'}`}
+          dir={isArabic ? 'rtl' : 'ltr'}
+        >
         {/* Tablet Header */}
         <div className="p-3 pb-3 border-b border-white/5 flex flex-col items-center">
           <button
@@ -408,10 +440,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
             {tabletExpanded && (
               <>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 min-w-0">
-                  <h4 className="text-[11px] font-bold text-white truncate">
+                  <h4 className="text-[11px] font-bold text-white line-clamp-2 leading-tight">
                     {session ? (isArabic ? session.nameAr || 'مصطفى لايق' : session.name || 'M. Layaq') : (isArabic ? 'مصطفى لايق' : 'M. Layaq')}
                   </h4>
-                  <p className="text-[9px] text-slate-500 font-medium truncate uppercase tracking-tighter">
+                  <p className="text-[9px] text-slate-500 font-medium line-clamp-2 leading-tight uppercase tracking-tighter mt-0.5">
                     {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
                   </p>
                 </motion.div>
@@ -425,13 +457,26 @@ export function StaffSidebar({ lang }: { lang: string }) {
               </>
             )}
           </div>
-          <div className={`mt-2 flex items-center px-1 ${tabletExpanded ? 'justify-between' : 'justify-center'}`}>
-            <div className="flex gap-1 items-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
-              {tabletExpanded && (
-                <span className="text-[8px] text-teal-400 font-bold uppercase tracking-tighter">{isArabic ? 'متصل' : 'ONLINE'}</span>
+          <div className={`mt-3 pt-2 border-t border-white/5 flex items-center justify-between px-1 ${tabletExpanded ? '' : 'justify-center'}`}>
+            <button
+              onClick={toggleTheme}
+              className="text-slate-400 hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+              title={isArabic ? 'تغيير المظهر' : 'Toggle Theme'}
+              aria-label="Toggle Theme"
+              aria-pressed={theme === 'dark'}
+            >
+              {theme === 'dark' ? (
+                <Sun size={16} className="text-yellow-400" />
+              ) : (
+                <Moon size={16} className="text-blue-400" />
               )}
-            </div>
+            </button>
+            {tabletExpanded && (
+              <div className="flex gap-1 items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
+                <span className="text-[8px] text-teal-400 font-bold uppercase tracking-tighter">{isArabic ? 'متصل' : 'ONLINE'}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -450,7 +495,8 @@ export function StaffSidebar({ lang }: { lang: string }) {
             background: rgba(255, 255, 255, 0.1);
           }
         `}</style>
-      </aside>
+        </aside>
+      </>
     );
   }
 
@@ -537,10 +583,10 @@ export function StaffSidebar({ lang }: { lang: string }) {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-[12px] font-bold text-white truncate">
+            <h4 className="text-[12px] font-bold text-white line-clamp-2 leading-tight">
               {session ? (isArabic ? session.nameAr || 'مصطفى لايق' : session.name || 'M. Layaq') : (isArabic ? 'مصطفى لايق' : ' M. Layaq')}
             </h4>
-            <p className="text-[10px] text-slate-500 font-medium truncate uppercase tracking-tighter">
+            <p className="text-[10px] text-slate-500 font-medium line-clamp-2 leading-tight uppercase tracking-tighter mt-0.5">
               {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع ' : 'Site Manager')}
             </p>
           </div>
@@ -553,9 +599,28 @@ export function StaffSidebar({ lang }: { lang: string }) {
           </button>
         </div>
 
-        <div className="mt-4 flex justify-between items-center px-2">
-          <span className="text-[9px] font-bold text-slate-600 tracking-widest uppercase">system v1.1</span>
-          <div className="flex gap-1.5">
+        <div className="mt-4 flex justify-between items-center px-2 border-t border-white/5 pt-3">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer"
+            title={isArabic ? 'تغيير المظهر' : 'Toggle Theme'}
+            aria-label="Toggle Theme"
+            aria-pressed={theme === 'dark'}
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun size={14} className="text-yellow-400" />
+                <span>{isArabic ? 'الوضع المضيء' : 'Light Mode'}</span>
+              </>
+            ) : (
+              <>
+                <Moon size={14} className="text-blue-400" />
+                <span>{isArabic ? 'الوضع الداكن' : 'Dark Mode'}</span>
+              </>
+            )}
+          </button>
+          
+          <div className="flex gap-1.5 items-center">
             <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
             <span className="text-[9px] text-teal-400 font-bold uppercase tracking-tighter">{isArabic ? 'متصل' : 'ONLINE'}</span>
           </div>

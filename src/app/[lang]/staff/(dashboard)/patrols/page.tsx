@@ -25,7 +25,8 @@ import {
   Edit3,
   Trash2,
   X,
-  Loader2
+  Loader2,
+  ArrowRight
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -127,7 +128,8 @@ function ActiveUnitCard({
                  e.stopPropagation();
                  setActiveMenuId(activeMenuId === unit.id ? null : (unit.id || null));
                }}
-               className="text-slate-500 hover:text-white transition-colors p-1"
+               aria-label={isAr ? 'خيارات الدورية' : 'Patrol options'}
+               className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
              >
                 <MoreVertical size={18} />
              </button>
@@ -460,472 +462,216 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
 
   return (
     <div 
-      className="max-w-[1500px] mx-auto space-y-8 relative" 
+      className={showModal ? "max-w-[1200px] mx-auto space-y-6 pb-12 animate-in fade-in duration-300" : "max-w-[1500px] mx-auto space-y-8 relative"} 
       dir={isArabic ? 'rtl' : 'ltr'}
       onClick={() => setActiveMenuId(null)}
     >
-      
-      {/* ── Page Header ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-white/10">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-             <span className="w-8 h-1 bg-teal-500 rounded-full" />
-             <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
-                 {isArabic ? 'وحدة السيطرة البحرية' : 'Marine Control Unit'}
-             </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter">
-            {isArabic ? 'عمليات الدوريات النشطة' : 'Active Patrol Operations'}
-          </h1>
-        </div>
-
-        <div className="flex gap-3">
-           <Button intent="outline" className="rounded-2xl border-white/10 px-5 flex items-center gap-2 text-[12px] font-bold shadow-sm bg-white/5 text-white hover:bg-white/10">
-              <Compass size={16} className="text-teal-400" />
-              {isArabic ? 'خريطة الأسطول' : 'Fleet Map'}
-           </Button>
-           <Button 
-             onClick={() => { resetFormFields(); setShowModal(true); }}
-             intent="primary" 
-             className="rounded-2xl px-6 flex items-center gap-2 text-[12px] font-bold shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic"
-           >
-              <Plus size={18} strokeWidth={3} />
-              {isArabic ? 'تسجيل دورية' : 'Log New Patrol'}
-           </Button>
-        </div>
-      </div>
-
-      {/* Mobile View Toggle: Map vs Data */}
-      {isMobile && (
-        <div className="flex p-1 bg-[#0a1628]/90 backdrop-blur-2xl border border-white/10 rounded-2xl mb-4 gap-1.5 shadow-xl">
-          <button
-            type="button"
-            onClick={() => setMobilePanel('data')}
-            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
-              mobilePanel === 'data'
-                ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Shield size={14} className="shrink-0" />
-            {isArabic ? 'لوحة العمليات والوحدات' : 'Operations & Units'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobilePanel('map')}
-            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
-              mobilePanel === 'map'
-                ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Compass size={14} className="shrink-0" />
-            {isArabic ? 'الخريطة التكتيكية' : 'Tactical Map'}
-          </button>
-        </div>
-      )}
-
-      {/* ── Summary Stats Row ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {dynamicStats.map((stat, idx) => (
-          <TacticalStat key={idx} stat={stat} isAr={isArabic} />
-        ))}
-      </div>
-
-      {/* ── Command Center Main Grid ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Tactical Map HUD Card */}
-        <div className={`lg:col-span-2 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''}`}>
-           <Card className={`${isMobile ? 'h-[320px]' : 'h-[550px]'} border-none shadow-lg overflow-hidden relative group bg-[#0a1628]`}>
-              {/* GIS HUD Elements Overlay */}
-              <div className="absolute top-3 right-3 md:top-6 md:right-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
-                 <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/5 shadow-2xl min-w-[110px] md:min-w-[180px]">
-                    <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Marine Weather</p>
-                    <div className="flex items-center justify-between gap-1.5 text-white">
-                       <span className="text-sm md:text-xl font-bold font-mono tracking-tighter">24°C</span>
-                       <Wind size={14} className="text-teal-400 shrink-0" />
-                       <span className="text-[9px] md:text-[11px] font-bold text-teal-400 shrink-0">12 kt</span>
-                    </div>
-                 </div>
-                 <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl hidden sm:block">
-                    <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Sync Status</p>
-                    <div className="flex items-center gap-2">
-                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                       <span className="text-[9px] md:text-[11px] font-bold text-white tracking-tight">Database Synchronized</span>
-                    </div>
-                 </div>
-              </div>
-
-              {/* Map Mock Illustration */}
-              <div className="absolute inset-0 opacity-20 pointer-events-none">
-                 <div className="absolute inset-0 bg-[linear-gradient(rgba(20,184,166,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
-                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.1)_0%,transparent_70%)]" />
-              </div>
-
-              {/* Central Map Controls HUD */}
-              <div className="absolute bottom-3 md:bottom-6 left-1/2 -translate-x-1/2 z-20 px-3 py-2 md:px-6 md:py-3 rounded-full bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-3xl flex items-center gap-4 md:gap-8">
-                 <div className="hidden md:flex items-center gap-3 border-r border-white/10 pr-6">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em] italic">Strategic Tracking Active</span>
-                 </div>
-                 <div className="flex gap-4 md:gap-6">
-                    <button className="text-white/50 hover:text-white transition-colors"><MapIcon size={16} /></button>
-                    <button className="text-white/50 hover:text-white transition-colors"><Compass size={16} /></button>
-                    <button className="text-white/50 hover:text-white transition-colors"><Menu size={16} /></button>
-                 </div>
-              </div>
-
-              {/* Centered Large Map UI Text */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                 <div className="w-24 h-24 border border-teal-500/20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
-                    <div className="w-1.5 h-1.5 bg-teal-500 rounded-full" />
-                 </div>
-                 <p className="mt-4 text-[10px] font-black text-teal-500/50 uppercase tracking-[0.5em] italic">Tactical Area Delta</p>
-              </div>
-           </Card>
-        </div>
-
-        {/* Active Unit Sidebar */}
-        <div className={`space-y-4 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`} onClick={(e) => e.stopPropagation()}>
-           <div className="flex items-center justify-between px-1">
-              <h3 className="font-bold text-white text-sm tracking-tight">{isArabic ? 'الوحدات الميدانية' : 'Units On-Field'}</h3>
-              <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest px-2 py-0.5 bg-teal-500/10 rounded-full">
-                 {activePatrols.length} Live
-              </span>
-           </div>
-           <div className="space-y-4 h-[490px] overflow-y-auto pr-1">
-              <AnimatePresence mode="popLayout">
-                 {activePatrols.map((unit, idx) => (
-                    <motion.div 
-                      key={unit.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <ActiveUnitCard 
-                        unit={unit} 
-                        isAr={isArabic} 
-                        onEdit={startEditing}
-                        onDelete={handleDelete}
-                        activeMenuId={activeMenuId}
-                        setActiveMenuId={setActiveMenuId}
-                      />
-                    </motion.div>
-                 ))}
-                 {activePatrols.length === 0 && (
-                   <div className="p-4 text-center text-slate-500 font-bold text-xs uppercase tracking-widest border border-white/5 bg-white/5 rounded-2xl">
-                      {isArabic ? 'لا توجد وحدات نشطة' : 'No Active Units'}
-                   </div>
-                 )}
-              </AnimatePresence>
-           </div>
-        </div>
-
-      </div>
-
-      {/* ── Tactical History Table Section ──────────────────────────────────── */}
-      <div className={isMobile && mobilePanel !== 'data' ? 'hidden' : ''}>
-        <Card className="border-none shadow-lg overflow-hidden bg-slate-900/40 backdrop-blur-xl">
-         <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-               <h3 className="text-lg font-bold text-white tracking-tight">{isArabic ? 'تاريخ المهمات التكتيكية' : 'Tactical Mission History'}</h3>
-               <p className="text-[11px] text-slate-400 font-medium uppercase tracking-widest italic">{isArabic ? 'سجل العمليات المكتملة لآخر 7 أيام' : 'Completed operation logs for the last 7 days'}</p>
-            </div>
-            
-            <div className="flex gap-2">
-               <div className="relative group">
-                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-teal-400" />
-                  <input 
-                    type="text" 
-                    placeholder={isArabic ? 'ابحث عن المعرف أو المركب...' : 'Search mission ID...'}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-xl py-2.5 pl-9 pr-4 text-[12px] font-medium outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500/30 transition-all min-w-[220px] text-white placeholder:text-slate-500"
-                  />
-               </div>
-               <button className="p-2.5 rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-                  <Filter size={18} />
-               </button>
-            </div>
-         </div>
-
-         <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-               <thead>
-                  <tr className="bg-white/5 border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">
-                     <th className="py-4 px-6">{isArabic ? 'المعرف' : 'ID'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'المركب' : 'Unit Vessel'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'التاريخ' : 'Deployed Date'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'المدة' : 'Duration'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'المساحة' : 'Area'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'المخالفات' : 'Violations'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'الحالة' : 'Outcome'}</th>
-                     <th className="py-4 px-6">{isArabic ? 'الإجراءات' : 'Actions'}</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  {filteredMissions.map((mission) => (
-                    <tr key={mission.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors text-center group">
-                       <td className="py-4 px-6">
-                          <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-teal-400 transition-colors">#{mission.code}</span>
-                       </td>
-                       <td className="py-4 px-6 font-bold text-white">{isArabic ? (mission.vesselAr || mission.vessel) : mission.vessel}</td>
-                       <td className="py-4 px-6 text-slate-400">{formatMissionDate(mission.startTime)}</td>
-                       <td className="py-4 px-6 font-mono font-bold text-slate-500 italic">
-                          {mission.duration ? `${mission.duration}h` : '—'}
-                       </td>
-                       <td className="py-4 px-6 font-mono font-bold text-teal-400 tracking-tighter">
-                          {mission.areaCovered ? `${mission.areaCovered} km²` : '—'}
-                       </td>
-                       <td className="py-4 px-6">
-                          {(mission.incidentsReported ?? 0) > 0 ? (
-                            <div className="flex items-center justify-center gap-1 text-red-400 font-black italic">
-                               <AlertCircle size={14} />
-                               <span>{mission.incidentsReported} Found</span>
-                            </div>
-                          ) : (
-                            <span className="text-slate-600 font-bold">—</span>
-                          )}
-                       </td>
-                       <td className="py-4 px-6">
-                          <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-[11px] uppercase tracking-tighter">
-                             <CheckCircle2 size={14} />
-                             {mission.status}
-                          </div>
-                       </td>
-                       <td className="py-4 px-6">
-                          <div className="flex items-center justify-center gap-2">
-                             <button 
-                               onClick={() => startEditing(mission)}
-                               className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
-                               title={isArabic ? 'تعديل' : 'Edit'}
-                             >
-                                <Edit3 size={14} className="text-teal-400" />
-                             </button>
-                             <button 
-                               onClick={() => handleDelete(mission)}
-                               className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
-                               title={isArabic ? 'حذف' : 'Delete'}
-                             >
-                                <Trash2 size={14} className="text-rose-400" />
-                             </button>
-                          </div>
-                       </td>
-                    </tr>
-                  ))}
-                  {filteredMissions.length === 0 && (
-                      <tr>
-                         <td colSpan={8} className="py-8 text-slate-500 font-bold text-xs uppercase tracking-widest">
-                            {isArabic ? 'لا توجد سجلات مطابقة' : 'No matching logs'}
-                         </td>
-                      </tr>
-                  )}
-               </tbody>
-            </table>
-         </div>
-         
-         <div className="p-4 bg-white/[0.02] border-t border-white/5 text-center">
-            <button className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-teal-400 transition-colors">
-               Load Extended Tactical History
-            </button>
-         </div>
-        </Card>
-      </div>
-
-      {/* ── Add/Edit Modal Form ──────────────────────────────────────────────── */}
-      {showModal && (
-        <div 
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[999] flex items-center justify-center p-4 overflow-y-auto"
-          onClick={() => setShowModal(false)}
-        >
-          <Card 
-            className="w-full max-w-[700px] p-5 md:p-8 border border-white/10 bg-[#0c1628]/95 rounded-2xl md:rounded-3xl shadow-2xl relative animate-in fade-in zoom-in-95 duration-200" 
-            onClick={(e) => e.stopPropagation()}
-          >
+      {showModal ? (
+        /* ── INLINE FORM VIEW ── */
+        <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+          {/* Header with Back Button */}
+          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
             <button 
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 md:top-6 md:right-6 text-slate-500 hover:text-white transition-colors"
+              onClick={() => { resetFormFields(); setShowModal(false); }}
+              type="button"
+              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
             >
-              <X size={20} />
+              <ArrowRight size={20} className={isArabic ? '' : 'rotate-180'} />
             </button>
+            <div>
+              <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+                {isArabic ? 'إدارة الدوريات' : 'Patrol Operations'}
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                <Ship className="text-teal-500" size={20} />
+                {editingPatrol 
+                  ? (isArabic ? 'تعديل بيانات الدورية' : 'Edit Patrol Details')
+                  : (isArabic ? 'تسجيل دورية جديدة' : 'Log New Patrol')
+                }
+              </h2>
+            </div>
+          </div>
 
-            <h2 className="text-2xl font-black text-white tracking-tight mb-6 flex items-center gap-2 pb-3 border-b border-white/5">
-              <Ship className="text-teal-400" size={24} />
-              {editingPatrol 
-                ? (isArabic ? 'تعديل بيانات الدورية' : 'Edit Patrol Details')
-                : (isArabic ? 'تسجيل دورية جديدة' : 'Log New Patrol')
-              }
-            </h2>
-
+          <div className="w-full max-w-4xl mx-auto pt-4">
             <form onSubmit={handleFormSubmit} className="space-y-6">
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-code" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'رمز الدورية *' : 'Patrol Code *'}
                   </label>
                   <Input 
+                    id="patrol-code"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="e.g. PAT-204"
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                     required
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-zone-en" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'المنطقة (EN) *' : 'Zone (EN) *'}
                   </label>
                   <Input 
+                    id="patrol-zone-en"
                     value={zone}
                     onChange={(e) => setZone(e.target.value)}
                     placeholder="e.g. Sector Delta"
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                     required
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-zone-ar" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'المنطقة (AR) *' : 'Zone (AR) *'}
                   </label>
                   <Input 
+                    id="patrol-zone-ar"
                     value={zoneAr}
                     onChange={(e) => setZoneAr(e.target.value)}
                     placeholder="e.g. قطاع دلتا"
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                     required
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-vessel" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'المركب المستخدم *' : 'Deployed Vessel *'}
                   </label>
                   <select 
+                    id="patrol-vessel"
                     value={vesselId}
                     onChange={(e) => setVesselId(e.target.value)}
-                    className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                    className="w-full h-11 bg-white/5 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer hover:bg-white/10 transition-all"
                     required
                   >
-                    <option value="">{isArabic ? 'اختر مركباً...' : 'Select vessel...'}</option>
+                    <option value="" className="bg-[#0c1628]">{isArabic ? 'اختر مركباً...' : 'Select vessel...'}</option>
                     {vessels.map((v) => (
-                      <option key={v.id} value={v.id}>
+                      <option key={v.id} value={v.id} className="bg-[#0c1628]">
                         {isArabic ? v.nameAr || v.name : v.name} {v.code ? `(${v.code})` : ''}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-officer" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'ضابط الدورية *' : 'Patrol Officer *'}
                   </label>
                   <select 
+                    id="patrol-officer"
                     value={officerId}
                     onChange={(e) => setOfficerId(e.target.value)}
-                    className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                    className="w-full h-11 bg-white/5 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer hover:bg-white/10 transition-all"
                     required
                   >
-                    <option value="">{isArabic ? 'اختر ضابطاً...' : 'Select officer...'}</option>
+                    <option value="" className="bg-[#0c1628]">{isArabic ? 'اختر ضابطاً...' : 'Select officer...'}</option>
                     {officers.map((o) => (
-                      <option key={o.id} value={o.id}>
+                      <option key={o.id} value={o.id} className="bg-[#0c1628]">
                         {isArabic ? o.nameAr || o.name : o.name} ({o.role})
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-area" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'المساحة المغطاة (كم²)' : 'Area Covered (km²)'}
                   </label>
                   <Input 
+                    id="patrol-area"
                     type="number"
                     step="any"
                     min="0"
                     value={areaCovered}
                     onChange={(e) => setAreaCovered(e.target.value)}
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-duration" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'المدة (ساعات)' : 'Duration (Hours)'}
                   </label>
                   <Input 
+                    id="patrol-duration"
                     type="number"
                     step="any"
                     min="0"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-weather" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'حالة الطقس' : 'Weather Conditions'}
                   </label>
                   <Input 
+                    id="patrol-weather"
                     value={weather}
                     onChange={(e) => setWeather(e.target.value)}
                     placeholder="e.g. Clear, 12kt Wind"
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-status" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'الحالة التشغيلية *' : 'Status *'}
                   </label>
                   <select 
+                    id="patrol-status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value as any)}
-                    className="w-full h-11 bg-[#050b14] border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+                    className="w-full h-11 bg-white/5 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer hover:bg-white/10 transition-all"
                     required
                   >
-                    <option value="ACTIVE">{isArabic ? 'نشط (ACTIVE)' : 'Active'}</option>
-                    <option value="STANDBY">{isArabic ? 'استعداد (STANDBY)' : 'Standby'}</option>
-                    <option value="EMERGENCY">{isArabic ? 'طوارئ (EMERGENCY)' : 'Emergency'}</option>
-                    <option value="COMPLETED">{isArabic ? 'مكتمل (COMPLETED)' : 'Completed'}</option>
+                    <option value="ACTIVE" className="bg-[#0c1628]">{isArabic ? 'نشط (ACTIVE)' : 'Active'}</option>
+                    <option value="STANDBY" className="bg-[#0c1628]">{isArabic ? 'استعداد (STANDBY)' : 'Standby'}</option>
+                    <option value="EMERGENCY" className="bg-[#0c1628]">{isArabic ? 'طوارئ (EMERGENCY)' : 'Emergency'}</option>
+                    <option value="COMPLETED" className="bg-[#0c1628]">{isArabic ? 'مكتمل (COMPLETED)' : 'Completed'}</option>
                   </select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="space-y-2">
+                  <label htmlFor="patrol-incidents" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {isArabic ? 'المخالفات المرصودة' : 'Incidents Reported'}
                   </label>
                   <Input 
+                    id="patrol-incidents"
                     type="number"
                     min="0"
                     value={incidentsReported}
                     onChange={(e) => setIncidentsReported(e.target.value)}
-                    className="bg-[#050b14] border-white/10 text-white rounded-xl"
+                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              <div className="space-y-2">
+                <label htmlFor="patrol-observations" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   {isArabic ? 'الملاحظات الرئيسية' : 'Observations'}
                 </label>
                 <textarea
+                  id="patrol-observations"
                   value={observations}
                   onChange={(e) => setObservations(e.target.value)}
                   placeholder={isArabic ? 'أدخل ملاحظات الدورية هنا...' : 'Enter patrol observations here...'}
-                  className="w-full h-24 bg-[#050b14] border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm placeholder:text-slate-500"
+                  className="w-full h-32 bg-white/5 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm placeholder:text-slate-500 focus:border-teal-500/30 transition-all"
                 />
               </div>
 
               {/* Actions */}
-              <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
+              <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
                 <button 
                   type="button" 
-                  onClick={() => setShowModal(false)}
+                  onClick={() => { resetFormFields(); setShowModal(false); }}
                   className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors"
                   disabled={submitting}
                 >
@@ -935,7 +681,7 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
                 <Button 
                   type="submit" 
                   disabled={submitting}
-                  className="bg-teal-600 hover:bg-teal-500 text-[#0c1628] font-black rounded-xl py-2.5 px-6"
+                  className="bg-teal-500 hover:bg-teal-400 text-[#001529] font-black rounded-xl py-2.5 px-6 shadow-[0_0_15px_rgba(45,212,191,0.2)]"
                 >
                   {submitting 
                     ? <Loader2 className="animate-spin" size={16} /> 
@@ -945,8 +691,279 @@ export default function PatrolsPage({ params }: { params: { lang: string } }) {
               </div>
 
             </form>
-          </Card>
+          </div>
         </div>
+      ) : (
+        /* ── DIRECTORY LISTS VIEW ── */
+        <>
+          {/* ── Page Header ──────────────────────────────────────────────────────── */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-white/10">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                 <span className="w-8 h-1 bg-teal-500 rounded-full" />
+                 <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+                     {isArabic ? 'وحدة السيطرة البحرية' : 'Marine Control Unit'}
+                 </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter">
+                {isArabic ? 'عمليات الدوريات النشطة' : 'Active Patrol Operations'}
+              </h1>
+            </div>
+
+            <div className="flex gap-3">
+               <Button intent="outline" className="rounded-2xl border-white/10 px-5 flex items-center gap-2 text-[12px] font-bold shadow-sm bg-white/5 text-white hover:bg-white/10">
+                  <Compass size={16} className="text-teal-400" />
+                  {isArabic ? 'خريطة الأسطول' : 'Fleet Map'}
+               </Button>
+               <Button 
+                 onClick={() => { resetFormFields(); setShowModal(true); }}
+                 intent="primary" 
+                 className="rounded-2xl px-6 flex items-center gap-2 text-[12px] font-bold shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic"
+               >
+                  <Plus size={18} strokeWidth={3} />
+                  {isArabic ? 'تسجيل دورية' : 'Log New Patrol'}
+               </Button>
+            </div>
+          </div>
+
+          {/* Mobile View Toggle: Map vs Data */}
+          {isMobile && (
+            <div className="flex p-1 bg-[#0a1628]/90 backdrop-blur-2xl border border-white/10 rounded-2xl mb-4 gap-1.5 shadow-xl">
+              <button
+                type="button"
+                onClick={() => setMobilePanel('data')}
+                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                  mobilePanel === 'data'
+                    ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Shield size={14} className="shrink-0" />
+                {isArabic ? 'لوحة العمليات والوحدات' : 'Operations & Units'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobilePanel('map')}
+                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                  mobilePanel === 'map'
+                    ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Compass size={14} className="shrink-0" />
+                {isArabic ? 'الخريطة التكتيكية' : 'Tactical Map'}
+              </button>
+            </div>
+          )}
+
+          {/* ── Summary Stats Row ────────────────────────────────────────────────── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {dynamicStats.map((stat, idx) => (
+              <TacticalStat key={idx} stat={stat} isAr={isArabic} />
+            ))}
+          </div>
+
+          {/* ── Command Center Main Grid ─────────────────────────────────────────── */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Tactical Map HUD Card */}
+            <div className={`lg:col-span-2 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''}`}>
+               <Card className={`${isMobile ? 'h-[320px]' : 'h-[550px]'} border-none shadow-lg overflow-hidden relative group bg-[#0a1628]`}>
+                  {/* GIS HUD Elements Overlay */}
+                  <div className="absolute top-3 right-3 md:top-6 md:right-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
+                     <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/5 shadow-2xl min-w-[110px] md:min-w-[180px]">
+                        <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Marine Weather</p>
+                        <div className="flex items-center justify-between gap-1.5 text-white">
+                           <span className="text-sm md:text-xl font-bold font-mono tracking-tighter">24°C</span>
+                           <Wind size={14} className="text-teal-400 shrink-0" />
+                           <span className="text-[9px] md:text-[11px] font-bold text-teal-400 shrink-0">12 kt</span>
+                        </div>
+                     </div>
+                     <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl hidden sm:block">
+                        <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Sync Status</p>
+                        <div className="flex items-center gap-2">
+                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                           <span className="text-[9px] md:text-[11px] font-bold text-white tracking-tight">Database Synchronized</span>
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Map Mock Illustration */}
+                  <div className="absolute inset-0 opacity-20 pointer-events-none">
+                     <div className="absolute inset-0 bg-[linear-gradient(rgba(20,184,166,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
+                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.1)_0%,transparent_70%)]" />
+                  </div>
+
+                  {/* Central Map Controls HUD */}
+                  <div className="absolute bottom-3 md:bottom-6 left-1/2 -translate-x-1/2 z-20 px-3 py-2 md:px-6 md:py-3 rounded-full bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-3xl flex items-center gap-4 md:gap-8">
+                     <div className="hidden md:flex items-center gap-3 border-r border-white/10 pr-6">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em] italic">Strategic Tracking Active</span>
+                     </div>
+                     <div className="flex gap-4 md:gap-6">
+                        <button className="text-white/50 hover:text-white transition-colors"><MapIcon size={16} /></button>
+                        <button className="text-white/50 hover:text-white transition-colors"><Compass size={16} /></button>
+                        <button className="text-white/50 hover:text-white transition-colors"><Menu size={16} /></button>
+                     </div>
+                  </div>
+
+                  {/* Centered Large Map UI Text */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                     <div className="w-24 h-24 border border-teal-500/20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                        <div className="w-1.5 h-1.5 bg-teal-500 rounded-full" />
+                     </div>
+                     <p className="mt-4 text-[10px] font-black text-teal-500/50 uppercase tracking-[0.5em] italic">Tactical Area Delta</p>
+                  </div>
+               </Card>
+            </div>
+
+            {/* Active Unit Sidebar */}
+            <div className={`space-y-4 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`} onClick={(e) => e.stopPropagation()}>
+               <div className="flex items-center justify-between px-1">
+                  <h3 className="font-bold text-white text-sm tracking-tight">{isArabic ? 'الوحدات الميدانية' : 'Units On-Field'}</h3>
+                  <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest px-2 py-0.5 bg-teal-500/10 rounded-full">
+                     {activePatrols.length} Live
+                  </span>
+               </div>
+               <div className="space-y-4 h-[490px] overflow-y-auto pr-1">
+                  <AnimatePresence mode="popLayout">
+                     {activePatrols.map((unit, idx) => (
+                        <motion.div 
+                          key={unit.id}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                        >
+                          <ActiveUnitCard 
+                            unit={unit} 
+                            isAr={isArabic} 
+                            onEdit={startEditing}
+                            onDelete={handleDelete}
+                            activeMenuId={activeMenuId}
+                            setActiveMenuId={setActiveMenuId}
+                          />
+                        </motion.div>
+                     ))}
+                     {activePatrols.length === 0 && (
+                       <div className="p-4 text-center text-slate-500 font-bold text-xs uppercase tracking-widest border border-white/5 bg-white/5 rounded-2xl">
+                          {isArabic ? 'لا توجد وحدات نشطة' : 'No Active Units'}
+                       </div>
+                     )}
+                  </AnimatePresence>
+               </div>
+            </div>
+
+          </div>
+
+          {/* ── Tactical History Table Section ──────────────────────────────────── */}
+          <div className={isMobile && mobilePanel !== 'data' ? 'hidden' : ''}>
+            <Card className="border-none shadow-lg overflow-hidden bg-slate-900/40 backdrop-blur-xl">
+             <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                   <h3 className="text-lg font-bold text-white tracking-tight">{isArabic ? 'تاريخ المهمات التكتيكية' : 'Tactical Mission History'}</h3>
+                   <p className="text-[11px] text-slate-400 font-medium uppercase tracking-widest italic">{isArabic ? 'سجل العمليات المكتملة لآخر 7 أيام' : 'Completed operation logs for the last 7 days'}</p>
+                </div>
+                
+                <div className="flex gap-2">
+                   <div className="relative group">
+                      <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-teal-400" />
+                      <input 
+                        type="text" 
+                        placeholder={isArabic ? 'ابحث عن المعرف أو المركب...' : 'Search mission ID...'}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="bg-white/5 border border-white/10 rounded-xl py-2.5 pl-9 pr-4 text-[12px] font-medium outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500/30 transition-all min-w-[220px] text-white placeholder:text-slate-500"
+                      />
+                   </div>
+                   <button className="p-2.5 rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                      <Filter size={18} />
+                   </button>
+                </div>
+             </div>
+
+             <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                   <thead>
+                      <tr className="bg-white/5 border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">
+                         <th className="py-4 px-6">{isArabic ? 'المعرف' : 'ID'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'المركب' : 'Unit Vessel'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'التاريخ' : 'Deployed Date'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'المدة' : 'Duration'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'المساحة' : 'Area'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'المخالفات' : 'Violations'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'الحالة' : 'Outcome'}</th>
+                         <th className="py-4 px-6">{isArabic ? 'الإجراءات' : 'Actions'}</th>
+                      </tr>
+                   </thead>
+                   <tbody>
+                      {filteredMissions.map((mission) => (
+                        <tr key={mission.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors text-center group">
+                           <td className="py-4 px-6">
+                              <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-teal-400 transition-colors">#{mission.code}</span>
+                           </td>
+                           <td className="py-4 px-6 font-bold text-white">{isArabic ? (mission.vesselAr || mission.vessel) : mission.vessel}</td>
+                           <td className="py-4 px-6 text-slate-400">{formatMissionDate(mission.startTime)}</td>
+                           <td className="py-4 px-6 font-mono font-bold text-slate-500 italic">
+                              {mission.duration ? `${mission.duration}h` : '—'}
+                           </td>
+                           <td className="py-4 px-6 font-mono font-bold text-teal-400 tracking-tighter">
+                              {mission.areaCovered ? `${mission.areaCovered} km²` : '—'}
+                           </td>
+                           <td className="py-4 px-6">
+                              {(mission.incidentsReported ?? 0) > 0 ? (
+                                <div className="flex items-center justify-center gap-1 text-red-400 font-black italic">
+                                   <AlertCircle size={14} />
+                                   <span>{mission.incidentsReported} Found</span>
+                                </div>
+                              ) : (
+                                <span className="text-slate-600 font-bold">—</span>
+                              )}
+                           </td>
+                           <td className="py-4 px-6">
+                              <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-[11px] uppercase tracking-tighter">
+                                 <CheckCircle2 size={14} />
+                                 {mission.status}
+                              </div>
+                           </td>
+                           <td className="py-4 px-6">
+                              <div className="flex items-center justify-center gap-2">
+                                 <button 
+                                   onClick={() => startEditing(mission)}
+                                   className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                                   title={isArabic ? 'تعديل' : 'Edit'}
+                                 >
+                                    <Edit3 size={14} className="text-teal-400" />
+                                 </button>
+                                 <button 
+                                   onClick={() => handleDelete(mission)}
+                                   className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                                   title={isArabic ? 'حذف' : 'Delete'}
+                                 >
+                                    <Trash2 size={14} className="text-rose-400" />
+                                 </button>
+                              </div>
+                           </td>
+                        </tr>
+                      ))}
+                      {filteredMissions.length === 0 && (
+                          <tr>
+                             <td colSpan={8} className="py-8 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                                {isArabic ? 'لا توجد سجلات مطابقة' : 'No matching logs'}
+                             </td>
+                          </tr>
+                      )}
+                   </tbody>
+                </table>
+             </div>
+             
+             <div className="p-4 bg-white/[0.02] border-t border-white/5 text-center">
+                <button className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-teal-400 transition-colors">
+                   Load Extended Tactical History
+                </button>
+             </div>
+            </Card>
+          </div>
+        </>
       )}
 
       <div className="h-20" /> {/* Spacer */}

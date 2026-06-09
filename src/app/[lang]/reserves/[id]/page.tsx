@@ -224,7 +224,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
 
   if (loading) {
     return (
-      <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
         <PublicNavbar lang={lang} />
         <div className="flex-1 flex flex-col items-center justify-center gap-4 py-40">
           <Loader2 className="animate-spin text-teal-400" size={40} />
@@ -239,7 +239,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
 
   if (!reserve) {
     return (
-      <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
         <PublicNavbar lang={lang} />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 py-40 max-w-xl mx-auto text-center px-6">
           <Shield className="text-rose-500 scale-125" size={48} />
@@ -267,29 +267,40 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
   const isStatusRestricted = reserve.status === 'RESTRICTED';
 
   return (
-    <div className="bg-[#0a1628] text-white min-h-screen flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="bg-th-bg text-th-text min-h-screen flex flex-col justify-between transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       <PublicNavbar lang={lang} />
 
+      <main className="transition-colors duration-300">
+
       {/* ── Immersive Hero Header ────────────────────────────────────────── */}
-      <section className="relative h-[60vh] min-h-[400px] flex items-end justify-center px-6 overflow-hidden">
+      <section className="relative h-[70vh] min-h-[480px] flex items-end justify-center px-6 overflow-hidden" style={{ backgroundColor: 'var(--hero-bg, #0a1628)' }}>
         {/* Cover Image Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/45 to-transparent z-10" />
           <img 
             src={reserve.img} 
             alt={isAr ? reserve.nameAr : reserve.name}
             className="w-full h-full object-cover scale-105"
           />
+          {/* Full-screen frosted overlay — white/opaque in light, subtle in dark */}
+          <div 
+            className="absolute inset-0 z-10 pointer-events-none"
+            style={{ background: 'var(--hero-overlay)' }}
+          />
+          {/* Bottom-to-top gradient blending into page bg */}
+          <div 
+            className="absolute inset-0 z-20 pointer-events-none"
+            style={{ background: 'var(--hero-overlay-bottom)' }}
+          />
         </div>
 
         {/* Floating Decorative Elements */}
-        <div className="absolute top-28 left-6 right-6 flex justify-between items-center z-20 pointer-events-none">
+        <div className="absolute top-28 left-6 right-6 flex justify-between items-center z-30 pointer-events-none">
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-teal-400 italic">
             <Compass size={14} className="animate-spin-slow" />
             <span>{isAr ? 'تفاصيل قطاع المحمية' : 'Reserve Sector Profile'}</span>
           </div>
           <Link href={`/${lang}/reserves`} className="pointer-events-auto">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/60 backdrop-blur-md border border-white/10 hover:border-teal-500/30 text-white hover:text-teal-400 text-xs font-black uppercase tracking-widest transition-all">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 hover:border-teal-500/50 text-th-text hover:text-teal-400 text-xs font-black uppercase tracking-widest transition-all shadow-sm">
               {isAr ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
               {isAr ? 'الشبكة الموحدة' : 'Unified Network'}
             </button>
@@ -297,15 +308,15 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
         </div>
 
         {/* Title Content */}
-        <div className="relative z-20 max-w-7xl mx-auto w-full pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="relative z-30 max-w-7xl mx-auto w-full pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="px-3.5 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-[10px] font-black text-teal-400 uppercase tracking-widest italic block w-fit">
+            <span className="px-3.5 py-1.5 rounded-xl bg-teal-500/20 border border-teal-500/30 text-[10px] font-black text-teal-500 uppercase tracking-widest italic block w-fit backdrop-blur-sm">
               {isAr ? reserve.statusAr : reserve.name.toUpperCase() + ' PROFILE'}
             </span>
-            <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
+            <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight text-th-text drop-shadow-sm">
               {isAr ? reserve.nameAr : reserve.name}
             </h1>
-            <p className="text-sm font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5 italic">
+            <p className="text-sm font-black text-th-dim uppercase tracking-wider flex items-center gap-1.5 italic">
               <MapPin size={16} className="text-teal-400" />
               {isAr ? reserve.locationAr : reserve.location}
             </p>
@@ -334,7 +345,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
           <div className="lg:col-span-8 space-y-12">
             
             {/* Description & Overview */}
-            <div className="p-8 sm:p-10 rounded-[2.5rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-xl relative overflow-hidden space-y-6">
+            <div className="p-8 sm:p-10 rounded-[2.5rem] bg-th-surface border border-th-border shadow-xl relative overflow-hidden space-y-6">
               {/* Corner brackets */}
               <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-teal-400 rounded-tl-lg pointer-events-none" />
               <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-teal-400 rounded-tr-lg pointer-events-none" />
@@ -344,14 +355,14 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
               </h2>
               
               <div 
-                className="text-slate-300 font-medium italic leading-relaxed space-y-4
-                  [&>h1]:text-white [&>h1]:font-black [&>h1]:text-2xl [&>h1]:mt-6 [&>h1]:mb-3 [&>h1]:uppercase [&>h1]:italic [&>h1]:tracking-tighter
-                  [&>h2]:text-white [&>h2]:font-black [&>h2]:text-xl [&>h2]:mt-5 [&>h2]:mb-2 [&>h2]:uppercase [&>h2]:italic [&>h2]:tracking-tighter
+                className="text-th-muted font-medium italic leading-relaxed space-y-4
+                  [&>h1]:text-th-text [&>h1]:font-black [&>h1]:text-2xl [&>h1]:mt-6 [&>h1]:mb-3 [&>h1]:uppercase [&>h1]:italic [&>h1]:tracking-tighter
+                  [&>h2]:text-th-text [&>h2]:font-black [&>h2]:text-xl [&>h2]:mt-5 [&>h2]:mb-2 [&>h2]:uppercase [&>h2]:italic [&>h2]:tracking-tighter
                   [&>p]:mb-4 [&>p]:leading-relaxed
-                  [&>ul]:list-disc [&>ul]:list-inside [&>ul]:space-y-2 [&>ul]:mb-4 [&>ul]:text-slate-300
-                  [&>ol]:list-decimal [&>ol]:list-inside [&>ol]:space-y-2 [&>ol]:mb-4 [&>ol]:text-slate-300
-                  [&>li]:text-slate-300 [&>li]:italic
-                  [&>strong]:text-white [&>strong]:font-bold"
+                  [&>ul]:list-disc [&>ul]:list-inside [&>ul]:space-y-2 [&>ul]:mb-4 [&>ul]:text-th-muted
+                  [&>ol]:list-decimal [&>ol]:list-inside [&>ol]:space-y-2 [&>ol]:mb-4 [&>ol]:text-th-muted
+                  [&>li]:text-th-muted [&>li]:italic
+                  [&>strong]:text-th-text [&>strong]:font-bold"
                 dangerouslySetInnerHTML={{ 
                   __html: isAr ? reserve.descriptionAr : reserve.description 
                 }}
@@ -360,7 +371,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
 
             {/* Activities Section */}
             {activities.length > 0 && (
-              <div className="p-8 sm:p-10 rounded-[2.5rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-xl relative overflow-hidden space-y-6">
+              <div className="p-8 sm:p-10 rounded-[2.5rem] bg-th-surface border border-th-border shadow-xl relative overflow-hidden space-y-6">
                 {/* Corner brackets */}
                 <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-teal-400 rounded-tl-lg pointer-events-none" />
                 <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-teal-400 rounded-tr-lg pointer-events-none" />
@@ -375,7 +386,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
                     <motion.div 
                       key={idx}
                       whileHover={{ scale: 1.02, translateY: -2 }}
-                      className="p-5 rounded-2xl bg-[#081324] border border-white/5 hover:border-teal-500/30 transition-all flex items-center gap-4 group"
+                      className="p-5 rounded-2xl bg-th-surface2 border border-th-border hover:border-teal-500/30 transition-all flex items-center gap-4 group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center group-hover:bg-teal-500/20 transition-all flex-shrink-0">
                         {getActivityIcon(activity)}
@@ -396,7 +407,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
 
             {/* Famous Species Section */}
             {famousSpecies.length > 0 && (
-              <div className="p-8 sm:p-10 rounded-[2.5rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-xl relative overflow-hidden space-y-6">
+              <div className="p-8 sm:p-10 rounded-[2.5rem] bg-th-surface border border-th-border shadow-xl relative overflow-hidden space-y-6">
                 {/* Corner brackets */}
                 <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-teal-400 rounded-tl-lg pointer-events-none" />
                 <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-teal-400 rounded-tr-lg pointer-events-none" />
@@ -413,7 +424,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
                       <motion.div 
                         key={idx}
                         whileHover={{ scale: 1.02 }}
-                        className="p-5 rounded-2xl bg-[#081324] border border-white/5 hover:border-emerald-500/30 transition-all flex items-start gap-4 group"
+                        className="p-5 rounded-2xl bg-th-surface2 border border-th-border hover:border-emerald-500/30 transition-all flex items-start gap-4 group"
                       >
                         <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-all flex-shrink-0 mt-0.5">
                           {getSpeciesIcon(species)}
@@ -435,7 +446,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
 
             {/* Immersive Photo Gallery Slideshow */}
             {gallery.length > 0 && (
-              <div className="p-8 sm:p-10 rounded-[2.5rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-xl relative overflow-hidden space-y-6">
+              <div className="p-8 sm:p-10 rounded-[2.5rem] bg-th-surface border border-th-border shadow-xl relative overflow-hidden space-y-6">
                 {/* Corner brackets */}
                 <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-teal-400 rounded-tl-lg pointer-events-none" />
                 <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-teal-400 rounded-tr-lg pointer-events-none" />
@@ -509,7 +520,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
             {/* Biodiversity Highlight */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Species metric */}
-              <div className="p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 hover:border-teal-500/20 transition-all group">
+              <div className="p-8 rounded-[2rem] bg-th-surface border border-th-border hover:border-teal-500/20 transition-all group">
                 <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 mb-6 group-hover:scale-110 transition-transform">
                   <Microscope size={24} />
                 </div>
@@ -527,7 +538,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
               </div>
 
               {/* Health index metric */}
-              <div className="p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 hover:border-teal-500/20 transition-all group">
+              <div className="p-8 rounded-[2rem] bg-th-surface border border-th-border hover:border-teal-500/20 transition-all group">
                 <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 mb-6 group-hover:scale-110 transition-transform">
                   <Activity size={24} />
                 </div>
@@ -546,7 +557,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
             </div>
 
             {/* Engagement Rules */}
-            <div className="p-8 sm:p-10 rounded-[2.5rem] bg-slate-900/40 border border-white/5 space-y-6">
+            <div className="p-8 sm:p-10 rounded-[2.5rem] bg-th-surface border border-th-border space-y-6">
               <h3 className="text-xl font-black uppercase italic tracking-tighter text-rose-400 flex items-center gap-2">
                 <Ban className="text-rose-500" size={20} />
                 {isAr ? 'قوانين المحمية وقواعد السلامة' : 'Sanctuary Rules & Protocols'}
@@ -583,7 +594,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
           <div className="lg:col-span-4 space-y-8">
             
             {/* Technical Specifications */}
-            <div className="p-8 rounded-[2.5rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-xl relative overflow-hidden space-y-6">
+            <div className="p-8 rounded-[2.5rem] bg-th-surface border border-th-border shadow-xl relative overflow-hidden space-y-6">
               {/* Corner brackets */}
               <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-teal-400 rounded-tr-lg pointer-events-none" />
               
@@ -593,22 +604,22 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
               </h3>
               
               <div className="space-y-4">
-                <div className="p-4.5 rounded-2xl bg-[#071324] border border-white/5 space-y-1">
+                <div className="p-4.5 rounded-2xl bg-th-surface2 border border-th-border space-y-1">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'سنة الإعلان الرسمي' : 'Declaration Year'}</span>
                   <p className="text-lg font-black text-white font-mono">{reserve.establishedYear}</p>
                 </div>
 
-                <div className="p-4.5 rounded-2xl bg-[#071324] border border-white/5 space-y-1">
+                <div className="p-4.5 rounded-2xl bg-th-surface2 border border-th-border space-y-1">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'المساحة المحمية' : 'Protected Area'}</span>
                   <p className="text-lg font-black text-white font-mono">{reserve.area.toLocaleString()} km²</p>
                 </div>
 
-                <div className="p-4.5 rounded-2xl bg-[#071324] border border-white/5 space-y-1">
+                <div className="p-4.5 rounded-2xl bg-th-surface2 border border-th-border space-y-1">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">{isAr ? 'الإحداثيات المكانية' : 'Coordinates'}</span>
                   <p className="text-lg font-black text-white font-mono tracking-tighter">{reserve.coords}</p>
                 </div>
 
-                <div className="p-4.5 rounded-2xl bg-[#071324] border border-white/5 space-y-1.5">
+                <div className="p-4.5 rounded-2xl bg-th-surface2 border border-th-border space-y-1.5">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic block">{isAr ? 'الحالة التشغيلية' : 'Operational Status'}</span>
                   <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider block w-fit ${
                     isStatusOpen 
@@ -627,7 +638,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
 
             {/* Ticket Prices Card */}
             {ticketPrices && (
-              <div className="p-8 rounded-[2.5rem] bg-[#0c1b2f]/60 backdrop-blur-3xl border border-white/5 shadow-xl relative overflow-hidden space-y-6">
+              <div className="p-8 rounded-[2.5rem] bg-th-surface border border-th-border shadow-xl relative overflow-hidden space-y-6">
                 {/* Corner brackets */}
                 <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-teal-400 rounded-tr-lg pointer-events-none" />
                 
@@ -638,7 +649,7 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
                 
                 <div className="space-y-4">
                   {ticketPrices.map((priceItem, idx) => (
-                    <div key={idx} className="p-4.5 rounded-2xl bg-[#071324] border border-white/5 flex items-center justify-between">
+                    <div key={idx} className="p-4.5 rounded-2xl bg-th-surface2 border border-th-border flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <Coins className="text-amber-400 animate-pulse" size={16} />
                         <span className="text-xs font-bold text-slate-300">{priceItem.category}</span>
@@ -834,6 +845,8 @@ export default function ReserveDetailPage({ params }: { params: { lang: string; 
           </div>
         )}
       </AnimatePresence>
+
+      </main>
 
       <PublicFooter lang={lang} />
     </div>

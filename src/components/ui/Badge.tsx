@@ -3,11 +3,11 @@
 import React from 'react';
 
 const colorMap: Record<string, string> = {
-  primary: 'bg-indigo-500/10 text-indigo-400',
-  success: 'bg-emerald-500/10 text-emerald-400',
-  warning: 'bg-amber-500/10 text-amber-400',
-  danger: 'bg-rose-500/10 text-rose-400',
-  teal: 'bg-teal-500/10 text-teal-400',
+  primary: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+  success: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  warning: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  danger: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
+  teal: 'bg-teal-500/10 text-teal-600 dark:text-teal-400',
 };
 
 const sizeMap: Record<string, string> = {

@@ -97,11 +97,12 @@ export default function NewsClient({ lang }: { lang: string }) {
       return titleMatch || contentMatch;
    });
 
-   return (
-      <div className="bg-[#0a1628] text-white min-h-screen" dir={isAr ? 'rtl' : 'ltr'}>
-         <PublicNavbar lang={lang} />
+    return (
+       <div className="bg-th-bg text-th-text min-h-screen transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
+          <PublicNavbar lang={lang} />
 
-         <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto">
+          <main className="transition-colors duration-300">
+             <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-20 border-b border-white/5 pb-12">
                <div className="space-y-6 max-w-2xl">
                   <div className="flex items-center gap-3">
@@ -127,7 +128,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder={isAr ? 'ابحث في أخبار ومستجدات المحميات...' : 'Search news & updates...'}
-                        className={`w-full ${isAr ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-slate-900/40 hover:bg-slate-900/60 focus:bg-slate-900 border border-white/5 focus:border-teal-500/50 rounded-2xl text-sm font-medium text-white placeholder-slate-500 outline-none transition-all shadow-inner`}
+                        className={`w-full ${isAr ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-th-surface hover:bg-th-surface2 focus:bg-th-surface border border-th-border focus:border-teal-500/50 rounded-2xl text-sm font-medium text-th-text placeholder-th-muted outline-none transition-all shadow-sm`}
                      />
                   </div>
 
@@ -175,14 +176,14 @@ export default function NewsClient({ lang }: { lang: string }) {
                         <motion.div
                            initial={{ opacity: 0, x: -30 }}
                            animate={{ opacity: 1, x: 0 }}
-                           className="group relative h-[350px] sm:h-[500px] rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl cursor-pointer w-full"
+                           className="dark group relative h-[350px] sm:h-[500px] rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl cursor-pointer w-full"
                         >
                            <img
                               src={filtered[0].imageUrl || '/red_sea_hero_aerial_1774790601114.png'}
                               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[3s]"
                               alt="Featured News"
                            />
-                           <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-black/20 to-transparent" />
+                           <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/60 to-transparent" />
                            <div className="absolute top-8 left-8">
                               <div className="px-5 py-2 rounded-xl bg-teal-500 text-[#001529] font-black text-[10px] tracking-widest uppercase italic">
                                  {isAr ? 'الخبر الرئيسي' : 'FEATURED ARTICLE'}
@@ -194,7 +195,7 @@ export default function NewsClient({ lang }: { lang: string }) {
                                  <span>•</span>
                                  <span>{getReadTime(filtered[0])}</span>
                               </div>
-                              <h2 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase italic tracking-tighter drop-shadow-lg group-hover:text-teal-400 transition-colors leading-tight">
+                              <h2 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase italic tracking-tighter text-white drop-shadow-lg group-hover:text-teal-400 transition-colors leading-tight">
                                  {isAr ? filtered[0].titleAr : filtered[0].title}
                               </h2>
                               <p className="text-lg font-medium text-slate-200 max-w-2xl italic leading-relaxed line-clamp-2">
@@ -325,9 +326,10 @@ export default function NewsClient({ lang }: { lang: string }) {
                   )}
                </div>
             )}
-         </section>
+             </section>
+          </main>
 
-         <PublicFooter lang={lang} />
-      </div>
-   );
+          <PublicFooter lang={lang} />
+       </div>
+    );
 }

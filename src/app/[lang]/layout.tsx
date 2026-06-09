@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '../globals.css';
 import { Inter, Cairo } from 'next/font/google';
+import { ThemeProvider } from '../../components/layout/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const cairo = Cairo({ weight: ['300', '400', '500', '600', '700', '800', '900'], subsets: ['arabic'], variable: '--font-cairo' });
@@ -95,14 +96,32 @@ export default function RootLayout({
      }
   };
   
+  const inlineThemeScript = `
+    (function() {
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || (!saved && true)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
+  `;
+
   return (
     <html lang={params.lang} dir={isArabic ? 'rtl' : 'ltr'}>
-      <body className={`${inter.variable} ${cairo.variable} ${isArabic ? 'font-arabic' : 'font-english'} antialiased bg-whiteFoam text-oceanPrimary`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: inlineThemeScript }} />
+      </head>
+      <body className={`${inter.variable} ${cairo.variable} ${isArabic ? 'font-arabic' : 'font-english'} antialiased`}>
         <script
            type="application/ld+json"
            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
