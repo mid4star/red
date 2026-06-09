@@ -135,7 +135,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setEmail(user.email || '');
     setCustomDomainEmail(user.customDomainEmail || '');
     setProfilePictureUrl(user.profilePictureUrl || '');
-    setBadgesText(user.badges ? user.badges.join(', ') : '');
+    setBadgesText(user.badges ? (Array.isArray(user.badges) ? user.badges : typeof user.badges === 'string' && user.badges.startsWith('[') ? JSON.parse(user.badges) : []).join(', ') : '');
     setUserRole(user.role);
     setReserveId(user.reserveId);
     setUserStatus(user.status);
@@ -563,9 +563,9 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                         </div>
 
                         {/* Badges inline */}
-                        {user.badges && user.badges.length > 0 && (
+                        {user.badges && (Array.isArray(user.badges) ? user.badges : (typeof user.badges === 'string' && user.badges.startsWith('[')) ? JSON.parse(user.badges) : []).length > 0 && (
                           <div className="flex flex-wrap gap-1.5 mb-3">
-                            {user.badges.map((badge, idx) => (
+                            {(Array.isArray(user.badges) ? user.badges : (typeof user.badges === 'string' && user.badges.startsWith('[')) ? JSON.parse(user.badges) : []).map((badge: string, idx: number) => (
                               <span key={idx} className="flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
                                 <UserCheck size={10} /> {badge}
                               </span>
