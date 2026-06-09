@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Lock, User, MapPin, ChevronRight, Fingerprint, Activity, Zap } from 'lucide-react';
+import { Shield, Lock, User, MapPin, ChevronRight, Fingerprint, Activity, Zap, Sun, Moon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/components/layout/ThemeProvider';
 
 const RESERVES = [
   { id: 'northern-islands', en: 'Northern Islands', ar: 'محمية الجزر الشمالية' },
@@ -15,6 +16,7 @@ const RESERVES = [
 export default function LoginPage({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [selectedReserve, setSelectedReserve] = useState(RESERVES[0].id);
@@ -108,7 +110,20 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#050b14] flex items-center justify-center relative overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+    <main className="min-h-screen bg-[#0a1628] flex items-center justify-center relative overflow-hidden transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
+      {/* Theme Toggle Button */}
+      <div className={`absolute top-6 ${isAr ? 'left-6' : 'right-6'} z-[100]`}>
+        <button
+          onClick={toggleTheme}
+          className="w-12 h-12 rounded-full bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all cursor-pointer"
+          title={isAr ? 'تغيير المظهر' : 'Toggle Theme'}
+          aria-label="Toggle Theme"
+          aria-pressed={theme === 'dark'}
+        >
+          {theme === 'dark' ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-blue-400" />}
+        </button>
+      </div>
+
       {/* Background HUD & Gradients */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
@@ -174,7 +189,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-[480px] mx-auto"
         >
-          <div className="bg-[#0a1628]/80 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.5)] relative overflow-hidden">
+          <div className="bg-[#0d1b2a]/95 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.5)] relative overflow-hidden transition-colors duration-300">
             
             {/* Top decorative elements */}
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-teal-500/0 via-teal-500 to-teal-500/0 opacity-50" />
@@ -219,7 +234,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                     disabled={loading}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     placeholder={isAr ? 'أدخل رقم هويتك الوظيفية' : 'Enter your staff ID'}
-                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
+                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
                   />
                 </div>
               </div>
@@ -239,7 +254,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                     disabled={loading}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
+                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
                   />
                 </div>
               </div>
@@ -257,7 +272,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                     value={selectedReserve}
                     disabled={loading}
                     onChange={(e) => setSelectedReserve(e.target.value)}
-                    className={`w-full bg-[#050b14]/50 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer disabled:opacity-50`}
+                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer disabled:opacity-50`}
                   >
                     {RESERVES.map(res => (
                       <option key={res.id} value={res.id} className="bg-[#0a1628] text-white">
@@ -338,6 +353,6 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
           </div>
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }
