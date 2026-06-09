@@ -138,7 +138,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
             </Link>
 
             <Link href={`/${lang}/staff/login`} className="hidden md:block no-underline">
-               <button className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl bg-teal-500 text-[#001529] font-black text-[12px] tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
+               <button className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl bg-teal-500 text-white font-black text-[12px] tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
                   <User size={16} strokeWidth={3} />
                   {isAr ? 'بوابة الموظفين' : 'Staff Portal'}
                </button>
@@ -175,7 +175,7 @@ export function PublicNavbar({ lang }: { lang: string }) {
             ))}
             <div className="pt-6 border-t border-th-border flex flex-col gap-6">
                <Link href={`/${lang}/staff/login`} onClick={() => setMobileMenuOpen(false)} className="no-underline">
-                  <button className="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-teal-500 text-[#001529] font-black text-[14px] tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
+                  <button className="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-teal-500 text-white font-black text-[14px] tracking-tighter uppercase italic hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(45,212,191,0.2)]">
                      <User size={18} strokeWidth={3} />
                      {isAr ? 'بوابة الموظفين' : 'Staff Portal'}
                   </button>
