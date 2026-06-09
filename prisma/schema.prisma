@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -33,15 +34,19 @@ model User {
   passwordHash    String
   name            String
   nameAr          String   @default("")
-  role            String   @default("MONITOR") // ADMIN, MONITOR, RESEARCHER, RANGER, MANAGER
-  reserveId       String   @default("")
-  reserve         String?
-  reserveAr       String?
-  status          String   @default("ACTIVE")
-  certifications  String?  // Comma-separated or JSON
-  allowedSections String?  // JSON
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  role              String   @default("MONITOR") // ADMIN, MONITOR, RESEARCHER, RANGER, MANAGER
+  reserveId         String   @default("")
+  reserve           String?
+  reserveAr         String?
+  status            String   @default("ACTIVE")
+  email             String?
+  customDomainEmail String?
+  profilePictureUrl String?
+  badges            String?  // JSON or comma-separated
+  certifications    String?  // Comma-separated or JSON
+  allowedSections   String?  // JSON
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   patrolsParticipated Patrol[] @relation("PatrolMembers")
   violationsReported  Violation[]

@@ -86,6 +86,9 @@ function mapClientToSql(collectionName: string, clientData: any, action?: string
     if (Array.isArray(mapped.certifications)) {
       mapped.certifications = mapped.certifications.join(', ');
     }
+    if (Array.isArray(mapped.badges)) {
+      mapped.badges = JSON.stringify(mapped.badges);
+    }
     if (mapped.allowedSections) {
       mapped.allowedSections = JSON.stringify(mapped.allowedSections);
     }
