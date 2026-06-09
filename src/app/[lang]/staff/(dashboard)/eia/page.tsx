@@ -111,8 +111,6 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
   // Mobile responsiveness states
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [mobilePanel, setMobilePanel] = useState<'map' | 'data'>('data');
-  const [subMode, setSubMode] = useState<'form' | 'list'>('list');
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -137,6 +135,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
 
   // Form toggles
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
 
   // Advanced Filters
   // 1. Costs filters
@@ -805,38 +804,37 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
     }
   };
 
-  const handleOpenDetail = (item: any, type: any) => {
-    const targetMapItem = mapItems.find(m => m.id === item.id && m.dataType === (item.dataType || type.slice(0, -1)));
-    if (targetMapItem) {
-      setActiveMapItem(targetMapItem);
-    } else {
-      setActiveMapItem({
-        id: item.id,
-        dataType: (type === 'inspections' ? 'inspection' : type === 'violations' ? 'violation' : 'accident') as any,
-        latitude: item.latitude,
-        longitude: item.longitude,
-        locationName: item.locationName,
-        type: item.type || item.locationName,
-        date: item.date,
-        details: item.description || item.inspectorName || item.entityName,
-        ...item
-      });
-    }
-    
-    // Instead of inline editing/viewing, use the Modal
+  const handleOpenDetail = (item: any, type: 'costs' | 'inspections' | 'violations' | 'accidents') => {
     setSelectedDetailItem(item);
     setSelectedDetailType(type);
     setIsReportModalOpen(true);
     
-    if (isMobile) {
-      setMobilePanel('map');
+    // Also update map highlight for location-aware items
+    if (item.latitude && item.longitude) {
+      const dataTypeMap = type === 'inspections' ? 'inspection' : type === 'violations' ? 'violation' : 'accident';
+      const targetMapItem = mapItems.find(m => m.id === item.id && m.dataType === dataTypeMap);
+      if (targetMapItem) {
+        setActiveMapItem(targetMapItem);
+      } else {
+        setActiveMapItem({
+          id: item.id,
+          dataType: dataTypeMap as any,
+          latitude: item.latitude,
+          longitude: item.longitude,
+          locationName: item.locationName,
+          type: item.type || item.locationName,
+          date: item.date,
+          details: item.description || item.inspectorName || item.entityName,
+          ...item
+        });
+      }
     }
   };
 
   const renderDetailedView = () => {
     if (!selectedDetailItem) return null;
     return (
-      <Card className="p-6 border border-white/10 bg-slate-900/40 backdrop-blur-xl rounded-3xl shadow-xl space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+      <Card className="p-6 border border-white/10 bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-xl space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
         {/* Back & Role Switcher Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/10">
           <button 
@@ -1844,11 +1842,35 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
         </div>
       )}
 
-      {/* ── Main Layout Split Screen: 60% Lists & Forms, 40% GIS Map ────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        
-        {/* Left Side: Forms & Content Lists (60% equivalent = 3 cols) */}
-        <div className={`lg:col-span-3 space-y-6 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`}>
+      {/* ── Main Layout: Map (7/12) LEFT + Data (5/12) RIGHT ──────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
+
+        {/* Left Column: GIS Map (7 of 12 cols) — hidden on mobile when not 'map' */}
+        <div className={`lg:col-span-7 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''} ${isMobile ? 'h-[calc(100vh-16rem)]' : 'h-[600px] lg:h-[calc(100vh-14rem)] sticky top-6'} relative`}>
+          <MapComponent 
+            items={mapItems} 
+            activeItem={activeMapItem} 
+            onItemSelect={(item) => {
+              setActiveMapItem(item);
+              const tabName = item.dataType === 'inspection' ? 'inspections' : item.dataType === 'violation' ? 'violations' : 'accidents';
+              setActiveTab(tabName);
+              if (item.dataType === 'inspection') {
+                const found = inspections.find(i => i.id === item.id);
+                if (found) { setSelectedDetailItem(found); setSelectedDetailType('inspections'); setIsEditingDetail(false); }
+              } else if (item.dataType === 'violation') {
+                const found = violations.find(v => v.id === item.id);
+                if (found) { setSelectedDetailItem(found); setSelectedDetailType('violations'); setIsEditingDetail(false); }
+              } else if (item.dataType === 'accident') {
+                const found = accidents.find(a => a.id === item.id);
+                if (found) { setSelectedDetailItem(found); setSelectedDetailType('accidents'); setIsEditingDetail(false); }
+              }
+            }} 
+            lang={params.lang}
+          />
+        </div>
+
+        {/* Right Column: Forms & Content Lists (5 of 12 cols) */}
+        <div className={`lg:col-span-5 space-y-4 md:space-y-5 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`}>
           {selectedDetailItem ? (
             renderDetailedView()
           ) : (
@@ -2337,7 +2359,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               {activeTab === 'costs' && (
                 <div className="space-y-4">
                   {/* Costs Advanced Search Panel */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl">
                     <div className="relative flex items-center">
                       <Search size={14} className={`absolute ${isArabic ? 'right-3' : 'left-3'} text-slate-500 pointer-events-none`} />
                       <input 
@@ -2424,7 +2446,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               {activeTab === 'inspections' && (
                 <div className="space-y-4">
                   {/* Inspections Advanced Search Panel */}
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl">
                     <div className="relative flex items-center">
                       <Search size={14} className={`absolute ${isArabic ? 'right-3' : 'left-3'} text-slate-500 pointer-events-none`} />
                       <input 
@@ -2534,7 +2556,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               {activeTab === 'violations' && (
                 <div className="space-y-4">
                   {/* Violations Advanced Search Panel */}
-                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-3 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-3 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl">
                     <select
                       value={searchViolationType}
                       onChange={(e) => setSearchViolationType(e.target.value)}
@@ -2591,7 +2613,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                           key={viol.id + (activeMapItem?.id === viol.id ? '-active' : '')}
                           interactive
                           onClick={() => handleOpenDetail(viol, 'violations')}
-                          className={`p-4 border bg-slate-900/40 backdrop-blur-xl transition-all relative border-l-4 border-l-rose-500 flex flex-col justify-between ${
+                          className={`p-4 border bg-[#0d1e36]/60 backdrop-blur-xl transition-all relative border-l-4 border-l-rose-500 flex flex-col justify-between ${
                             activeMapItem?.id === viol.id ? 'highlight-active-card' : 'border-white/5 hover:border-white/10'
                           }`}
                         >
@@ -2653,7 +2675,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               {activeTab === 'accidents' && (
                 <div className="space-y-4">
                   {/* Accidents Advanced Search Panel */}
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-2xl">
                     <select
                       value={searchAccidentType}
                       onChange={(e) => setSearchAccidentType(e.target.value)}
@@ -2745,53 +2767,17 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
             </div>
           )}
         </>)}
-      </div>
-
-        {/* Right Side: Fixed/Interactive GIS Leaflet Map (40% equivalent = 2 cols) */}
-        <div className={`lg:col-span-7 relative ${isMobile && mobilePanel !== "map" ? "hidden" : ""} ${isMobile ? "h-[calc(100vh-16rem)]" : "h-[600px] lg:h-[calc(100vh-14rem)] sticky top-6"}`}>
-          <MapComponent 
-            items={mapItems} 
-            activeItem={activeMapItem} 
-            onItemSelect={(item) => {
-              setActiveMapItem(item);
-              const tabName = item.dataType === 'inspection' ? 'inspections' : item.dataType === 'violation' ? 'violations' : 'accidents';
-              setActiveTab(tabName);
-              
-              if (item.dataType === 'inspection') {
-                const found = inspections.find(i => i.id === item.id);
-                if (found) {
-                  setSelectedDetailItem(found);
-                  setSelectedDetailType('inspections');
-                  setIsEditingDetail(false);
-                }
-              } else if (item.dataType === 'violation') {
-                const found = violations.find(v => v.id === item.id);
-                if (found) {
-                  setSelectedDetailItem(found);
-                  setSelectedDetailType('violations');
-                  setIsEditingDetail(false);
-                }
-              } else if (item.dataType === 'accident') {
-                const found = accidents.find(a => a.id === item.id);
-                if (found) {
-                  setSelectedDetailItem(found);
-                  setSelectedDetailType('accidents');
-                  setIsEditingDetail(false);
-                }
-              }
-            }} 
-            lang={params.lang}
-          />
         </div>
 
-        <EIAReportModal 
-          isOpen={isReportModalOpen} 
-          onClose={() => setIsReportModalOpen(false)} 
-          item={selectedDetailItem} 
+        <EIAReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          item={selectedDetailItem}
           type={selectedDetailType}
-          lang={params.lang} 
+          lang={params.lang}
         />
       </div>
+
       <style jsx>{`
         @keyframes cardGlow {
           0% {
