@@ -668,18 +668,26 @@ export function StaffSidebar({ lang }: { lang: string }) {
       </div>
 
       <style jsx global>{`
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.4) rgba(0, 0, 0, 0.2);
+        }
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+          margin-top: 10px;
+          margin-bottom: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(255, 255, 255, 0.4);
           border-radius: 10px;
+          border: 2px solid rgba(0, 0, 0, 0.2);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(45, 212, 191, 0.8);
         }
       `}</style>
     </aside>
