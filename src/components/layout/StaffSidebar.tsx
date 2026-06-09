@@ -357,13 +357,12 @@ export function StaffSidebar({ lang }: { lang: string }) {
         </AnimatePresence>
 
         <aside
-          className={`no-print bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-300 ease-in-out border-none ${
-            tabletExpanded ? 'w-64' : 'w-[72px]'
-          } ${isArabic ? 'right-0' : 'left-0'}`}
-          dir={isArabic ? 'rtl' : 'ltr'}
+          className={`fixed inset-y-0 ${isArabic ? 'right-0' : 'left-0'} bg-[#0a1628] text-white flex flex-col z-[100] transition-all duration-300 ${tabletExpanded ? 'w-64' : 'w-[72px]'} shadow-[4px_0_24px_rgba(0,0,0,0.3)]`}
+          onMouseEnter={() => setTabletExpanded(true)}
+          onMouseLeave={() => setTabletExpanded(false)}
         >
         {/* Tablet Header */}
-        <div className="p-3 pb-3 border-b border-white/5 flex flex-col items-center">
+        <div className="p-3 border-b border-white/5 flex items-center justify-center shrink-0">
           <button
             onClick={() => setTabletExpanded(prev => !prev)}
             className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] shrink-0 transition-transform hover:scale-105 overflow-hidden"
@@ -392,8 +391,8 @@ export function StaffSidebar({ lang }: { lang: string }) {
           )}
         </div>
 
-        {/* Tablet Navigation */}
-        <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto custom-scrollbar">
+        {/* Tablet Nav */}
+        <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto custom-scrollbar min-h-0">
           {filteredNavItems.map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
@@ -455,7 +454,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
         </nav>
 
         {/* Tablet Footer */}
-        <div className="mt-auto p-2 border-t border-white/5 bg-white/[0.02]">
+        <div className="mt-auto p-2 border-t border-white/5 bg-white/[0.02] shrink-0">
           <Link href={`/${lang}/staff/profile`} className={`flex items-center gap-2 p-2 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer no-underline ${tabletExpanded ? '' : 'justify-center'}`}>
             <div className="w-8 h-8 rounded-full bg-[#1e293b] border-2 border-white/10 overflow-hidden shrink-0">
               <img
@@ -534,7 +533,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* ── Header / Branding ────────────────────────────────────────────────── */}
-      <div className="p-8 pb-6 border-b border-white/5 flex flex-col gap-4">
+      <div className="p-8 pb-6 border-b border-white/5 flex flex-col gap-4 shrink-0">
         <div className="flex items-center gap-3.5">
           {config.siteLogoUrl ? (
              <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] bg-white/5 shrink-0">
@@ -557,7 +556,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
       </div>
 
       {/* ── Navigation List ──────────────────────────────────────────────────── */}
-      <nav className="flex-1 py-8 px-5 space-y-1.5 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 py-8 px-5 space-y-1.5 overflow-y-auto custom-scrollbar min-h-0 pb-10">
         {filteredNavItems.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
@@ -606,7 +605,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
       </nav>
 
       {/* ── User Session / Bottom Footer ────────────────────────────────────── */}
-      <div className="mt-auto p-5 border-t border-white/5 bg-white/[0.02]">
+      <div className="mt-auto p-5 border-t border-white/5 bg-white/[0.02] shrink-0 z-20">
         <Link href={`/${lang}/staff/profile`} className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer no-underline">
           <div className="w-10 h-10 rounded-full bg-[#1e293b] border-2 border-white/10 overflow-hidden shrink-0">
             <img
