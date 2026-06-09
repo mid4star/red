@@ -170,13 +170,13 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
         <div className="px-6 md:px-10 relative">
           
           {/* Avatar (Overlapping cover) */}
-          <div className="flex justify-between items-end -mt-16 md:-mt-20 mb-4 md:mb-6">
+          <div className="flex justify-between items-end -mt-12 sm:-mt-16 md:-mt-20 mb-4 md:mb-6">
             <div className="relative shrink-0 z-10 group">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] border-white dark:border-[#0f1c2e] bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-xl flex items-center justify-center relative">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full border-[4px] md:border-[6px] border-white dark:border-[#0f1c2e] bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-xl flex items-center justify-center relative">
                 {profile.profilePictureUrl ? (
                   <img src={profile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <UserIcon size={64} className="text-slate-400" />
+                  <UserIcon className="w-12 h-12 md:w-16 md:h-16 text-slate-400" />
                 )}
                 
                 {/* Upload Overlay */}
@@ -204,10 +204,10 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
           </div>
 
           {/* Name & Title */}
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 z-10">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-6 z-10">
             <div className="space-y-3 flex-1">
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+              <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                   {isArabic ? profile.nameAr || profile.name : profile.name}
                 </h1>
                 {profile.role === 'ADMIN' && (
@@ -218,8 +218,8 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium">
-                <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/5">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-x-6 gap-y-3 text-sm font-medium">
+                <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/5 w-fit">
                   <Key size={14} className="text-teal-500" /> 
                   <span className="opacity-70 text-xs mr-1 uppercase">ID:</span> {profile.employeeId}
                 </span>
@@ -425,7 +425,7 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
         <div className="lg:col-span-2 space-y-8">
           
           {/* KPI Stats */}
-          <div className="grid grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             <Card className="p-5 md:p-6 bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-xl rounded-3xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full filter blur-3xl -z-10 group-hover:bg-blue-500/20 transition-all" />
               <div className="flex items-center justify-between mb-4">
@@ -463,7 +463,7 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
           {/* Activity Logs */}
           <Card className="bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-xl rounded-3xl overflow-hidden flex flex-col min-h-[500px]">
             {/* Tabs Header */}
-            <div className="flex items-center border-b border-slate-200 dark:border-white/10 px-2 pt-2">
+            <div className="flex items-center border-b border-slate-200 dark:border-white/10 px-2 pt-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
               {[
                 { id: 'patrols', label: 'Patrols History', labelAr: 'سجل الدوريات', icon: Waves },
                 { id: 'violations', label: 'Reported Violations', labelAr: 'المخالفات المسجلة', icon: AlertTriangle },
@@ -497,18 +497,18 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                   {profile.patrolsParticipated?.length > 0 ? (
                     profile.patrolsParticipated.map((patrol: any) => (
                       <div key={patrol.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-teal-500/30 transition-colors group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                            <Waves size={20} />
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <Waves size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                           <div>
-                            <h5 className="font-bold text-slate-900 dark:text-white text-sm">{patrol.code || 'Uncoded Patrol'}</h5>
+                            <h5 className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{patrol.code || 'Uncoded Patrol'}</h5>
                             <p className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1.5">
-                              <MapPin size={12} /> {patrol.zone || (isArabic ? 'منطقة غير محددة' : 'Unknown Zone')}
+                              <MapPin size={12} className="shrink-0" /> <span className="line-clamp-1">{patrol.zone || (isArabic ? 'منطقة غير محددة' : 'Unknown Zone')}</span>
                             </p>
                           </div>
                         </div>
-                        <div className="text-end">
+                        <div className="text-end shrink-0 pl-2 rtl:pl-0 rtl:pr-2">
                           <span className={`inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${patrol.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
                             {patrol.status}
                           </span>
@@ -533,18 +533,18 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                   {profile.violationsReported?.length > 0 ? (
                     profile.violationsReported.map((violation: any) => (
                       <div key={violation.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-rose-500/30 transition-colors group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                            <AlertTriangle size={20} />
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <AlertTriangle size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                           <div>
                             <h5 className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{violation.type || 'General Violation'}</h5>
                             <p className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1.5">
-                              <MapPin size={12} /> {violation.location || (isArabic ? 'موقع غير محدد' : 'Unknown Location')}
+                              <MapPin size={12} className="shrink-0" /> <span className="line-clamp-1">{violation.location || (isArabic ? 'موقع غير محدد' : 'Unknown Location')}</span>
                             </p>
                           </div>
                         </div>
-                        <div className="text-end">
+                        <div className="text-end shrink-0 pl-2 rtl:pl-0 rtl:pr-2">
                           <span className={`inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${violation.status === 'RESOLVED' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                             {violation.status}
                           </span>
@@ -569,18 +569,18 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                   {profile.surveysConducted?.length > 0 ? (
                     profile.surveysConducted.map((survey: any) => (
                       <div key={survey.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-purple-500/30 transition-colors group">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                            <Microscope size={20} />
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <Microscope size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                           <div>
                             <h5 className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{survey.target || 'General Survey'}</h5>
                             <p className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1.5">
-                              <MapPin size={12} /> {survey.area || (isArabic ? 'منطقة غير محددة' : 'Unknown Area')}
+                              <MapPin size={12} className="shrink-0" /> <span className="line-clamp-1">{survey.area || (isArabic ? 'منطقة غير محددة' : 'Unknown Area')}</span>
                             </p>
                           </div>
                         </div>
-                        <div className="text-end">
+                        <div className="text-end shrink-0 pl-2 rtl:pl-0 rtl:pr-2">
                           <span className={`inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${survey.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-500/10 text-slate-500'}`}>
                             {survey.status}
                           </span>
