@@ -260,6 +260,24 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         if (!response.ok) throw new Error('Failed to add user');
       }
 
+      // Automatically create or attempt to create Email Routing Alias
+      if (email && customDomainEmail && customDomainEmail.includes('@rsmp-eg.com')) {
+        const aliasStr = customDomainEmail.split('@')[0];
+        try {
+          await fetch('/api/staff/email-routing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              alias: aliasStr,
+              destinationEmail: email,
+              description: `صندوق بريد تلقائي للموظف ${employeeId} - ${nameAr}`
+            })
+          });
+        } catch (cfErr) {
+          console.error('Email routing alias auto-creation failed:', cfErr);
+        }
+      }
+
       resetFormFields();
       setShowAddForm(false);
       fetchUsers();
