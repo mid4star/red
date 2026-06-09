@@ -27,8 +27,8 @@ export async function POST(request: Request) {
     } else {
       // Backward compatibility plain-text fallback
       isValid = password === user.passwordHash || 
-                (email === 'admin@rsmp-eg.com' && password === 'admin') || 
-                (email === 'monitor@rsmp-eg.com' && password === 'password');
+                (user.employeeId === 'ADMIN-01' && password === 'admin') || 
+                (user.employeeId === 'MON-102' && password === 'password');
     }
 
     if (!isValid) {
