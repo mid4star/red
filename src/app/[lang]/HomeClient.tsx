@@ -235,7 +235,7 @@ export default function HomeClient({ lang }: { lang: string }) {
                      {heroTitleVal}
                   </h1>
 
-                  <p className="text-xl md:text-2xl font-medium text-th-dim max-w-3xl mx-auto italic drop-shadow-lg">
+                  <p className="text-xl md:text-[1.35rem] leading-relaxed font-bold text-th-text opacity-90 max-w-3xl mx-auto italic drop-shadow-md">
                      {heroSubtitleVal}
                   </p>
 
