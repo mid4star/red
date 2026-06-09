@@ -102,6 +102,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
       media: { nameEn: 'Media Center', nameAr: 'المركز الإعلامي' },
       users: { nameEn: 'User Management', nameAr: 'إدارة المستخدمين' },
       settings: { nameEn: 'System Settings', nameAr: 'إعدادات النظام' },
+      profile: { nameEn: 'User Profile', nameAr: 'الملف الشخصي' },
     };
 
     const meta = sectionsMap[primarySegment] || { nameEn: primarySegment, nameAr: primarySegment };
@@ -116,7 +117,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
   const { isDashboard, key, nameEn, nameAr } = getSectionInfo(pathname);
 
   let hasAccess = true;
-  if (!isDashboard && key !== 'settings') {
+  if (!isDashboard && key !== 'settings' && key !== 'profile') {
     if (key === 'users') {
       hasAccess = session?.role === 'ADMIN';
     } else {
