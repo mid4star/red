@@ -9,7 +9,7 @@ import { User, UserRole } from '@/lib/firebase/schema';
 import { 
   Users, ShieldAlert, Plus, Search, CheckCircle2, Loader2, Lock, Check, X, Shield, UserPlus, Trash2, Edit3,
   Waves, Microscope, ClipboardList, AlertTriangle, Anchor, Megaphone, Settings, ShieldCheck, ArrowRight,
-  Camera, Mail, Tag, UserCheck, User as UserIcon
+  Camera, Mail, Tag, UserCheck, User as UserIcon, Map
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -24,6 +24,7 @@ const SECTIONS_METADATA = [
   { id: 'patrols', name: 'Marine Patrols', nameAr: 'الدوريات البحرية', icon: Waves, color: 'text-indigo-500 dark:text-indigo-400', bg: 'bg-indigo-100 dark:bg-indigo-500/10' },
   { id: 'monitoring', name: 'Environmental Monitoring', nameAr: 'الرصد البيئي', icon: Microscope, color: 'text-emerald-500 dark:text-emerald-400', bg: 'bg-emerald-100 dark:bg-emerald-500/10' },
   { id: 'eia', name: 'Environmental Assessment', nameAr: 'تقييم الأثر البيئي', icon: ClipboardList, color: 'text-teal-500 dark:text-teal-400', bg: 'bg-teal-100 dark:bg-teal-500/10' },
+  { id: 'gis', name: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية', icon: Map, color: 'text-fuchsia-500 dark:text-fuchsia-400', bg: 'bg-fuchsia-100 dark:bg-fuchsia-500/10' },
   { id: 'violations', name: 'Violations Log', nameAr: 'سجل المخالفات', icon: AlertTriangle, color: 'text-rose-500 dark:text-rose-400', bg: 'bg-rose-100 dark:bg-rose-500/10' },
   { id: 'fleet', name: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات', icon: Anchor, color: 'text-cyan-500 dark:text-cyan-400', bg: 'bg-cyan-100 dark:bg-cyan-500/10' },
   { id: 'media', name: 'Media Center', nameAr: 'المركز الإعلامي', icon: Megaphone, color: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-500/10' },
