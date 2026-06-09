@@ -52,6 +52,7 @@ model User {
   patrolsParticipated Patrol[] @relation("PatrolMembers")
   violationsReported  Violation[]
   surveysConducted    Survey[]
+  emailRoutes         EmailRoute[]
 }
 
 model Patrol {
@@ -144,6 +145,21 @@ model EiaCost {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   files           EiaCostFile[]
+}
+
+model EmailRoute {
+  id               String   @id @default(cuid())
+  userId           String
+  alias            String   @unique
+  destinationEmail String
+  description      String?
+  status           String   @default("PENDING") // PENDING, ACTIVE, DISABLED
+  cloudflareRuleId String?
+  verified         Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model EiaCostFile {

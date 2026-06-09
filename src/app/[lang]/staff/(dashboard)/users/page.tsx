@@ -29,6 +29,7 @@ const SECTIONS_METADATA = [
   { id: 'fleet', name: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات', icon: Anchor, color: 'text-cyan-500 dark:text-cyan-400', bg: 'bg-cyan-100 dark:bg-cyan-500/10' },
   { id: 'media', name: 'Media Center', nameAr: 'المركز الإعلامي', icon: Megaphone, color: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-500/10' },
   { id: 'settings', name: 'System Settings', nameAr: 'إعدادات النظام', icon: Settings, color: 'text-slate-500 dark:text-slate-400', bg: 'bg-slate-200 dark:bg-slate-500/10' },
+  { id: 'email-routing', name: 'Email Routing', nameAr: 'توجيه البريد', icon: Mail, color: 'text-orange-500 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-500/10' },
 ];
 
 export default function UserManagementPage({ params }: { params: { lang: string } }) {

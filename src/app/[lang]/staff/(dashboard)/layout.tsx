@@ -103,6 +103,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
       users: { nameEn: 'User Management', nameAr: 'إدارة المستخدمين' },
       settings: { nameEn: 'System Settings', nameAr: 'إعدادات النظام' },
       profile: { nameEn: 'User Profile', nameAr: 'الملف الشخصي' },
+      'email-routing': { nameEn: 'Email Routing', nameAr: 'توجيه البريد' },
     };
 
     const meta = sectionsMap[primarySegment] || { nameEn: primarySegment, nameAr: primarySegment };

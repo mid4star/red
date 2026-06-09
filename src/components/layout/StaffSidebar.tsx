@@ -21,7 +21,8 @@ import {
   ChevronDown,
   Sun,
   Moon,
-  Map
+  Map,
+  Mail
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
@@ -147,6 +148,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
     { name: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات', href: `/${lang}/staff/fleet`, icon: Anchor, sectionKey: 'fleet' },
     { name: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية', href: `/${lang}/staff/gis`, icon: Map, sectionKey: 'gis' },
     { name: 'User Management', nameAr: 'إدارة المستخدمين', href: `/${lang}/staff/users`, icon: Users, sectionKey: 'users' },
+    { name: 'Email Routing', nameAr: 'توجيه البريد', href: `/${lang}/staff/email-routing`, icon: Mail, sectionKey: 'email-routing' },
     { name: 'Media Center', nameAr: 'المركز الإعلامي', href: `/${lang}/staff/media`, icon: Megaphone, sectionKey: 'media' },
     { name: 'System Settings', nameAr: 'إعدادات النظام', href: `/${lang}/staff/settings`, icon: Settings, sectionKey: 'settings' },
   ];
