@@ -94,26 +94,31 @@ export default function OpenDataClient({ lang }: { lang: string }) {
       <main className="flex-grow pt-40 pb-24 px-6 max-w-7xl mx-auto w-full space-y-12">
         
         {/* Header Briefing */}
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
-               <Database size={20} strokeWidth={2.5} />
-            </div>
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">
-               {isAr ? 'أرشيف البيانات العلمية المفتوحة' : 'Open Scientific Data Archives'}
-            </span>
-          </div>
-
-          <div className="max-w-4xl space-y-4">
-            <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
-              {isAr ? 'بوابة البيانات المفتوحة' : 'Open Data Portal'}
-            </h1>
-            <p className="text-lg text-slate-400 font-medium italic leading-relaxed">
-              {isAr 
-                ? 'مستودعنا العام للدراسات الأكاديمية ومجموعات البيانات والتقارير التنظيمية حول النظام البيئي لمحميات البحر الأحمر.' 
-                : 'Our public archives for academic studies, biological datasets, and administrative reports concerning the Red Sea ecosystem.'}
-            </p>
-          </div>
+        <section className="flex flex-col mb-4 border-b border-th-border pb-12">
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.5 }}
+             className="space-y-6 max-w-3xl"
+          >
+             <div className="flex items-center gap-3">
+                <div className="flex gap-1">
+                   <div className="w-1 h-5 bg-teal-500 rounded-full animate-pulse" />
+                   <div className="w-1 h-5 bg-emerald-500 rounded-full" />
+                </div>
+                <span className="text-[12px] font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">
+                   {isAr ? 'أرشيف البيانات العلمية المفتوحة' : 'Open Scientific Data Archives'}
+                </span>
+             </div>
+             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-tight lg:leading-[1.1] bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 pb-2">
+                {isAr ? 'بوابة البيانات المفتوحة' : 'Open Data Portal'}
+             </h1>
+             <p className="text-lg md:text-xl text-th-muted max-w-2xl font-medium leading-relaxed">
+                {isAr 
+                   ? 'مستودعنا العام للدراسات الأكاديمية ومجموعات البيانات والتقارير التنظيمية حول النظام البيئي لمحميات البحر الأحمر.' 
+                   : 'Our public archives for academic studies, biological datasets, and administrative reports concerning the Red Sea ecosystem.'}
+             </p>
+          </motion.div>
         </section>
 
         {/* Filter Controls */}

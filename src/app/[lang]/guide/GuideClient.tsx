@@ -79,21 +79,46 @@ export default function GuideClient({ lang }: { lang: string }) {
          <main className="transition-colors duration-300">
 
          {/* ── Page Header ─────────────────────────────────────────────────── */}
-         <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto w-full">
-            <div className="flex flex-col lg:flex-row justify-between items-end gap-10">
-               <div className="max-w-4xl space-y-6">
-                  <h1 className="text-4xl md:text-6xl lg:text-[7.5rem] font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1] drop-shadow-2xl">
-                     {isAr ? 'دليل الزوار' : 'Visitor Field Guide'}
+         <section className="pt-40 pb-16 px-6 max-w-7xl mx-auto w-full border-b border-th-border mb-8">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
+               <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="max-w-4xl space-y-6"
+               >
+                  <div className="flex items-center gap-3 mb-4">
+                     <div className="flex gap-1">
+                        <div className="w-1 h-5 bg-teal-500 rounded-full animate-pulse" />
+                        <div className="w-1 h-5 bg-blue-500 rounded-full" />
+                     </div>
+                     <span className="text-[12px] font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">
+                        {isAr ? 'دليل الرحلات والمحميات' : 'Travel & Reserves Guide'}
+                     </span>
+                  </div>
+                  <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-tight lg:leading-[1.1] bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-blue-600 dark:from-teal-400 dark:to-blue-400 pb-2">
+                     {isAr ? 'دليل الزوار الميداني' : 'Visitor Field Guide'}
                   </h1>
-               </div>
-               <div className="flex flex-col items-end gap-4">
-                  <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-teal-900/10 border border-teal-500/10">
+                  <p className="text-lg md:text-xl text-th-muted max-w-2xl font-medium leading-relaxed">
+                     {isAr 
+                        ? 'كل ما تحتاجه من قواعد وإرشادات لضمان زيارة ممتعة وآمنة لمحميات البحر الأحمر.' 
+                        : 'Everything you need to know for a safe and enjoyable visit to the Red Sea reserves.'}
+                  </p>
+               </motion.div>
+
+               <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="flex flex-col items-start lg:items-end gap-4 mt-6 lg:mt-0"
+               >
+                  <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-teal-500/10 border border-teal-500/20 shadow-sm">
                      <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-                     <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest italic">
+                     <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest">
                         {isAr ? 'حالة الدخول: المحميات مفتوحة للزيارة' : 'Access Status: Reserves Open'}
                      </span>
                   </div>
-               </div>
+               </motion.div>
             </div>
          </section>
 

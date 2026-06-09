@@ -103,51 +103,66 @@ export default function NewsClient({ lang }: { lang: string }) {
 
           <main className="transition-colors duration-300">
              <section className="pt-40 pb-20 px-6 max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-20 border-b border-white/5 pb-12">
-               <div className="space-y-6 max-w-2xl">
-                  <div className="flex items-center gap-3">
-                     <div className="flex gap-1.5">
-                        <div className="w-1.5 h-6 bg-teal-500 rounded-full animate-pulse" />
-                        <div className="w-1.5 h-6 bg-teal-500/50 rounded-full" />
-                     </div>
-                     <span className="text-[11px] font-black uppercase tracking-[0.4em] text-teal-400 italic">
-                        {isAr ? 'ابقى على اطلاع' : 'Media & News Center'}
-                     </span>
-                  </div>
-                  <h1 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase italic tracking-tighter leading-tight lg:leading-[1.1]">
-                     {isAr ? 'المركز الإعلامي' : 'News & Media Feed'}
-                  </h1>
-               </div>
+             <div className="flex flex-col mb-16 border-b border-th-border pb-12">
+                <motion.div 
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.5 }}
+                   className="space-y-6 max-w-3xl"
+                >
+                   <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                         <div className="w-1 h-5 bg-teal-500 rounded-full animate-pulse" />
+                         <div className="w-1 h-5 bg-indigo-500 rounded-full" />
+                      </div>
+                      <span className="text-[12px] font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">
+                         {isAr ? 'المركز الإعلامي' : 'Media & News Center'}
+                      </span>
+                   </div>
+                   <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-tight lg:leading-[1.1] bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-indigo-600 dark:from-teal-400 dark:to-indigo-400 pb-2">
+                      {isAr ? 'أخبار ومستجدات المحميات' : 'News & Media Feed'}
+                   </h1>
+                   <p className="text-lg md:text-xl text-th-muted max-w-2xl font-medium leading-relaxed">
+                      {isAr 
+                         ? 'تابع أحدث البيانات الصحفية، والتقارير البيئية، والتسجيلات الميدانية الموثقة من شبكة محميات البحر الأحمر.'
+                         : 'Stay updated with the latest press releases, conservation reports, and field recordings from the Red Sea reserves network.'}
+                   </p>
+                </motion.div>
 
-               <div className="flex flex-col md:flex-row items-stretch md:items-center gap-6 w-full md:w-auto">
-                  {/* Search Input */}
-                  <div className="relative w-full md:w-80 group">
-                     <Search className={`absolute ${isAr ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors`} size={16} />
-                     <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={isAr ? 'ابحث في أخبار ومستجدات المحميات...' : 'Search news & updates...'}
-                        className={`w-full ${isAr ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-th-surface hover:bg-th-surface2 focus:bg-th-surface border border-th-border focus:border-teal-500/50 rounded-2xl text-sm font-medium text-th-text placeholder-th-muted outline-none transition-all shadow-sm`}
-                     />
-                  </div>
+                <motion.div 
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.5, delay: 0.2 }}
+                   className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 mt-12"
+                >
+                   <div className="flex flex-wrap gap-4 md:gap-8 justify-start">
+                      {NEWS_CATEGORIES.map((cat) => (
+                         <button
+                            key={cat.id}
+                            onClick={() => setActiveTab(cat.id)}
+                            className={`text-[13px] md:text-[14px] font-bold transition-all relative py-2 ${activeTab === cat.id ? 'text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}
+                         >
+                            {isAr ? cat.nameAr : cat.name}
+                            {activeTab === cat.id && (
+                               <motion.div layoutId="catLine" className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.3)]" />
+                            )}
+                         </button>
+                      ))}
+                   </div>
 
-                  <div className="flex flex-wrap gap-6 justify-start md:justify-end w-full md:w-auto">
-                     {NEWS_CATEGORIES.map((cat) => (
-                        <button
-                           key={cat.id}
-                           onClick={() => setActiveTab(cat.id)}
-                           className={`text-[12px] font-black uppercase tracking-widest italic transition-all relative ${activeTab === cat.id ? 'text-teal-400' : 'text-slate-500 hover:text-white'}`}
-                        >
-                           {isAr ? cat.nameAr : cat.name}
-                           {activeTab === cat.id && (
-                              <motion.div layoutId="catLine" className="absolute -bottom-2 left-0 right-0 h-0.5 bg-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.5)]" />
-                           )}
-                        </button>
-                     ))}
-                  </div>
-               </div>
-            </div>
+                   {/* Search Input */}
+                   <div className="relative w-full md:w-80 group">
+                      <Search className={`absolute ${isAr ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-th-muted group-focus-within:text-teal-500 transition-colors`} size={18} />
+                      <input
+                         type="text"
+                         value={searchQuery}
+                         onChange={(e) => setSearchQuery(e.target.value)}
+                         placeholder={isAr ? 'ابحث في الأخبار...' : 'Search news...'}
+                         className={`w-full ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3 bg-th-surface border border-th-border focus:border-teal-500 rounded-xl text-sm font-medium text-th-text placeholder-th-muted outline-none transition-all shadow-sm`}
+                      />
+                   </div>
+                </motion.div>
+             </div>
 
             {/* ── Featured Articles ───────────────────────────────────────── */}
             {loading ? (
