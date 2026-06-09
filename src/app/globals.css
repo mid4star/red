@@ -305,32 +305,40 @@ html:not(.dark) main .dark * {
 }
 
 @media print {
-  /* Hide everything using visibility to maintain document structure but hide content */
-  body {
-    visibility: hidden !important;
-    background: white !important;
+  /* Hide all direct children of body EXCEPT the portal root */
+  body > *:not(.print-portal-root) {
+    display: none !important;
   }
 
-  /* Make the modal take over the entire screen and be visible */
-  .print-modal-container {
+  /* Reset body styles for print */
+  body {
+    background: white !important;
     visibility: visible !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-portal-root {
+    display: block !important;
+    position: relative !important;
+    z-index: auto !important;
+  }
+
+  .print-modal-container {
+    position: relative !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    overflow: visible !important;
     width: 100% !important;
     max-width: none !important;
     height: auto !important;
     max-height: none !important;
     margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    background: white !important;
-    overflow: visible !important;
+    inset: auto !important;
   }
 
   .print-content {
-    visibility: visible !important;
     overflow: visible !important;
     padding: 0 !important;
     height: auto !important;
@@ -338,8 +346,7 @@ html:not(.dark) main .dark * {
     background: white !important;
   }
 
-  /* Hide specific elements within the visible modal that shouldn't print */
-  .no-print {
+  .no-print, .no-print-bg {
     display: none !important;
   }
 
@@ -363,7 +370,6 @@ html:not(.dark) main .dark * {
     background: transparent !important;
   }
 
-  /* Format for A4 */
   @page {
     size: A4 portrait;
     margin: 1.5cm;

@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
-import { X, Printer, MapPin, Calendar, Activity, AlertCircle, Compass, Waves, User, FileText } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { X, Printer, MapPin, Calendar, Activity, AlertCircle, Compass, Waves, User, FileText, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -11,12 +12,31 @@ interface ReportModalProps {
 }
 
 export default function ReportModal({ isOpen, onClose, item, lang }: ReportModalProps) {
-  if (!isOpen || !item) return null;
+  const [mounted, setMounted] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !item || !mounted) return null;
 
   const isAr = lang === 'ar';
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleScrollUp = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ top: -300, behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollDown = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ top: 300, behavior: 'smooth' });
+    }
   };
 
   const formatDate = (dateVal: any) => {
@@ -60,8 +80,8 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
     </div>
   );
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 no-print-bg backdrop-blur-md bg-black/60 dark:bg-[#050b14]/80 transition-all duration-300">
+  const modalContent = (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 no-print-bg backdrop-blur-md bg-black/60 dark:bg-[#050b14]/80 transition-all duration-300 print-portal-root">
       
       {/* Background click to close (no-print) */}
       <div className="absolute inset-0 no-print cursor-pointer" onClick={onClose} />
@@ -72,6 +92,16 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
         dir={isAr ? 'rtl' : 'ltr'}
       >
         
+        {/* Custom Scroll Buttons - No Print */}
+        <div className={`absolute ${isAr ? 'left-6' : 'right-6'} bottom-6 flex flex-col gap-3 z-20 no-print`}>
+           <button onClick={handleScrollUp} className="w-11 h-11 rounded-full bg-slate-900/90 hover:bg-slate-800 dark:bg-[#0a1628] dark:hover:bg-[#0d1b2a] text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 backdrop-blur-md border border-white/10">
+             <ChevronUp size={22} />
+           </button>
+           <button onClick={handleScrollDown} className="w-11 h-11 rounded-full bg-slate-900/90 hover:bg-slate-800 dark:bg-[#0a1628] dark:hover:bg-[#0d1b2a] text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 backdrop-blur-md border border-white/10">
+             <ChevronDown size={22} />
+           </button>
+        </div>
+
         {/* Header - No Print (Action bar) */}
         <div className="no-print flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-white/5 bg-slate-50/80 dark:bg-[#0d1b2a]/80 backdrop-blur-xl z-10">
           <div className="flex items-center gap-3.5">
@@ -101,7 +131,16 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
         </div>
 
         {/* Scrollable Printable Content */}
-        <div className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 flex-1 min-h-0 w-full custom-scrollbar bg-white dark:bg-transparent">
+        <div 
+          ref={scrollRef}
+          className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 flex-1 min-h-0 w-full bg-white dark:bg-transparent"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+           <style>{`
+             .print-content::-webkit-scrollbar {
+               display: none;
+             }
+           `}</style>
            
            {/* Report Header for Print */}
            <div className="border-b-2 border-slate-800 dark:border-white/20 pb-6 mb-8 print-header">
@@ -218,4 +257,6 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
