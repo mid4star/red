@@ -81,7 +81,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
   );
 
   const modalContent = (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 no-print-bg backdrop-blur-md bg-black/60 dark:bg-[#050b14]/80 transition-all duration-300 print-portal-root">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-md bg-black/60 dark:bg-[#050b14]/80 transition-all duration-300 print-portal-root">
       
       {/* Background click to close (no-print) */}
       <div className="absolute inset-0 no-print cursor-pointer" onClick={onClose} />
