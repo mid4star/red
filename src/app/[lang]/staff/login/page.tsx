@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Lock, User, MapPin, ChevronRight, Fingerprint, Activity, Zap, Sun, Moon } from 'lucide-react';
+import { Shield, Lock, User, MapPin, ChevronRight, Fingerprint, Activity, Zap, Sun, Moon, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useTheme } from '@/components/layout/ThemeProvider';
 
 const RESERVES = [
@@ -111,8 +112,15 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#050b14] flex items-center justify-center relative overflow-hidden transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
-      {/* Theme Toggle Button */}
-      <div className={`absolute top-6 ${isAr ? 'left-6' : 'right-6'} z-[100]`}>
+      {/* Top Controls */}
+      <div className={`absolute top-6 ${isAr ? 'left-6' : 'right-6'} z-[100] flex gap-3 items-center`}>
+        <Link
+          href={`/${params.lang}`}
+          className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 dark:bg-white/5 dark:border-white/10 backdrop-blur-md flex items-center justify-center text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400 dark:hover:bg-white/10 transition-all cursor-pointer no-underline"
+          title={isAr ? 'العودة للرئيسية' : 'Back to Home'}
+        >
+          <Home size={20} />
+        </Link>
         <button
           onClick={toggleTheme}
           className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 dark:bg-white/5 dark:border-white/10 backdrop-blur-md flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/10 dark:shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all cursor-pointer"
