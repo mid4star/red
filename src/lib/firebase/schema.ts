@@ -7,6 +7,10 @@ export interface User {
   employeeId: string;
   name: string;
   nameAr: string;
+  email?: string;
+  customDomainEmail?: string;
+  profilePictureUrl?: string;
+  badges?: string[];
   role: UserRole;
   reserveId: string; // The assigned reserve ID
   reserve?: string;

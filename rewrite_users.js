@@ -1,4 +1,7 @@
-'use client';
+const fs = require('fs');
+const path = require('path');
+
+const code = `'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
@@ -9,7 +12,7 @@ import { User, UserRole } from '@/lib/firebase/schema';
 import { 
   Users, ShieldAlert, Plus, Search, CheckCircle2, Loader2, Lock, Check, X, Shield, UserPlus, Trash2, Edit3,
   Waves, Microscope, ClipboardList, AlertTriangle, Anchor, Megaphone, Settings, ShieldCheck, ArrowRight,
-  Camera, Mail, Tag, UserCheck, User as UserIcon
+  Camera, Mail, Tag, UserCheck
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -104,7 +107,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   // Auto-generate custom domain email when Employee ID changes (for new users)
   useEffect(() => {
     if (!editingUser && employeeId) {
-      setCustomDomainEmail(employeeId.toLowerCase().replace(/\s+/g, '') + '@rsmp-eg.com');
+      setCustomDomainEmail(employeeId.toLowerCase().replace(/\\s+/g, '') + '@rsmp-eg.com');
     }
   }, [employeeId, editingUser]);
 
@@ -263,7 +266,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
       fetchUsers();
     } catch (err: any) {
       console.error('Error saving user:', err);
-      alert(isArabic ? `حدث خطأ: ${err.message}` : `Error: ${err.message}`);
+      alert(isArabic ? \`حدث خطأ: \${err.message}\` : \`Error: \${err.message}\`);
     } finally {
       setSubmitting(false);
     }
@@ -273,8 +276,8 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const handleDeleteUser = async (user: User) => {
     if (!user.id) return;
     const confirmMsg = isArabic 
-      ? `هل أنت متأكد من حذف حساب الموظف ${user.nameAr} نهائياً؟`
-      : `Are you sure you want to delete user ${user.name}?`;
+      ? \`هل أنت متأكد من حذف حساب الموظف \${user.nameAr} نهائياً؟\`
+      : \`Are you sure you want to delete user \${user.name}?\`;
     
     if (confirm(confirmMsg)) {
       setSubmitting(true);
@@ -384,7 +387,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                           {profilePictureUrl ? (
                             <Image src={profilePictureUrl} alt="Profile" fill className="object-cover" />
                           ) : (
-                            <UserIcon size={32} className="text-slate-400" />
+                            <User size={32} className="text-slate-400" />
                           )}
                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
                             <Camera size={20} className="text-white" />
@@ -482,9 +485,9 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                           const Icon = sec.icon;
                           const isChecked = allowedSections.includes(sec.id);
                           return (
-                            <div key={sec.id} onClick={() => handleSectionToggle(sec.id)} className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all ${isChecked ? 'bg-teal-50 dark:bg-teal-500/10 border-teal-500/30' : 'bg-slate-50 dark:bg-[#050b14]/20 border-slate-200 dark:border-white/5 opacity-60 hover:opacity-100'}`}>
+                            <div key={sec.id} onClick={() => handleSectionToggle(sec.id)} className={\`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all \${isChecked ? 'bg-teal-50 dark:bg-teal-500/10 border-teal-500/30' : 'bg-slate-50 dark:bg-[#050b14]/20 border-slate-200 dark:border-white/5 opacity-60 hover:opacity-100'}\`}>
                               <Icon size={14} className={isChecked ? 'text-teal-600 dark:text-teal-400' : 'text-slate-400'} />
-                              <span className={`text-[10px] font-bold truncate ${isChecked ? 'text-teal-900 dark:text-teal-100' : 'text-slate-500'}`}>{isArabic ? sec.nameAr : sec.name}</span>
+                              <span className={\`text-[10px] font-bold truncate \${isChecked ? 'text-teal-900 dark:text-teal-100' : 'text-slate-500'}\`}>{isArabic ? sec.nameAr : sec.name}</span>
                             </div>
                           );
                         })}
@@ -495,32 +498,32 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                       {submitting ? <Loader2 className="animate-spin mx-auto" size={18} /> : (editingUser ? (isArabic ? 'تحديث البيانات' : 'Update User') : (isArabic ? 'حفظ المستخدم' : 'Save User'))}
                     </Button>
                   </form>
-                  <style jsx>{`
+                  <style jsx>{\`
                     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(20, 184, 166, 0.3); border-radius: 4px; }
-                  `}</style>
+                  \`}</style>
                 </Card>
               </div>
             )}
 
             {/* RIGHT COLUMN: Users List */}
-            <div className={`${showAddForm ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-5 transition-all duration-500`}>
+            <div className={\`\${showAddForm ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-5 transition-all duration-500\`}>
               
               {/* Search Bar */}
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-3 sm:p-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl sm:rounded-3xl shadow-sm">
                 <div className="relative flex items-center w-full sm:max-w-md">
-                  <Search size={16} className={`absolute ${isArabic ? 'right-4' : 'left-4'} text-slate-400 pointer-events-none`} />
+                  <Search size={16} className={\`absolute \${isArabic ? 'right-4' : 'left-4'} text-slate-400 pointer-events-none\`} />
                   <input 
                     type="text"
                     placeholder={isArabic ? 'بحث بالاسم، الإيميل، الرقم...' : 'Search by name, email, ID...'}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full bg-slate-50 dark:bg-[#050b14]/60 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl ${isArabic ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3 text-xs sm:text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all`}
+                    className={\`w-full bg-slate-50 dark:bg-[#050b14]/60 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl \${isArabic ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3 text-xs sm:text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all\`}
                   />
                 </div>
                 <div className="text-xs font-black text-slate-500 uppercase tracking-widest">
-                  {isArabic ? `الإجمالي: ${filteredUsers.length}` : `Total: ${filteredUsers.length}`}
+                  {isArabic ? \`الإجمالي: \${filteredUsers.length}\` : \`Total: \${filteredUsers.length}\`}
                 </div>
               </div>
 
@@ -535,7 +538,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                   {isArabic ? 'لا توجد نتائج' : 'No results found'}
                 </div>
               ) : (
-                <div className={`grid grid-cols-1 ${showAddForm ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4 sm:gap-5`}>
+                <div className={\`grid grid-cols-1 \${showAddForm ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4 sm:gap-5\`}>
                   {filteredUsers.map((user) => (
                     <Card key={user.id} className="p-5 bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-teal-400 hover:shadow-lg transition-all group relative overflow-hidden flex flex-col justify-between">
                       {/* Glow effect */}
@@ -548,7 +551,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                             {user.profilePictureUrl ? (
                               <Image src={user.profilePictureUrl} alt={user.name} fill className="object-cover" />
                             ) : (
-                              user.role === 'ADMIN' ? <ShieldCheck size={24} className="text-teal-500" /> : <UserIcon size={24} className="text-slate-400" />
+                              user.role === 'ADMIN' ? <ShieldCheck size={24} className="text-teal-500" /> : <User size={24} className="text-slate-400" />
                             )}
                             {user.status === 'ACTIVE' && <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#0a1628] rounded-full z-10" />}
                           </div>
@@ -578,7 +581,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                           <div className="flex items-center gap-2 text-[11px]">
                             <Mail size={12} className="text-slate-400 shrink-0" />
                             <div className="flex flex-col min-w-0">
-                              <span className="text-slate-900 dark:text-slate-300 font-mono font-medium truncate">{user.customDomainEmail || `${user.employeeId.toLowerCase()}@rsmp-eg.com`}</span>
+                              <span className="text-slate-900 dark:text-slate-300 font-mono font-medium truncate">{user.customDomainEmail || \`\${user.employeeId.toLowerCase()}@rsmp-eg.com\`}</span>
                               {user.email && <span className="text-slate-500 truncate">{user.email}</span>}
                             </div>
                           </div>
@@ -623,3 +626,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     </div>
   );
 }
+`;
+
+fs.writeFileSync(path.join('src/app/[lang]/staff/(dashboard)/users/page.tsx'), code, 'utf-8');
+console.log('Done rewriting users page.');
