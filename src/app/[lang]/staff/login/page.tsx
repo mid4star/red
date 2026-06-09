@@ -110,24 +110,24 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a1628] flex items-center justify-center relative overflow-hidden transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-slate-50 dark:bg-[#050b14] flex items-center justify-center relative overflow-hidden transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Theme Toggle Button */}
       <div className={`absolute top-6 ${isAr ? 'left-6' : 'right-6'} z-[100]`}>
         <button
           onClick={toggleTheme}
-          className="w-12 h-12 rounded-full bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all cursor-pointer"
+          className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 dark:bg-white/5 dark:border-white/10 backdrop-blur-md flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/10 dark:shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all cursor-pointer"
           title={isAr ? 'تغيير المظهر' : 'Toggle Theme'}
           aria-label="Toggle Theme"
           aria-pressed={theme === 'dark'}
         >
-          {theme === 'dark' ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-blue-400" />}
+          {theme === 'dark' ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-blue-500" />}
         </button>
       </div>
 
       {/* Background HUD & Gradients */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(45,212,191,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(45,212,191,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] dark:opacity-20 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(45,212,191,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(45,212,191,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
         
         {/* Glows */}
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] mix-blend-screen" />
@@ -144,24 +144,24 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
           className="hidden lg:flex flex-col justify-center space-y-8"
         >
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-teal-500/20 flex items-center justify-center border border-teal-500/30 shadow-[0_0_30px_rgba(45,212,191,0.2)]">
-              <Shield className="text-teal-400" size={32} />
+            <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-500/20 flex items-center justify-center border border-teal-200 dark:border-teal-500/30 shadow-[0_0_30px_rgba(45,212,191,0.1)] dark:shadow-[0_0_30px_rgba(45,212,191,0.2)]">
+              <Shield className="text-teal-600 dark:text-teal-400" size={32} />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white tracking-[0.2em] uppercase italic">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-[0.2em] uppercase italic">
                 Red Sea Reserves
               </h2>
-              <p className="text-xs font-bold text-teal-500 uppercase tracking-widest">
+              <p className="text-xs font-bold text-teal-600 dark:text-teal-500 uppercase tracking-widest">
                 Strategic Intelligence Hub
               </p>
             </div>
           </div>
           
           <div className="space-y-6">
-            <h1 className="text-5xl font-black text-white tracking-tighter leading-[1.1]">
+            <h1 className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter leading-[1.1]">
               {isAr ? 'نظام التحكم المركزي' : 'Central Command System'}
             </h1>
-            <p className="text-slate-400 font-medium text-lg max-w-md leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-400 font-medium text-lg max-w-md leading-relaxed">
               {isAr 
                 ? 'قم بالولوج إلى لوحة المراقبة وإدارة البيانات لتوثيق وتحليل المهام الميدانية في المحميات.' 
                 : 'Access the monitoring dashboard and data management system to document and analyze field missions across all reserves.'}
@@ -169,15 +169,15 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-8 max-w-md">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-               <Activity className="text-teal-500 mb-3" size={24} />
-               <p className="text-sm font-bold text-white mb-1">{isAr ? 'رصد البيانات' : 'Data Logging'}</p>
-               <p className="text-xs text-slate-400">{isAr ? 'توثيق المعلومات الميدانية' : 'Field intelligence records'}</p>
+            <div className="p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm">
+               <Activity className="text-teal-600 dark:text-teal-500 mb-3" size={24} />
+               <p className="text-sm font-bold text-slate-900 dark:text-white mb-1">{isAr ? 'رصد البيانات' : 'Data Logging'}</p>
+               <p className="text-xs text-slate-500 dark:text-slate-400">{isAr ? 'توثيق المعلومات الميدانية' : 'Field intelligence records'}</p>
             </div>
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-               <Zap className="text-indigo-400 mb-3" size={24} />
-               <p className="text-sm font-bold text-white mb-1">{isAr ? 'إدارة الدوريات' : 'Patrol Control'}</p>
-               <p className="text-xs text-slate-400">{isAr ? 'تتبع وتحليل مسارات المهام' : 'Track & analyze missions'}</p>
+            <div className="p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm">
+               <Zap className="text-indigo-500 dark:text-indigo-400 mb-3" size={24} />
+               <p className="text-sm font-bold text-slate-900 dark:text-white mb-1">{isAr ? 'إدارة الدوريات' : 'Patrol Control'}</p>
+               <p className="text-xs text-slate-500 dark:text-slate-400">{isAr ? 'تتبع وتحليل مسارات المهام' : 'Track & analyze missions'}</p>
             </div>
           </div>
         </motion.div>
@@ -189,19 +189,19 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-[480px] mx-auto"
         >
-          <div className="bg-[#0d1b2a]/95 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.5)] relative overflow-hidden transition-colors duration-300">
+          <div className="bg-white dark:bg-[#0d1b2a]/95 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-10 border border-slate-200 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.05)] dark:shadow-[0_40px_80px_rgba(0,0,0,0.5)] relative overflow-hidden transition-colors duration-300">
             
             {/* Top decorative elements */}
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-teal-500/0 via-teal-500 to-teal-500/0 opacity-50" />
-            <div className="absolute top-10 right-10 opacity-5 pointer-events-none">
+            <div className="absolute top-10 right-10 opacity-[0.03] dark:opacity-5 pointer-events-none">
               <Fingerprint size={120} />
             </div>
 
             <div className="mb-8 relative z-10">
-              <h2 className="text-3xl font-black text-white tracking-tighter mb-2">
+              <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter mb-2">
                 {isAr ? 'تسجيل الدخول' : 'Authentication'}
               </h2>
-              <p className="text-slate-400 text-sm font-medium">
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                 {isAr ? 'يرجى إدخال بيانات الاعتماد المعتمدة للوصول للنظام' : 'Enter your authorized credentials to access the system.'}
               </p>
             </div>
@@ -221,11 +221,11 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
               
               {/* Employee ID */}
               <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {isAr ? 'رقم الموظف' : 'Operator ID'}
                 </label>
                 <div className="relative group">
-                  <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-500 group-focus-within:text-teal-400 transition-colors`}>
+                  <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors`}>
                     <User size={18} />
                   </div>
                   <input 
@@ -234,18 +234,18 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                     disabled={loading}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     placeholder={isAr ? 'أدخل رقم هويتك الوظيفية' : 'Enter your staff ID'}
-                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
+                    className={`w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
                   />
                 </div>
               </div>
 
               {/* Password */}
               <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {isAr ? 'كلمة المرور' : 'Access Code'}
                 </label>
                 <div className="relative group">
-                  <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-500 group-focus-within:text-teal-400 transition-colors`}>
+                  <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors`}>
                     <Lock size={18} />
                   </div>
                   <input 
@@ -254,35 +254,35 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                     disabled={loading}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
+                    className={`w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all disabled:opacity-50`}
                   />
                 </div>
               </div>
 
               {/* Reserve Location */}
               <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {isAr ? 'موقع التعيين' : 'Assigned Reserve'}
                 </label>
                 <div className="relative group">
-                  <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-500 group-focus-within:text-teal-400 transition-colors`}>
+                  <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors`}>
                     <MapPin size={18} />
                   </div>
                   <select 
                     value={selectedReserve}
                     disabled={loading}
                     onChange={(e) => setSelectedReserve(e.target.value)}
-                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer disabled:opacity-50`}
+                    className={`w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-slate-900 dark:text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer disabled:opacity-50`}
                   >
                     {RESERVES.map(res => (
-                      <option key={res.id} value={res.id} className="bg-[#0a1628] text-white">
+                      <option key={res.id} value={res.id} className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">
                         {isAr ? res.ar : res.en}
                       </option>
                     ))}
                   </select>
                   {/* Custom Arrow */}
                   <div className={`absolute inset-y-0 ${isAr ? 'left-4' : 'right-4'} flex items-center pointer-events-none`}>
-                     <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-slate-500"></div>
+                     <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-slate-400 dark:border-t-slate-500"></div>
                   </div>
                 </div>
               </div>
@@ -302,15 +302,15 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                   className="w-full relative group overflow-hidden rounded-2xl p-[1px] disabled:opacity-50 cursor-pointer block"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-indigo-500 opacity-80 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative bg-[#0a1628] rounded-2xl py-4 px-8 flex items-center justify-center gap-3 transition-all group-hover:bg-opacity-0">
+                  <div className="relative bg-white dark:bg-[#0a1628] rounded-2xl py-4 px-8 flex items-center justify-center gap-3 transition-all group-hover:bg-opacity-0 group-hover:text-white">
                     {loading ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-slate-900 dark:border-white border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
-                        <span className="text-sm font-black uppercase tracking-widest text-white">
+                        <span className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white group-hover:text-white transition-colors">
                           {isAr ? 'تأكيد الولوج' : 'Authorize Protocol'}
                         </span>
-                        <ChevronRight size={18} className={`text-white transition-transform group-hover:translate-x-1 ${isAr ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
+                        <ChevronRight size={18} className={`text-slate-900 dark:text-white group-hover:text-white transition-transform group-hover:translate-x-1 ${isAr ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
                       </>
                     )}
                   </div>
@@ -319,8 +319,8 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
             </form>
 
             {/* Quick Login Section */}
-            <div className="mt-8 pt-6 border-t border-white/10 space-y-3 relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 space-y-3 relative z-10">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 text-center">
                 {isAr ? 'تسجيل دخول سريع للفحص' : 'Developer Quick Access'}
               </p>
               <div className="grid grid-cols-2 gap-3">
@@ -328,31 +328,31 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                   type="button"
                   onClick={() => triggerQuickLogin('ADMIN-01', 'admin')}
                   disabled={loading}
-                  className="py-2.5 px-3 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-teal-500/10 hover:border-teal-500/30 text-[11.5px] font-bold text-slate-300 hover:text-teal-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
+                  className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 dark:bg-white/[0.03] dark:border-white/10 hover:bg-teal-50 hover:border-teal-200 dark:hover:bg-teal-500/10 dark:hover:border-teal-500/30 text-[11.5px] font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
                 >
                   <span>{isAr ? 'مسئول النظام' : 'System Admin'}</span>
-                  <span className="text-[9px] text-slate-500 font-medium">ADMIN-01 / admin</span>
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">ADMIN-01 / admin</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => triggerQuickLogin('MON-102', 'password')}
                   disabled={loading}
-                  className="py-2.5 px-3 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-indigo-500/10 hover:border-indigo-500/30 text-[11.5px] font-bold text-slate-300 hover:text-indigo-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
+                  className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 dark:bg-white/[0.03] dark:border-white/10 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-500/10 dark:hover:border-indigo-500/30 text-[11.5px] font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
                 >
                   <span>{isAr ? 'مراقب ميداني' : 'Field Monitor'}</span>
-                  <span className="text-[9px] text-slate-500 font-medium">MON-102 / password</span>
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">MON-102 / password</span>
                 </button>
               </div>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-white/10 text-center relative z-10">
-               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">
+            <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/10 text-center relative z-10">
+               <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">
                  {isAr ? 'نظام تحكم الإدارة البيئية • v2.0' : 'Environmental Management Control • v2.0'}
                </p>
             </div>
           </div>
         </motion.div>
       </div>
-    </main>
+    </div>
   );
 }
