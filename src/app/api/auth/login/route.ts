@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({ 
       success: true,
       user: { 
+        id: user.id,
         employeeId: user.employeeId, 
         role: user.role,
         name: user.name,
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
         reserveId: user.reserveId,
         reserve: user.reserve,
         reserveAr: user.reserveAr,
+        profilePictureUrl: user.profilePictureUrl,
         allowedSections: user.allowedSections ? JSON.parse(user.allowedSections) : []
       }
     });

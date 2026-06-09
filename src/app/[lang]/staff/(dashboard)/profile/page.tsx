@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { 
   ShieldCheck, User as UserIcon, Mail, MapPin, Calendar, CheckCircle2, 
   AlertTriangle, Waves, Microscope, Activity, LayoutDashboard, Anchor, 
-  Megaphone, Clock, Award, Key, Target
+  Megaphone, Clock, Award, Key, Target, Camera, Loader2
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -23,6 +23,7 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
   const isArabic = lang === 'ar';
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<'patrols' | 'violations' | 'surveys'>('patrols');
 
   useEffect(() => {
@@ -36,6 +37,44 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+      const uploadData = await uploadRes.json();
+
+      if (!uploadRes.ok) throw new Error(uploadData.error || 'Upload failed');
+
+      const updateRes = await fetch('/api/staff/profile/picture', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profilePictureUrl: uploadData.url })
+      });
+      const updateData = await updateRes.json();
+
+      if (!updateRes.ok) throw new Error(updateData.error || 'Update failed');
+
+      setProfile({ ...profile, profilePictureUrl: uploadData.url });
+
+      const sessionRaw = localStorage.getItem('active_user_session');
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        session.profilePictureUrl = uploadData.url;
+        localStorage.setItem('active_user_session', JSON.stringify(session));
+        window.dispatchEvent(new Event('user-session-changed'));
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -78,13 +117,26 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
           
           {/* Avatar (Overlapping cover) */}
           <div className="flex justify-between items-end -mt-16 md:-mt-20 mb-4 md:mb-6">
-            <div className="relative shrink-0 z-10">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] border-white dark:border-[#0f1c2e] bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-xl flex items-center justify-center">
+            <div className="relative shrink-0 z-10 group">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] border-white dark:border-[#0f1c2e] bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-xl flex items-center justify-center relative">
                 {profile.profilePictureUrl ? (
                   <img src={profile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <UserIcon size={64} className="text-slate-400" />
                 )}
+                
+                {/* Upload Overlay */}
+                <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-sm">
+                  {uploading ? (
+                    <Loader2 size={28} className="animate-spin mb-1" />
+                  ) : (
+                    <>
+                      <Camera size={28} className="mb-1" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{isArabic ? 'تحديث الصورة' : 'Update'}</span>
+                    </>
+                  )}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+                </label>
               </div>
               {isOnline && (
                 <div 
