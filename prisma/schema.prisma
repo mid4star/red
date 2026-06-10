@@ -50,6 +50,8 @@ model User {
   updatedAt         DateTime @updatedAt
 
   patrolsParticipated Patrol[] @relation("PatrolMembers")
+  patrolsLed          Patrol[] @relation("PatrolLeader")
+  patrolCrewMemberships PatrolCrew[]
   violationsReported  Violation[]
   surveysConducted    Survey[]
   emailRoutes         EmailRoute[]
@@ -61,20 +63,106 @@ model Patrol {
   zone              String?
   zoneAr            String?
   date              DateTime @default(now())
-  vesselId          String?
-  areaCovered       Float?
-  duration          Float?
-  weather           String?
-  observations      String?
-  status            String   @default("DRAFT")
+  type              String?  @default("Marine Patrol") // Marine Patrol, Coastal Patrol, Monitoring Patrol, Inspection Patrol
   startTime         DateTime @default(now())
   endTime           DateTime?
-  routeCoordinates  String?  // JSON string
-  incidentsReported Int      @default(0)
+  weather           String?
+  notes             String?
+  status            String   @default("DRAFT")
+
+  leaderId          String?
+  customLeaderName  String?
   
+  leader            User?    @relation("PatrolLeader", fields: [leaderId], references: [id])
+  crew              PatrolCrew[]
+  patrolObservations PatrolObservation[]
+  patrolViolations   PatrolViolation[]
+  attachments       PatrolAttachment[]
+  route             PatrolRoute?
+  
+  // Legacy fields or backwards compatibility:
+  vesselId          String?
+  vessel            Vessel?  @relation(fields: [vesselId], references: [id])
+  areaCovered       Float?
+  duration          Float?
+  incidentsReported Int      @default(0)
+  routeCoordinates  String?  // old json string
+  observations      String?
   members           User[]   @relation("PatrolMembers")
   violations        Violation[]
-  vessel            Vessel?  @relation(fields: [vesselId], references: [id])
+}
+
+model PatrolCrew {
+  id          String @id @default(cuid())
+  patrolId    String
+  userId      String
+
+  patrol      Patrol @relation(fields: [patrolId], references: [id], onDelete: Cascade)
+  user        User   @relation(fields: [userId], references: [id])
+}
+
+model PatrolObservation {
+  id                 String   @id @default(cuid())
+  patrolId           String
+  speciesName        String
+  count              Int
+  observationTime    DateTime
+  locationName       String
+  latitude           Float
+  longitude          Float
+  behaviorNotes      String?
+  photos             String?  // JSON array of URLs
+  
+  monitoringRecordId String?
+  monitoringRecord   Observation? @relation(fields: [monitoringRecordId], references: [id])
+  
+  patrol             Patrol @relation(fields: [patrolId], references: [id], onDelete: Cascade)
+}
+
+model PatrolViolation {
+  id                 String   @id @default(cuid())
+  patrolId           String
+  violatorName       String?
+  vesselName         String?
+  violationType      String
+  violationDetails   String?
+  dateTime           DateTime
+  location           String?
+  latitude           Float
+  longitude          Float
+  evidencePhotos     String? // JSON
+  evidenceFiles      String? // JSON
+  immediateAction    String?
+  followupAction     String?
+  status             String   @default("NEW")
+  severity           String   @default("LOW")
+
+  violationRecordId  String?
+  violationRecord    Violation? @relation(fields: [violationRecordId], references: [id])
+
+  patrol             Patrol @relation(fields: [patrolId], references: [id], onDelete: Cascade)
+}
+
+model PatrolAttachment {
+  id          String @id @default(cuid())
+  patrolId    String
+  name        String
+  url         String
+  type        String // IMAGE, DOCUMENT
+  
+  patrol      Patrol @relation(fields: [patrolId], references: [id], onDelete: Cascade)
+}
+
+model PatrolRoute {
+  id          String @id @default(cuid())
+  patrolId    String @unique
+  geojson     String // JSON representation
+  startLat    Float?
+  startLng    Float?
+  endLat      Float?
+  endLng      Float?
+  
+  patrol      Patrol @relation(fields: [patrolId], references: [id], onDelete: Cascade)
 }
 
 model Vessel {
@@ -115,6 +203,7 @@ model Violation {
   officer       User     @relation(fields: [officerId], references: [id])
   patrolId      String?
   patrol        Patrol?  @relation(fields: [patrolId], references: [id])
+  patrolViolations PatrolViolation[]
 }
 
 model Survey {
@@ -372,6 +461,8 @@ model Observation {
   indicators   String   // JSON string
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  patrolObservations PatrolObservation[]
 }
 
 model MarineSpecies {

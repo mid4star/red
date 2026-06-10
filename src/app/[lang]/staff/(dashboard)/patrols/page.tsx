@@ -1,972 +1,345 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Shield, 
-  Map as MapIcon, 
-  Zap, 
-  Activity, 
-  Waves, 
-  Ship, 
-  Clock, 
-  MapPin, 
-  MoreVertical, 
-  Navigation, 
-  Compass, 
-  Fuel, 
-  Wind,
-  Plus,
-  Search,
-  Filter,
-  CheckCircle2,
-  AlertCircle,
-  Menu,
-  Edit3,
-  Trash2,
-  X,
-  Loader2,
-  ArrowRight
-} from 'lucide-react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Shield, Plus, Ship, Clock, AlertTriangle, Eye, Calendar, MapPin, CheckCircle, Search, Filter } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import EnvironmentalConditions from '@/components/patrols/EnvironmentalConditions';
 
-// ─── Interfaces ─────────────────────────────────────────────────────────────
-
-export interface PatrolWithRelations {
-  id?: string;
-  code?: string | null;
-  zone?: string | null;
-  zoneAr?: string | null;
-  vesselId?: string | null;
-  areaCovered?: number | null;
-  duration?: number | null;
-  weather?: string | null;
-  observations?: string | null;
-  status: 'ACTIVE' | 'STANDBY' | 'EMERGENCY' | 'COMPLETED';
-  startTime?: any;
-  endTime?: any;
-  routeCoordinates?: { lat: number; lng: number }[];
-  incidentsReported?: number;
-
-  vessel?: string;
-  vesselAr?: string;
-  officer?: string;
-  officerAr?: string;
-  members?: any[];
-}
-
-// ─── Child Components ───────────────────────────────────────────────────────
-
-function TacticalStat({ stat, isAr }: { stat: { label: string, labelAr: string, value: string, trend: string, icon: any, color: string, bg: string }, isAr: boolean }) {
-  const Icon = stat.icon;
-  return (
-    <Card className="p-5 border-none shadow-sm hover:shadow-md transition-all group relative overflow-hidden bg-slate-900/40 backdrop-blur-xl">
-      <div className="flex justify-between items-start mb-3">
-        <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
-           <Icon size={20} />
-        </div>
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">
-           {stat.trend}
-        </span>
-      </div>
-      <div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-           {isAr ? stat.labelAr : stat.label}
-        </p>
-        <h3 className="text-2xl font-black text-white tracking-tight">{stat.value}</h3>
-      </div>
-      <div className="absolute -bottom-2 -right-2 opacity-5 text-white group-hover:scale-125 transition-transform duration-700">
-         <Icon size={80} />
-      </div>
-    </Card>
-  );
-}
-
-function ActiveUnitCard({ 
-  unit, 
-  isAr, 
-  onEdit, 
-  onDelete, 
-  activeMenuId, 
-  setActiveMenuId 
-}: { 
-  unit: PatrolWithRelations, 
-  isAr: boolean,
-  onEdit: (p: PatrolWithRelations) => void,
-  onDelete: (p: PatrolWithRelations) => void,
-  activeMenuId: string | null,
-  setActiveMenuId: (id: string | null) => void
-}) {
-  const getBadgeColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE': return 'success';
-      case 'EMERGENCY': return 'danger';
-      case 'STANDBY': return 'warning';
-      default: return 'primary';
-    }
-  };
-
-  return (
-    <div className="p-4 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-teal-500/30 transition-all hover:shadow-lg group relative">
-       <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-teal-400 group-hover:rotate-12 transition-transform">
-                <Ship size={20} />
-             </div>
-             <div>
-                <h4 className="font-bold text-white text-sm tracking-tight">{isAr ? (unit.vesselAr || unit.vessel) : unit.vessel}</h4>
-                <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase italic">#{unit.code || unit.id?.slice(0, 8)}</p>
-             </div>
-          </div>
-          
-          <div className="relative">
-             <button 
-               onClick={(e) => {
-                 e.stopPropagation();
-                 setActiveMenuId(activeMenuId === unit.id ? null : (unit.id || null));
-               }}
-               aria-label={isAr ? 'خيارات الدورية' : 'Patrol options'}
-               className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
-             >
-                <MoreVertical size={18} />
-             </button>
-             {activeMenuId === unit.id && (
-               <div className={`absolute top-8 ${isAr ? 'left-0' : 'right-0'} bg-[#0c1628]/95 border border-white/10 rounded-xl shadow-2xl p-1.5 z-30 min-w-[120px] backdrop-blur-xl`}>
-                 <button 
-                   onClick={(e) => {
-                     e.stopPropagation();
-                     onEdit(unit);
-                     setActiveMenuId(null);
-                   }}
-                   className={`w-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 rounded-lg flex items-center gap-2 p-2 ${isAr ? 'text-right' : 'text-left'}`}
-                 >
-                   <Edit3 size={14} className="text-teal-400" />
-                   <span>{isAr ? 'تعديل' : 'Edit'}</span>
-                 </button>
-                 <button 
-                   onClick={(e) => {
-                     e.stopPropagation();
-                     onDelete(unit);
-                     setActiveMenuId(null);
-                   }}
-                   className={`w-full text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg flex items-center gap-2 p-2 ${isAr ? 'text-right' : 'text-left'}`}
-                 >
-                   <Trash2 size={14} />
-                   <span>{isAr ? 'حذف' : 'Delete'}</span>
-                 </button>
-               </div>
-             )}
-          </div>
-       </div>
-
-       <div className="space-y-3 px-1">
-          <div className="flex items-center justify-between text-[11px]">
-             <span className="text-slate-400 flex items-center gap-1.5"><Navigation size={12} /> {isAr ? unit.zoneAr : unit.zone}</span>
-             <Badge color={getBadgeColor(unit.status)} className="text-[9px] font-black px-2 py-0.5">
-                {unit.status}
-             </Badge>
-          </div>
-          <div className="flex items-center justify-between text-[11px]">
-             <span className="text-slate-400 flex items-center gap-1.5"><Zap size={12} /> {isAr ? (unit.officerAr || unit.officer) : unit.officer}</span>
-             <span className="font-bold text-slate-300">
-                {unit.duration ? `${unit.duration}h` : '—'}
-             </span>
-          </div>
-          
-          <div className="pt-2 border-t border-white/5">
-             <div className="flex justify-between items-center mb-1.5">
-                <span className="text-[9px] font-black text-slate-400 uppercase italic">Operational Health</span>
-                <span className="text-[9px] font-black text-white">95%</span>
-             </div>
-             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-teal-500 rounded-full" style={{ width: `95%` }} />
-             </div>
-          </div>
-       </div>
-    </div>
-  );
-}
-
-// ─── Main Page ───────────────────────────────────────────────────────────────
-
-export default function PatrolsPage({ params }: { params: { lang: string } }) {
+export default function PatrolsDashboard({ params }: { params: { lang: string } }) {
   const isArabic = params.lang === 'ar';
   
-  // Mobile responsiveness states
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [mobilePanel, setMobilePanel] = useState<'data' | 'map'>('data');
+  const [patrols, setPatrols] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('ALL');
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    fetchPatrols();
   }, []);
-
-  const [activePatrols, setActivePatrols] = useState<PatrolWithRelations[]>([]);
-  const [recentMissions, setRecentMissions] = useState<PatrolWithRelations[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-
-  // Form states
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [editingPatrol, setEditingPatrol] = useState<PatrolWithRelations | null>(null);
-  
-  // Available lists for selects
-  const [vessels, setVessels] = useState<any[]>([]);
-  const [officers, setOfficers] = useState<any[]>([]);
-
-  // Form fields
-  const [code, setCode] = useState('');
-  const [zone, setZone] = useState('');
-  const [zoneAr, setZoneAr] = useState('');
-  const [vesselId, setVesselId] = useState('');
-  const [officerId, setOfficerId] = useState('');
-  const [areaCovered, setAreaCovered] = useState('0');
-  const [duration, setDuration] = useState('0');
-  const [weather, setWeather] = useState('');
-  const [observations, setObservations] = useState('');
-  const [status, setStatus] = useState<'ACTIVE' | 'STANDBY' | 'EMERGENCY' | 'COMPLETED'>('ACTIVE');
-  const [incidentsReported, setIncidentsReported] = useState('0');
 
   const fetchPatrols = async () => {
     try {
-      const res = await fetch('/api/staff/query?collection=patrols');
+      const res = await fetch('/api/staff/patrols?limit=100');
       const json = await res.json();
       if (json.success) {
-        const allPatrols = json.data as PatrolWithRelations[];
-        const active = allPatrols.filter(p => ['ACTIVE', 'STANDBY', 'EMERGENCY'].includes(p.status));
-        const completed = allPatrols.filter(p => p.status === 'COMPLETED');
-        setActivePatrols(active);
-        setRecentMissions(completed);
+        setPatrols(json.data);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error('Error fetching patrols:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchVesselsAndOfficers = async () => {
-    try {
-      const [vesselsRes, officersRes] = await Promise.all([
-        fetch('/api/staff/query?collection=fleet'),
-        fetch('/api/staff/query?collection=users')
-      ]);
-      const vesselsJson = await vesselsRes.json();
-      const officersJson = await officersRes.json();
-      
-      if (vesselsJson.success) {
-        setVessels(vesselsJson.data);
-      }
-      if (officersJson.success) {
-        setOfficers(officersJson.data);
-      }
-    } catch (e) {
-      console.error('Error fetching vessels and officers:', e);
+  const filteredPatrols = patrols.filter(p => {
+    if (filterStatus !== 'ALL' && p.status !== filterStatus) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return (p.code?.toLowerCase().includes(q) || p.zone?.toLowerCase().includes(q) || p.type?.toLowerCase().includes(q));
     }
-  };
-
-  useEffect(() => {
-    fetchPatrols();
-    fetchVesselsAndOfficers();
-  }, []);
-
-  const resetFormFields = () => {
-    setCode('');
-    setZone('');
-    setZoneAr('');
-    setVesselId('');
-    setOfficerId('');
-    setAreaCovered('0');
-    setDuration('0');
-    setWeather('');
-    setObservations('');
-    setStatus('ACTIVE');
-    setIncidentsReported('0');
-    setEditingPatrol(null);
-  };
-
-  const startEditing = (p: PatrolWithRelations) => {
-    setEditingPatrol(p);
-    setCode(p.code || '');
-    setZone(p.zone || '');
-    setZoneAr(p.zoneAr || '');
-    setVesselId(p.vesselId || '');
-    setOfficerId(p.members && p.members.length > 0 ? p.members[0].id : '');
-    setAreaCovered(String(p.areaCovered || 0));
-    setDuration(String(p.duration || 0));
-    setWeather(p.weather || '');
-    setObservations(p.observations || '');
-    setStatus(p.status || 'ACTIVE');
-    setIncidentsReported(String(p.incidentsReported || 0));
-    setShowModal(true);
-  };
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!zone || !zoneAr || !vesselId || !officerId) {
-      alert(isArabic ? 'يرجى ملء جميع الحقول المطلوبة' : 'Please fill all required fields');
-      return;
-    }
-
-    const parsedArea = parseFloat(areaCovered) || 0;
-    const parsedDuration = parseFloat(duration) || 0;
-    const parsedIncidents = parseInt(incidentsReported, 10) || 0;
-
-    if (parsedArea < 0 || parsedDuration < 0 || parsedIncidents < 0) {
-      alert(isArabic 
-        ? 'يجب أن تكون القيم الرقمية أكبر من أو تساوي 0' 
-        : 'Numeric values must be greater than or equal to 0'
-      );
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const patrolData = {
-        code,
-        zone,
-        zoneAr,
-        vesselId,
-        officerId,
-        areaCovered: parsedArea,
-        duration: parsedDuration,
-        weather,
-        observations,
-        status,
-        incidentsReported: parsedIncidents,
-        routeCoordinates: editingPatrol?.routeCoordinates || []
-      };
-
-      if (editingPatrol?.id) {
-        const response = await fetch('/api/staff/mutate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            collectionName: 'patrols',
-            action: 'UPDATE',
-            id: editingPatrol.id,
-            data: patrolData
-          })
-        });
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || 'Failed to update patrol');
-        }
-      } else {
-        const response = await fetch('/api/staff/mutate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            collectionName: 'patrols',
-            action: 'ADD',
-            data: patrolData
-          })
-        });
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || 'Failed to add patrol');
-        }
-      }
-
-      resetFormFields();
-      setShowModal(false);
-      fetchPatrols();
-    } catch (err: any) {
-      console.error('Error saving patrol:', err);
-      alert(isArabic 
-        ? `حدث خطأ أثناء حفظ البيانات: ${err.message || err}`
-        : `Error saving patrol data: ${err.message || err}`
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (patrol: PatrolWithRelations) => {
-    if (!patrol.id) return;
-    const confirmMsg = isArabic 
-      ? `هل أنت متأكد من حذف الدورية "${patrol.code || patrol.id}" نهائياً من النظام؟`
-      : `Are you sure you want to permanently delete patrol "${patrol.code || patrol.id}"?`;
-    
-    if (confirm(confirmMsg)) {
-      setSubmitting(true);
-      try {
-        const response = await fetch('/api/staff/mutate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            collectionName: 'patrols',
-            action: 'DELETE',
-            id: patrol.id
-          })
-        });
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || 'Failed to delete patrol');
-        }
-        fetchPatrols();
-      } catch (err: any) {
-        console.error('Error deleting patrol:', err);
-        alert(isArabic 
-          ? `حدث خطأ أثناء حذف الدورية: ${err.message || err}`
-          : `Error deleting patrol: ${err.message || err}`
-        );
-      } finally {
-        setSubmitting(false);
-      }
-    }
-  };
-
-  const formatMissionDate = (startTime: any) => {
-    if (!startTime) return '';
-    const d = startTime.toDate ? startTime.toDate() : new Date(startTime);
-    return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
-  };
-
-  const totalCoverage = [...activePatrols, ...recentMissions].reduce((sum, p) => sum + (p.areaCovered || 0), 0);
-  const totalIncidents = [...activePatrols, ...recentMissions].reduce((sum, p) => sum + (p.incidentsReported || 0), 0);
-  
-  const dynamicStats = [
-    { label: 'Active Patrols', labelAr: 'الدوريات النشطة', value: String(activePatrols.length), trend: 'Active', icon: Ship, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: 'Coverage Area', labelAr: 'مساحة التغطية', value: `${totalCoverage.toFixed(0)} km²`, trend: '+12%', icon: MapIcon, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-    { label: 'Avg Fuel/Unit', labelAr: 'معدل الوقود/الوحدة', value: '62%', trend: '-4%', icon: Fuel, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-    { label: 'Command Alerts', labelAr: 'تنبيهات القيادة', value: String(totalIncidents), trend: 'High', icon: Shield, color: 'text-rose-500', bg: 'bg-rose-500/10' },
-  ];
-
-  const filteredMissions = recentMissions.filter(mission => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    const codeMatch = mission.code?.toLowerCase().includes(query) || false;
-    const vesselMatch = mission.vessel?.toLowerCase().includes(query) || false;
-    const officerMatch = mission.officer?.toLowerCase().includes(query) || false;
-    const zoneMatch = mission.zone?.toLowerCase().includes(query) || false;
-    return codeMatch || vesselMatch || officerMatch || zoneMatch;
+    return true;
   });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const totalPatrols = patrols.length;
+  const totalHours = patrols.reduce((acc, p) => acc + (p.duration || 0), 0);
+  const totalObservations = patrols.reduce((acc, p) => acc + (p.patrolObservations?.length || 0), 0);
+  const totalViolations = patrols.reduce((acc, p) => acc + (p.patrolViolations?.length || 0), 0);
+
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'ACTIVE': return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
+      case 'COMPLETED': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
+      case 'EMERGENCY': return 'text-rose-400 bg-rose-400/10 border-rose-400/20';
+      default: return 'text-slate-400 bg-slate-400/10 border-slate-400/20';
+    }
+  };
 
   return (
-    <div 
-      className={showModal ? "max-w-[1200px] mx-auto space-y-6 pb-12 animate-in fade-in duration-300" : "max-w-[1500px] mx-auto space-y-8 relative"} 
-      dir={isArabic ? 'rtl' : 'ltr'}
-      onClick={() => setActiveMenuId(null)}
-    >
-      {showModal ? (
-        /* ── INLINE FORM VIEW ── */
-        <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-          {/* Header with Back Button */}
-          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
-            <button 
-              onClick={() => { resetFormFields(); setShowModal(false); }}
-              type="button"
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+    <div className="max-w-[1600px] mx-auto space-y-6 md:space-y-8 px-4 sm:px-6 md:px-8 overflow-hidden" dir={isArabic ? 'rtl' : 'ltr'}>
+      
+      {/* Majestic Hero Header Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative overflow-hidden rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-2xl p-5 md:p-10 mb-8 shadow-2xl"
+      >
+        {/* Abstract animated backgrounds */}
+        <div className="absolute top-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-teal-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-sky-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-8 relative z-10">
+          <div className="max-w-2xl">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex items-center gap-3 mb-3 md:mb-4"
             >
-              <ArrowRight size={20} className={isArabic ? '' : 'rotate-180'} />
-            </button>
-            <div>
-              <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
-                {isArabic ? 'إدارة الدوريات' : 'Patrol Operations'}
+              <div className="p-2 md:p-2.5 bg-teal-500/20 text-teal-400 rounded-xl border border-teal-500/30 shadow-[0_0_20px_rgba(45,212,191,0.2)]">
+                <Shield size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
+              </div>
+              <span className="text-[10px] md:text-xs font-black tracking-[0.2em] md:tracking-[0.3em] text-teal-400 uppercase drop-shadow-md">
+                {isArabic ? 'إدارة العمليات البحرية' : 'Marine Operations'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                <Ship className="text-teal-500" size={20} />
-                {editingPatrol 
-                  ? (isArabic ? 'تعديل بيانات الدورية' : 'Edit Patrol Details')
-                  : (isArabic ? 'تسجيل دورية جديدة' : 'Log New Patrol')
-                }
-              </h2>
-            </div>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tighter mb-3 md:mb-4 leading-tight"
+            >
+              {isArabic ? 'المركز الرئيسي للدوريات' : 'Patrol Command Center'}
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-xs md:text-base text-slate-400 leading-relaxed font-medium"
+            >
+              {isArabic 
+                ? 'إدارة الأسطول، توجيه الدوريات البحرية والساحلية، تسجيل المخالفات، ومتابعة الرصد البيئي الحي عبر كافة محميات البحر الأحمر.' 
+                : 'Manage the fleet, direct marine and coastal patrols, record violations, and monitor live ecological observations across the Red Sea reserves.'}
+            </motion.p>
           </div>
-
-          <div className="w-full max-w-4xl mx-auto pt-4">
-            <form onSubmit={handleFormSubmit} className="space-y-6">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label htmlFor="patrol-code" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'رمز الدورية *' : 'Patrol Code *'}
-                  </label>
-                  <Input 
-                    id="patrol-code"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="e.g. PAT-204"
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                    required
-                  />
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, type: "spring" }}
+            className="shrink-0 flex flex-col gap-3 mt-4 md:mt-0 w-full md:w-auto"
+          >
+            <Link href={`/${params.lang}/staff/patrols/new`} className="w-full">
+              <Button className="w-full md:w-auto h-12 md:h-14 bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-400 hover:to-emerald-300 text-[#001529] font-black rounded-xl md:rounded-2xl px-6 md:px-8 flex items-center justify-center gap-2 md:gap-3 shadow-[0_0_30px_rgba(45,212,191,0.3)] hover:shadow-[0_0_40px_rgba(45,212,191,0.5)] hover:-translate-y-1 transition-all duration-300 group">
+                <div className="bg-white/20 p-1 md:p-1.5 rounded-lg group-hover:rotate-90 transition-transform duration-300">
+                  <Plus size={18} strokeWidth={3} className="text-[#001529]" />
                 </div>
+                <span className="text-xs md:text-sm uppercase tracking-widest">{isArabic ? 'تسجيل دورية جديدة' : 'Log New Patrol'}</span>
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="patrol-zone-en" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'المنطقة (EN) *' : 'Zone (EN) *'}
-                  </label>
-                  <Input 
-                    id="patrol-zone-en"
-                    value={zone}
-                    onChange={(e) => setZone(e.target.value)}
-                    placeholder="e.g. Sector Delta"
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-zone-ar" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'المنطقة (AR) *' : 'Zone (AR) *'}
-                  </label>
-                  <Input 
-                    id="patrol-zone-ar"
-                    value={zoneAr}
-                    onChange={(e) => setZoneAr(e.target.value)}
-                    placeholder="e.g. قطاع دلتا"
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-vessel" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'المركب المستخدم *' : 'Deployed Vessel *'}
-                  </label>
-                  <select 
-                    id="patrol-vessel"
-                    value={vesselId}
-                    onChange={(e) => setVesselId(e.target.value)}
-                    className="w-full h-11 bg-white/5 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer hover:bg-white/10 transition-all"
-                    required
-                  >
-                    <option value="" className="bg-[#0c1628]">{isArabic ? 'اختر مركباً...' : 'Select vessel...'}</option>
-                    {vessels.map((v) => (
-                      <option key={v.id} value={v.id} className="bg-[#0c1628]">
-                        {isArabic ? v.nameAr || v.name : v.name} {v.code ? `(${v.code})` : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-officer" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'ضابط الدورية *' : 'Patrol Officer *'}
-                  </label>
-                  <select 
-                    id="patrol-officer"
-                    value={officerId}
-                    onChange={(e) => setOfficerId(e.target.value)}
-                    className="w-full h-11 bg-white/5 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer hover:bg-white/10 transition-all"
-                    required
-                  >
-                    <option value="" className="bg-[#0c1628]">{isArabic ? 'اختر ضابطاً...' : 'Select officer...'}</option>
-                    {officers.map((o) => (
-                      <option key={o.id} value={o.id} className="bg-[#0c1628]">
-                        {isArabic ? o.nameAr || o.name : o.name} ({o.role})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-area" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'المساحة المغطاة (كم²)' : 'Area Covered (km²)'}
-                  </label>
-                  <Input 
-                    id="patrol-area"
-                    type="number"
-                    step="any"
-                    min="0"
-                    value={areaCovered}
-                    onChange={(e) => setAreaCovered(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-duration" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'المدة (ساعات)' : 'Duration (Hours)'}
-                  </label>
-                  <Input 
-                    id="patrol-duration"
-                    type="number"
-                    step="any"
-                    min="0"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-weather" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'حالة الطقس' : 'Weather Conditions'}
-                  </label>
-                  <Input 
-                    id="patrol-weather"
-                    value={weather}
-                    onChange={(e) => setWeather(e.target.value)}
-                    placeholder="e.g. Clear, 12kt Wind"
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-status" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'الحالة التشغيلية *' : 'Status *'}
-                  </label>
-                  <select 
-                    id="patrol-status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
-                    className="w-full h-11 bg-white/5 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm cursor-pointer hover:bg-white/10 transition-all"
-                    required
-                  >
-                    <option value="ACTIVE" className="bg-[#0c1628]">{isArabic ? 'نشط (ACTIVE)' : 'Active'}</option>
-                    <option value="STANDBY" className="bg-[#0c1628]">{isArabic ? 'استعداد (STANDBY)' : 'Standby'}</option>
-                    <option value="EMERGENCY" className="bg-[#0c1628]">{isArabic ? 'طوارئ (EMERGENCY)' : 'Emergency'}</option>
-                    <option value="COMPLETED" className="bg-[#0c1628]">{isArabic ? 'مكتمل (COMPLETED)' : 'Completed'}</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="patrol-incidents" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {isArabic ? 'المخالفات المرصودة' : 'Incidents Reported'}
-                  </label>
-                  <Input 
-                    id="patrol-incidents"
-                    type="number"
-                    min="0"
-                    value={incidentsReported}
-                    onChange={(e) => setIncidentsReported(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500"
-                  />
-                </div>
+        {/* Analytics Mini-Dashboard within Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-6 md:mt-10 pt-6 md:pt-8 border-t border-white/10 relative z-10"
+        >
+          {[
+            { label: isArabic ? 'إجمالي الدوريات' : 'Total Patrols', val: totalPatrols, icon: Ship, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
+            { label: isArabic ? 'ساعات الإبحار' : 'Patrol Hours', val: `${totalHours}h`, icon: Clock, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+            { label: isArabic ? 'المشاهدات' : 'Observations', val: totalObservations, icon: Eye, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+            { label: isArabic ? 'المخالفات' : 'Violations', val: totalViolations, icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+          ].map((stat, idx) => (
+            <div key={idx} className={`flex items-center gap-2.5 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/[0.02] border ${stat.border} hover:bg-white/[0.05] transition-colors min-w-0`}>
+              <div className={`p-2 md:p-3 rounded-lg md:rounded-xl ${stat.bg} ${stat.color} shadow-inner shrink-0`}>
+                <stat.icon size={18} strokeWidth={2} className="md:w-[22px] md:h-[22px]" />
               </div>
-
-              <div className="space-y-2">
-                <label htmlFor="patrol-observations" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  {isArabic ? 'الملاحظات الرئيسية' : 'Observations'}
-                </label>
-                <textarea
-                  id="patrol-observations"
-                  value={observations}
-                  onChange={(e) => setObservations(e.target.value)}
-                  placeholder={isArabic ? 'أدخل ملاحظات الدورية هنا...' : 'Enter patrol observations here...'}
-                  className="w-full h-32 bg-white/5 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm placeholder:text-slate-500 focus:border-teal-500/30 transition-all"
-                />
+              <div className="flex flex-col overflow-hidden flex-1 min-w-0">
+                <span className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate block">{stat.label}</span>
+                <span className="text-base sm:text-lg md:text-2xl font-black text-white tracking-tight truncate block">{stat.val}</span>
               </div>
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
 
-              {/* Actions */}
-              <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
-                <button 
-                  type="button" 
-                  onClick={() => { resetFormFields(); setShowModal(false); }}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors"
-                  disabled={submitting}
-                >
-                  {isArabic ? 'إلغاء' : 'Cancel'}
-                </button>
-                
-                <Button 
-                  type="submit" 
-                  disabled={submitting}
-                  className="bg-teal-500 hover:bg-teal-400 text-[#001529] font-black rounded-xl py-2.5 px-6 shadow-[0_0_15px_rgba(45,212,191,0.2)]"
-                >
-                  {submitting 
-                    ? <Loader2 className="animate-spin" size={16} /> 
-                    : (editingPatrol ? (isArabic ? 'تحديث الدورية' : 'Update Patrol') : (isArabic ? 'تسجيل الدورية' : 'Log Patrol'))
-                  }
-                </Button>
-              </div>
+      {/* Environmental Conditions Panel */}
+      <EnvironmentalConditions isArabic={isArabic} />
 
-            </form>
+      {/* Filters and List */}
+      <Card className="bg-[#0c1628]/80 backdrop-blur-md border-white/5 p-4 md:p-6 rounded-2xl w-full overflow-hidden">
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute top-1/2 -translate-y-1/2 left-3 text-slate-500" size={18} />
+            <Input 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isArabic ? "بحث برمز الدورية أو المنطقة..." : "Search by code or zone..."}
+              className="pl-10 bg-white/5 border-white/10 text-white rounded-xl focus:border-teal-500 h-11"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-slate-400" />
+            <select 
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="h-11 bg-white/5 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-teal-500 text-sm cursor-pointer"
+            >
+              <option value="ALL" className="bg-[#0c1628]">{isArabic ? 'الكل' : 'All Status'}</option>
+              <option value="ACTIVE" className="bg-[#0c1628]">{isArabic ? 'نشط' : 'Active'}</option>
+              <option value="COMPLETED" className="bg-[#0c1628]">{isArabic ? 'مكتمل' : 'Completed'}</option>
+              <option value="DRAFT" className="bg-[#0c1628]">{isArabic ? 'مسودة' : 'Draft'}</option>
+            </select>
           </div>
         </div>
-      ) : (
-        /* ── DIRECTORY LISTS VIEW ── */
-        <>
-          {/* ── Page Header ──────────────────────────────────────────────────────── */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-white/10">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                 <span className="w-8 h-1 bg-teal-500 rounded-full" />
-                 <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
-                     {isArabic ? 'وحدة السيطرة البحرية' : 'Marine Control Unit'}
-                 </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tighter">
-                {isArabic ? 'عمليات الدوريات النشطة' : 'Active Patrol Operations'}
-              </h1>
-            </div>
 
-            <div className="flex gap-3">
-               <Button intent="outline" className="rounded-2xl border-white/10 px-5 flex items-center gap-2 text-[12px] font-bold shadow-sm bg-white/5 text-white hover:bg-white/10">
-                  <Compass size={16} className="text-teal-400" />
-                  {isArabic ? 'خريطة الأسطول' : 'Fleet Map'}
-               </Button>
-               <Button 
-                 onClick={() => { resetFormFields(); setShowModal(true); }}
-                 intent="primary" 
-                 className="rounded-2xl px-6 flex items-center gap-2 text-[12px] font-bold shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic"
-               >
-                  <Plus size={18} strokeWidth={3} />
-                  {isArabic ? 'تسجيل دورية' : 'Log New Patrol'}
-               </Button>
-            </div>
+        {loading ? (
+          <div className="h-64 flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
           </div>
-
-          {/* Mobile View Toggle: Map vs Data */}
-          {isMobile && (
-            <div className="flex p-1 bg-[#0a1628]/90 backdrop-blur-2xl border border-white/10 rounded-2xl mb-4 gap-1.5 shadow-xl">
-              <button
-                type="button"
-                onClick={() => setMobilePanel('data')}
-                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
-                  mobilePanel === 'data'
-                    ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Shield size={14} className="shrink-0" />
-                {isArabic ? 'لوحة العمليات والوحدات' : 'Operations & Units'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobilePanel('map')}
-                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
-                  mobilePanel === 'map'
-                    ? 'bg-teal-500 text-[#001529] shadow-md font-extrabold'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Compass size={14} className="shrink-0" />
-                {isArabic ? 'الخريطة التكتيكية' : 'Tactical Map'}
-              </button>
-            </div>
-          )}
-
-          {/* ── Summary Stats Row ────────────────────────────────────────────────── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {dynamicStats.map((stat, idx) => (
-              <TacticalStat key={idx} stat={stat} isAr={isArabic} />
-            ))}
-          </div>
-
-          {/* ── Command Center Main Grid ─────────────────────────────────────────── */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Tactical Map HUD Card */}
-            <div className={`lg:col-span-2 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''}`}>
-               <Card className={`${isMobile ? 'h-[320px]' : 'h-[550px]'} border-none shadow-lg overflow-hidden relative group bg-[#0a1628]`}>
-                  {/* GIS HUD Elements Overlay */}
-                  <div className="absolute top-3 right-3 md:top-6 md:right-6 z-20 flex flex-row md:flex-col gap-2 md:gap-3">
-                     <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/5 shadow-2xl min-w-[110px] md:min-w-[180px]">
-                        <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Marine Weather</p>
-                        <div className="flex items-center justify-between gap-1.5 text-white">
-                           <span className="text-sm md:text-xl font-bold font-mono tracking-tighter">24°C</span>
-                           <Wind size={14} className="text-teal-400 shrink-0" />
-                           <span className="text-[9px] md:text-[11px] font-bold text-teal-400 shrink-0">12 kt</span>
-                        </div>
-                     </div>
-                     <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl hidden sm:block">
-                        <p className="text-[8px] md:text-[9px] font-black text-white/40 uppercase tracking-widest mb-1 md:mb-2">Sync Status</p>
-                        <div className="flex items-center gap-2">
-                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                           <span className="text-[9px] md:text-[11px] font-bold text-white tracking-tight">Database Synchronized</span>
-                        </div>
-                     </div>
+        ) : (
+          <>
+            {/* Mobile Cards View */}
+            <div className="md:hidden flex flex-col gap-4">
+              {filteredPatrols.map((p) => (
+                <div key={p.id} className="bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 rounded-2xl p-4 flex flex-col gap-4 transition-colors relative overflow-hidden">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex flex-col">
+                      <span className="font-mono text-sm font-bold text-white">{p.code || p.id.slice(0,8)}</span>
+                      <span className="text-[10px] text-slate-500">{p.type}</span>
+                    </div>
+                    <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider border ${getStatusColor(p.status)}`}>
+                      {isArabic && p.status === 'ACTIVE' ? 'نشط' : 
+                       isArabic && p.status === 'COMPLETED' ? 'مكتمل' : 
+                       isArabic && p.status === 'DRAFT' ? 'مسودة' : p.status}
+                    </span>
                   </div>
 
-                  {/* Map Mock Illustration */}
-                  <div className="absolute inset-0 opacity-20 pointer-events-none">
-                     <div className="absolute inset-0 bg-[linear-gradient(rgba(20,184,166,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
-                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.1)_0%,transparent_70%)]" />
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex flex-col gap-1.5 bg-white/5 p-2.5 rounded-xl">
+                      <span className="text-[10px] text-slate-500 uppercase">{isArabic ? 'المنطقة' : 'Zone'}</span>
+                      <div className="flex items-center gap-1.5 text-slate-300">
+                        <MapPin size={14} className="text-sky-400 shrink-0" />
+                        <span className="font-medium truncate">{isArabic ? p.zoneAr : p.zone}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 bg-white/5 p-2.5 rounded-xl">
+                      <span className="text-[10px] text-slate-500 uppercase">{isArabic ? 'التاريخ' : 'Date'}</span>
+                      <div className="flex items-center gap-1.5 text-slate-300">
+                        <Calendar size={14} className="text-teal-400 shrink-0" />
+                        <span className="font-medium">{new Date(p.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Central Map Controls HUD */}
-                  <div className="absolute bottom-3 md:bottom-6 left-1/2 -translate-x-1/2 z-20 px-3 py-2 md:px-6 md:py-3 rounded-full bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-3xl flex items-center gap-4 md:gap-8">
-                     <div className="hidden md:flex items-center gap-3 border-r border-white/10 pr-6">
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em] italic">Strategic Tracking Active</span>
-                     </div>
-                     <div className="flex gap-4 md:gap-6">
-                        <button className="text-white/50 hover:text-white transition-colors"><MapIcon size={16} /></button>
-                        <button className="text-white/50 hover:text-white transition-colors"><Compass size={16} /></button>
-                        <button className="text-white/50 hover:text-white transition-colors"><Menu size={16} /></button>
-                     </div>
-                  </div>
-
-                  {/* Centered Large Map UI Text */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                     <div className="w-24 h-24 border border-teal-500/20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
-                        <div className="w-1.5 h-1.5 bg-teal-500 rounded-full" />
-                     </div>
-                     <p className="mt-4 text-[10px] font-black text-teal-500/50 uppercase tracking-[0.5em] italic">Tactical Area Delta</p>
-                  </div>
-               </Card>
-            </div>
-
-            {/* Active Unit Sidebar */}
-            <div className={`space-y-4 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`} onClick={(e) => e.stopPropagation()}>
-               <div className="flex items-center justify-between px-1">
-                  <h3 className="font-bold text-white text-sm tracking-tight">{isArabic ? 'الوحدات الميدانية' : 'Units On-Field'}</h3>
-                  <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest px-2 py-0.5 bg-teal-500/10 rounded-full">
-                     {activePatrols.length} Live
-                  </span>
-               </div>
-               <div className="space-y-4 h-[490px] overflow-y-auto pr-1">
-                  <AnimatePresence mode="popLayout">
-                     {activePatrols.map((unit, idx) => (
-                        <motion.div 
-                          key={unit.id}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.1 }}
-                        >
-                          <ActiveUnitCard 
-                            unit={unit} 
-                            isAr={isArabic} 
-                            onEdit={startEditing}
-                            onDelete={handleDelete}
-                            activeMenuId={activeMenuId}
-                            setActiveMenuId={setActiveMenuId}
-                          />
-                        </motion.div>
-                     ))}
-                     {activePatrols.length === 0 && (
-                       <div className="p-4 text-center text-slate-500 font-bold text-xs uppercase tracking-widest border border-white/5 bg-white/5 rounded-2xl">
-                          {isArabic ? 'لا توجد وحدات نشطة' : 'No Active Units'}
-                       </div>
-                     )}
-                  </AnimatePresence>
-               </div>
-            </div>
-
-          </div>
-
-          {/* ── Tactical History Table Section ──────────────────────────────────── */}
-          <div className={isMobile && mobilePanel !== 'data' ? 'hidden' : ''}>
-            <Card className="border-none shadow-lg overflow-hidden bg-slate-900/40 backdrop-blur-xl">
-             <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                   <h3 className="text-lg font-bold text-white tracking-tight">{isArabic ? 'تاريخ المهمات التكتيكية' : 'Tactical Mission History'}</h3>
-                   <p className="text-[11px] text-slate-400 font-medium uppercase tracking-widest italic">{isArabic ? 'سجل العمليات المكتملة لآخر 7 أيام' : 'Completed operation logs for the last 7 days'}</p>
-                </div>
-                
-                <div className="flex gap-2">
-                   <div className="relative group">
-                      <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-teal-400" />
-                      <input 
-                        type="text" 
-                        placeholder={isArabic ? 'ابحث عن المعرف أو المركب...' : 'Search mission ID...'}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded-xl py-2.5 pl-9 pr-4 text-[12px] font-medium outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500/30 transition-all min-w-[220px] text-white placeholder:text-slate-500"
-                      />
-                   </div>
-                   <button className="p-2.5 rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-                      <Filter size={18} />
-                   </button>
-                </div>
-             </div>
-
-             <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                   <thead>
-                      <tr className="bg-white/5 border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">
-                         <th className="py-4 px-6">{isArabic ? 'المعرف' : 'ID'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'المركب' : 'Unit Vessel'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'التاريخ' : 'Deployed Date'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'المدة' : 'Duration'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'المساحة' : 'Area'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'المخالفات' : 'Violations'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'الحالة' : 'Outcome'}</th>
-                         <th className="py-4 px-6">{isArabic ? 'الإجراءات' : 'Actions'}</th>
-                      </tr>
-                   </thead>
-                   <tbody>
-                      {filteredMissions.map((mission) => (
-                        <tr key={mission.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors text-center group">
-                           <td className="py-4 px-6">
-                              <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-teal-400 transition-colors">#{mission.code}</span>
-                           </td>
-                           <td className="py-4 px-6 font-bold text-white">{isArabic ? (mission.vesselAr || mission.vessel) : mission.vessel}</td>
-                           <td className="py-4 px-6 text-slate-400">{formatMissionDate(mission.startTime)}</td>
-                           <td className="py-4 px-6 font-mono font-bold text-slate-500 italic">
-                              {mission.duration ? `${mission.duration}h` : '—'}
-                           </td>
-                           <td className="py-4 px-6 font-mono font-bold text-teal-400 tracking-tighter">
-                              {mission.areaCovered ? `${mission.areaCovered} km²` : '—'}
-                           </td>
-                           <td className="py-4 px-6">
-                              {(mission.incidentsReported ?? 0) > 0 ? (
-                                <div className="flex items-center justify-center gap-1 text-red-400 font-black italic">
-                                   <AlertCircle size={14} />
-                                   <span>{mission.incidentsReported} Found</span>
-                                </div>
-                              ) : (
-                                <span className="text-slate-600 font-bold">—</span>
-                              )}
-                           </td>
-                           <td className="py-4 px-6">
-                              <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-[11px] uppercase tracking-tighter">
-                                 <CheckCircle2 size={14} />
-                                 {mission.status}
-                              </div>
-                           </td>
-                           <td className="py-4 px-6">
-                              <div className="flex items-center justify-center gap-2">
-                                 <button 
-                                   onClick={() => startEditing(mission)}
-                                   className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
-                                   title={isArabic ? 'تعديل' : 'Edit'}
-                                 >
-                                    <Edit3 size={14} className="text-teal-400" />
-                                 </button>
-                                 <button 
-                                   onClick={() => handleDelete(mission)}
-                                   className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
-                                   title={isArabic ? 'حذف' : 'Delete'}
-                                 >
-                                    <Trash2 size={14} className="text-rose-400" />
-                                 </button>
-                              </div>
-                           </td>
-                        </tr>
-                      ))}
-                      {filteredMissions.length === 0 && (
-                          <tr>
-                             <td colSpan={8} className="py-8 text-slate-500 font-bold text-xs uppercase tracking-widest">
-                                {isArabic ? 'لا توجد سجلات مطابقة' : 'No matching logs'}
-                             </td>
-                          </tr>
+                  <div className="flex flex-col gap-1.5 bg-white/5 p-2.5 rounded-xl">
+                    <span className="text-[10px] text-slate-500 uppercase">{isArabic ? 'القيادة' : 'Leadership'}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-white font-bold text-sm truncate">{p.leader ? (isArabic ? p.leader.nameAr || p.leader.name : p.leader.name) : (isArabic ? 'بدون قائد' : 'No Leader')}</span>
+                      {p.customLeaderName && (
+                        <span className="inline-flex items-center whitespace-nowrap text-[9px] text-teal-400 bg-teal-400/10 px-2 py-0.5 rounded-md border border-teal-400/20 font-bold shrink-0">
+                          {isArabic ? 'ريس:' : 'Capt:'} {p.customLeaderName}
+                        </span>
                       )}
-                   </tbody>
-                </table>
-             </div>
-             
-             <div className="p-4 bg-white/[0.02] border-t border-white/5 text-center">
-                <button className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-teal-400 transition-colors">
-                   Load Extended Tactical History
-                </button>
-             </div>
-            </Card>
-          </div>
-        </>
-      )}
+                    </div>
+                  </div>
 
-      <div className="h-20" /> {/* Spacer */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-1">
+                    <div className="flex gap-2">
+                      <span className="flex items-center justify-center gap-1.5 text-amber-400 bg-amber-400/10 px-2.5 py-1.5 rounded-lg font-bold text-xs min-w-[3rem]">
+                        <Eye size={12} /> {p.patrolObservations?.length || 0}
+                      </span>
+                      <span className="flex items-center justify-center gap-1.5 text-rose-400 bg-rose-400/10 px-2.5 py-1.5 rounded-lg font-bold text-xs min-w-[3rem]">
+                        <AlertTriangle size={12} /> {p.patrolViolations?.length || 0}
+                      </span>
+                    </div>
+                    <Link href={`/${params.lang}/staff/patrols/${p.id}`}>
+                      <Button className="bg-teal-500/20 hover:bg-teal-500 text-teal-400 hover:text-[#001529] rounded-xl px-5 py-1.5 text-xs font-bold transition-all shadow-sm">
+                        {isArabic ? 'التفاصيل' : 'Details'}
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {filteredPatrols.length === 0 && (
+                <div className="py-10 text-center text-slate-500 bg-white/5 rounded-2xl border border-white/10">
+                  <Ship size={32} className="mx-auto mb-3 opacity-20" />
+                  {isArabic ? 'لم يتم العثور على دوريات.' : 'No patrols found.'}
+                </div>
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block w-full overflow-x-auto pb-4">
+              <table className="w-full min-w-[800px] text-start border-collapse whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-white/10 text-xs uppercase tracking-widest text-slate-500">
+                    <th className="py-4 px-4 font-semibold">{isArabic ? 'الرمز' : 'Patrol Code'}</th>
+                    <th className="py-4 px-4 font-semibold">{isArabic ? 'التاريخ' : 'Date'}</th>
+                    <th className="py-4 px-4 font-semibold">{isArabic ? 'المنطقة' : 'Zone'}</th>
+                    <th className="py-4 px-4 font-semibold">{isArabic ? 'القائد والريس' : 'Leader & Captain'}</th>
+                    <th className="py-4 px-4 font-semibold">{isArabic ? 'الأنشطة' : 'Activities'}</th>
+                    <th className="py-4 px-4 font-semibold">{isArabic ? 'الحالة' : 'Status'}</th>
+                    <th className="py-4 px-4 text-end font-semibold">{isArabic ? 'إجراء' : 'Action'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filteredPatrols.map((p) => (
+                    <tr key={p.id} className="group hover:bg-white/5 transition-colors">
+                      <td className="py-4 px-4">
+                        <span className="font-mono text-sm font-bold text-white">{p.code || p.id.slice(0,8)}</span>
+                        <p className="text-[10px] text-slate-500 truncate max-w-[120px]">{p.type}</p>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2 text-slate-300 text-sm">
+                          <Calendar size={14} className="text-teal-400 shrink-0" />
+                          {new Date(p.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-slate-300 text-sm">
+                        <div className="flex items-center gap-2">
+                          <MapPin size={14} className="text-sky-400 shrink-0" />
+                          <span className="truncate max-w-[150px]">{isArabic ? p.zoneAr : p.zone}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-slate-300 text-sm">
+                        <div className="flex flex-col gap-1.5 items-start">
+                          <span className="text-white font-bold">{p.leader ? (isArabic ? p.leader.nameAr || p.leader.name : p.leader.name) : (isArabic ? 'بدون قائد' : 'No Leader')}</span>
+                          {p.customLeaderName && (
+                            <span className="inline-flex items-center whitespace-nowrap text-[10px] text-teal-400 bg-teal-400/10 px-2.5 py-1 rounded-md border border-teal-400/20 font-medium">
+                              {isArabic ? 'ريس:' : 'Capt:'} {p.customLeaderName}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex gap-2 text-xs">
+                          <span className="flex items-center justify-center gap-1.5 text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md font-bold min-w-[3rem]">
+                            <Eye size={12} /> {p.patrolObservations?.length || 0}
+                          </span>
+                          <span className="flex items-center justify-center gap-1.5 text-rose-400 bg-rose-400/10 px-2.5 py-1 rounded-md font-bold min-w-[3rem]">
+                            <AlertTriangle size={12} /> {p.patrolViolations?.length || 0}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-black tracking-wider border ${getStatusColor(p.status)}`}>
+                          {isArabic && p.status === 'ACTIVE' ? 'نشط' : 
+                           isArabic && p.status === 'COMPLETED' ? 'مكتمل' : 
+                           isArabic && p.status === 'DRAFT' ? 'مسودة' : p.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-end">
+                        <Link href={`/${params.lang}/staff/patrols/${p.id}`}>
+                          <Button className="bg-white/5 hover:bg-teal-500 hover:text-[#001529] text-slate-300 rounded-xl px-5 py-1.5 text-xs font-bold transition-all shadow-sm">
+                            {isArabic ? 'عرض' : 'View'}
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredPatrols.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-slate-500">
+                        {isArabic ? 'لم يتم العثور على دوريات.' : 'No patrols found.'}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </Card>
     </div>
   );
 }

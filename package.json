@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.19.2",
+    "@google/genai": "^2.8.0",
     "@libsql/client": "^0.17.2",
     "@prisma/adapter-libsql": "^7.5.0",
     "@prisma/client": "^7.5.0",
@@ -27,6 +28,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.72.0",
     "react-leaflet": "^4.2.1",
+    "react-markdown": "^10.1.0",
     "react-quill": "^2.0.0",
     "recharts": "^3.8.1",
     "zod": "^4.3.6"
