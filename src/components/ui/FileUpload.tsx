@@ -5,6 +5,7 @@ import { UploadDropzone } from '@/utils/uploadthing';
 import { Card } from '@/components/ui/Card';
 import { X, FileText, Image as ImageIcon, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import "@uploadthing/react/styles.css";
 
 export interface FileUploadProps {
   endpoint: 'imageUploader' | 'documentUploader' | 'mediaUploader';
@@ -29,6 +30,7 @@ export function FileUpload({ endpoint, onUploadComplete, onUploadError, lang }: 
       <Card className="border border-white/10 bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden relative shadow-inner p-1">
         <UploadDropzone
           endpoint={endpoint}
+          config={{ mode: "auto" }}
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
             setIsUploading(false);
