@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import PatrolMap from '@/components/patrols/PatrolMap';
+import { FileUpload } from '@/components/ui/FileUpload';
 import { motion } from 'framer-motion';
 
 export default function NewPatrolPage({ params }: { params: { lang: string } }) {
@@ -38,6 +39,7 @@ export default function NewPatrolPage({ params }: { params: { lang: string } }) 
   
   const [observations, setObservations] = useState<any[]>([]);
   const [violations, setViolations] = useState<any[]>([]);
+  const [attachments, setAttachments] = useState<{name: string, url: string, type: string}[]>([]);
 
   useEffect(() => {
     // Fetch users and vessels
@@ -108,7 +110,8 @@ export default function NewPatrolPage({ params }: { params: { lang: string } }) 
           endLng: routeCoordinates[routeCoordinates.length - 1][1],
         } : null,
         observations,
-        violations
+        violations,
+        attachments
       };
 
       const res = await fetch('/api/staff/patrols', {
@@ -369,6 +372,22 @@ export default function NewPatrolPage({ params }: { params: { lang: string } }) 
             ))}
             {violations.length === 0 && <p className="text-sm text-slate-500 text-center py-4">No violations recorded.</p>}
           </div>
+        </Card>
+        </motion.div>
+
+        {/* Section 6: Attachments */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.6 }}>
+        <Card className="p-6 bg-slate-900/60 backdrop-blur-xl border-white/5 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+          <div className="flex items-center gap-2 mb-6 relative z-10">
+            <FileText className="text-fuchsia-400" size={20} />
+            <h2 className="text-lg font-bold text-white">{isArabic ? 'المرفقات والصور' : 'Attachments & Photos'}</h2>
+          </div>
+          <FileUpload 
+            endpoint="mediaUploader"
+            lang={params.lang}
+            onUploadComplete={(files) => setAttachments(files)}
+          />
         </Card>
         </motion.div>
 

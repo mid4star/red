@@ -52,7 +52,8 @@ export async function POST(request: Request) {
       crew, // Array of User IDs
       observations, // Array of observation objects
       violations, // Array of violation objects
-      route // GeoJSON or route object
+      route, // GeoJSON or route object
+      attachments // Array of attachment objects { name, url, type }
     } = data;
 
     // Start a transaction or do consecutive creates (since we need to create Monitoring/Violation records first)
@@ -179,6 +180,16 @@ export async function POST(request: Request) {
           endLat: route.endLat,
           endLng: route.endLng
         }
+      };
+    }
+
+    if (attachments && attachments.length > 0) {
+      patrolData.attachments = {
+        create: attachments.map((att: any) => ({
+          name: att.name,
+          url: att.url,
+          type: att.type.includes('image') ? 'IMAGE' : 'DOCUMENT'
+        }))
       };
     }
 
