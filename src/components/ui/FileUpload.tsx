@@ -11,10 +11,11 @@ export interface FileUploadProps {
   endpoint: 'imageUploader' | 'documentUploader' | 'mediaUploader';
   onUploadComplete: (files: {name: string, url: string, type: string}[]) => void;
   onUploadError?: (error: Error) => void;
+  onUploadBegin?: () => void;
   lang: string;
 }
 
-export function FileUpload({ endpoint, onUploadComplete, onUploadError, lang }: FileUploadProps) {
+export function FileUpload({ endpoint, onUploadComplete, onUploadError, onUploadBegin, lang }: FileUploadProps) {
   const isArabic = lang === 'ar';
   const [uploadedFiles, setUploadedFiles] = useState<{name: string, url: string, type: string}[]>([]);
   const [, setIsUploading] = useState(false);
@@ -31,7 +32,10 @@ export function FileUpload({ endpoint, onUploadComplete, onUploadError, lang }: 
         <UploadDropzone
           endpoint={endpoint}
           config={{ mode: "auto" }}
-          onUploadBegin={() => setIsUploading(true)}
+          onUploadBegin={() => {
+            setIsUploading(true);
+            if (onUploadBegin) onUploadBegin();
+          }}
           onClientUploadComplete={(res) => {
             setIsUploading(false);
             if (res) {

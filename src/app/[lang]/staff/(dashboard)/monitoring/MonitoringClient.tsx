@@ -151,10 +151,10 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
     setLoading(true);
     try {
       const [epRes, scRes, sRes, bsRes] = await Promise.all([
-        fetch('/api/staff/query?collection=eco_programs').then(r => r.json()),
-        fetch('/api/staff/query?collection=stranding_cases').then(r => r.json()),
-        fetch('/api/staff/query?collection=sightings').then(r => r.json()),
-        fetch('/api/staff/query?collection=beach_surveys').then(r => r.json()),
+        fetch('/api/staff/query?collection=eco_programs', { cache: 'no-store' }).then(r => r.json()),
+        fetch('/api/staff/query?collection=stranding_cases', { cache: 'no-store' }).then(r => r.json()),
+        fetch('/api/staff/query?collection=sightings', { cache: 'no-store' }).then(r => r.json()),
+        fetch('/api/staff/query?collection=beach_surveys', { cache: 'no-store' }).then(r => r.json()),
       ]);
 
       if (epRes.success) setEcoPrograms(epRes.data);
@@ -900,7 +900,15 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         <FileUpload 
                           endpoint="mediaUploader"
                           lang={lang}
-                          onUploadComplete={(files) => setEpForm(prev => ({ ...prev, attachedFileUrl: files[0]?.url || '' }))}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setEpForm(prev => ({ ...prev, attachedFileUrl: files[0]?.url || '' }));
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
                         />
                       </div>
 
@@ -1063,7 +1071,15 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         <FileUpload 
                           endpoint="mediaUploader"
                           lang={lang}
-                          onUploadComplete={(files) => setScForm(prev => ({ ...prev, attachedFileUrl: files[0]?.url || '' }))}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setScForm(prev => ({ ...prev, attachedFileUrl: files[0]?.url || '' }));
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
                         />
                       </div>
 
@@ -1350,7 +1366,15 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                         <FileUpload 
                           endpoint="mediaUploader"
                           lang={lang}
-                          onUploadComplete={(files) => setBsForm(prev => ({ ...prev, attachedFileUrl: files[0]?.url || '' }))}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setBsForm(prev => ({ ...prev, attachedFileUrl: files[0]?.url || '' }));
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
                         />
                       </div>
 
