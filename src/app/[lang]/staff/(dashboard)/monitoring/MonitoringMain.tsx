@@ -9,6 +9,8 @@ import { FileUpload } from '@/components/ui/FileUpload';
 import MonitoringStats from './components/MonitoringStats';
 import DataGrid from './components/DataGrid';
 import RecordDrawer from './components/RecordDrawer';
+import QuickSpeciesDrawer from './components/QuickSpeciesDrawer';
+import SpeciesSelector from './components/SpeciesSelector';
 import type { EcoMapItem } from '@/components/monitoring/EcoMap';
 
 const EcoMap = dynamic(() => import('@/components/monitoring/EcoMap'), {
@@ -40,6 +42,8 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
   const [activeTab, setActiveTab] = useState<TabType>('eco_programs');
   const [activeItem, setActiveItem] = useState<EcoMapItem | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [quickSpeciesOpen, setQuickSpeciesOpen] = useState(false);
+  const [marineSpecies, setMarineSpecies] = useState<any[]>([]);
 
   const [formData, setFormData] = useState<any>({});
 
@@ -51,17 +55,19 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const [epRes, scRes, sRes, bsRes] = await Promise.all([
+      const [epRes, scRes, sRes, bsRes, msRes] = await Promise.all([
         fetch('/api/staff/query?collection=eco_programs', { cache: 'no-store' }).then(r => r.json()),
         fetch('/api/staff/query?collection=stranding_cases', { cache: 'no-store' }).then(r => r.json()),
         fetch('/api/staff/query?collection=sightings', { cache: 'no-store' }).then(r => r.json()),
         fetch('/api/staff/query?collection=beach_surveys', { cache: 'no-store' }).then(r => r.json()),
+        fetch('/api/staff/query?collection=marine_species', { cache: 'no-store' }).then(r => r.json()),
       ]);
 
       if (epRes.success) setEcoPrograms(epRes.data);
       if (scRes.success) setStrandingCases(scRes.data);
       if (sRes.success) setSightings(sRes.data);
       if (bsRes.success) setBeachSurveys(bsRes.data);
+      if (msRes.success) setMarineSpecies(msRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -393,7 +399,13 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
             <>
               <div className="space-y-1 col-span-2 md:col-span-1">
                 <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'النوع' : 'Species'}</label>
-                <Input type="text" value={formData.species || ''} onChange={e => setFormData({...formData, species: e.target.value})} />
+                <SpeciesSelector 
+                  value={formData.species || ''} 
+                  onChange={(val) => setFormData({...formData, species: val})} 
+                  lang={lang} 
+                  speciesList={marineSpecies}
+                  onAddNew={() => setQuickSpeciesOpen(true)}
+                />
               </div>
               <div className="space-y-1 col-span-2 md:col-span-1">
                 <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'الحالة' : 'Status'}</label>
@@ -409,7 +421,13 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
             <>
               <div className="space-y-1 col-span-2 md:col-span-1">
                 <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'النوع *' : 'Species *'}</label>
-                <Input type="text" value={formData.species || ''} onChange={e => setFormData({...formData, species: e.target.value})} required />
+                <SpeciesSelector 
+                  value={formData.species || ''} 
+                  onChange={(val) => setFormData({...formData, species: val})} 
+                  lang={lang} 
+                  speciesList={marineSpecies}
+                  onAddNew={() => setQuickSpeciesOpen(true)}
+                />
               </div>
               <div className="space-y-1 col-span-2 md:col-span-1">
                 <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'العدد' : 'Count'}</label>
@@ -445,6 +463,16 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
           </div>
         </div>
       </RecordDrawer>
+
+      <QuickSpeciesDrawer 
+        isOpen={quickSpeciesOpen}
+        onClose={() => setQuickSpeciesOpen(false)}
+        lang={lang}
+        onSuccess={(newSpecies) => {
+          setMarineSpecies(prev => [...prev, newSpecies]);
+          setFormData({ ...formData, species: newSpecies.name });
+        }}
+      />
     </div>
   );
 }
