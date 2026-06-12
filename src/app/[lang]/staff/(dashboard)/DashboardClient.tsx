@@ -16,6 +16,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import UnifiedAIAssistant from '@/components/dashboard/UnifiedAIAssistant';
+import ReportGeneratorModal from '@/components/reports/ReportGeneratorModal';
 
 // Animation variants
 const containerVariants = {
@@ -66,6 +67,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
   const isArabic = lang === 'ar';
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'ALL' | 'PATROLS' | 'VIOLATIONS'>('ALL');
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -106,9 +108,12 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
         </div>
 
         <div className="flex gap-3 relative z-10">
-           <Button className="rounded-2xl border-th-border bg-th-surface text-th-text hover:bg-th-surface2 px-5 flex items-center gap-2 text-[12px] font-bold shadow-sm">
+           <Button 
+             onClick={() => setIsReportModalOpen(true)}
+             className="rounded-2xl border-th-border bg-th-surface text-th-text hover:bg-th-surface2 px-5 flex items-center gap-2 text-[12px] font-bold shadow-sm"
+           >
               <BarChart3 size={16} className="text-teal-500" />
-              {isArabic ? 'إنشاء تقرير استخباراتي' : 'Generate Intelligence Report'}
+              {isArabic ? 'إنشاء تقرير' : 'Generate Report'}
            </Button>
         </div>
       </motion.div>
@@ -415,6 +420,12 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
       <motion.div variants={itemVariants} className="pt-4">
         <UnifiedAIAssistant lang={lang} />
       </motion.div>
+
+      <ReportGeneratorModal 
+        isOpen={isReportModalOpen} 
+        onClose={() => setIsReportModalOpen(false)} 
+        lang={lang} 
+      />
 
     </motion.div>
   );
