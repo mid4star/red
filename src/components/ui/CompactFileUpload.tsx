@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud, X, File, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useUploadThing } from '@/utils/uploadthing';
 
 interface CompactFileUploadProps {
   endpoint: string;
@@ -13,36 +14,33 @@ interface CompactFileUploadProps {
 
 export function CompactFileUpload({ endpoint, onUploadComplete, lang, accept = 'image/*,application/pdf' }: CompactFileUploadProps) {
   const isAr = lang === 'ar';
-  const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<{ url: string; name: string; type: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Map the generic 'endpoint' prop (like 'mediaUploader') to the ones defined in core.ts
+  const uploadEndpoint = endpoint === 'imageUploader' || endpoint === 'documentUploader' || endpoint === 'mediaUploader' 
+    ? endpoint 
+    : 'mediaUploader';
+
+  const { startUpload, isUploading } = useUploadThing(uploadEndpoint as any, {
+    onClientUploadComplete: (res) => {
+      if (!res || res.length === 0) return;
+      const file = res[0];
+      const fileData = { url: file.url, name: file.name, type: file.type || 'application/octet-stream' };
+      setUploadedFile(fileData);
+      onUploadComplete([fileData]);
+    },
+    onUploadError: (error: Error) => {
+      console.error('Upload error:', error);
+      alert(isAr ? 'فشل رفع الملف' : 'File upload failed');
+    },
+  });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const res = await fetch(`/api/upload?endpoint=${endpoint}`, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload failed');
-      
-      const fileData = { url: data.url, name: file.name, type: file.type };
-      setUploadedFile(fileData);
-      onUploadComplete([fileData]);
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert(isAr ? 'فشل رفع الملف' : 'File upload failed');
-    } finally {
-      setIsUploading(false);
-    }
+    
+    await startUpload([file]);
   };
 
   if (uploadedFile) {
