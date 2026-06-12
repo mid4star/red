@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PrintableA4Report from '@/components/reports/PrintableA4Report';
 import { Button } from '@/components/ui/Button';
 import { Printer, Loader2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ReportViewPage({ params }: { params: { lang: string } }) {
-  const isArabic = params.lang === 'ar';
+function ReportViewContent({ lang }: { lang: string }) {
+  const isArabic = lang === 'ar';
   const searchParams = useSearchParams();
   
   const startDate = searchParams.get('start');
@@ -70,7 +70,7 @@ export default function ReportViewPage({ params }: { params: { lang: string } })
       <div className="min-h-screen flex items-center justify-center bg-slate-50" dir={isArabic ? 'rtl' : 'ltr'}>
         <div className="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center max-w-md">
           <p className="text-rose-600 font-bold mb-4">{error}</p>
-          <Link href={`/${params.lang}/staff`}>
+          <Link href={`/${lang}/staff`}>
             <Button>{isArabic ? 'العودة للوحة القيادة' : 'Return to Dashboard'}</Button>
           </Link>
         </div>
@@ -82,7 +82,7 @@ export default function ReportViewPage({ params }: { params: { lang: string } })
     <div className="min-h-screen bg-slate-100 py-8 print:bg-white print:py-0" dir={isArabic ? 'rtl' : 'ltr'}>
       {/* Print Controls (Hidden when printing) */}
       <div className="max-w-[210mm] mx-auto mb-6 flex items-center justify-between print:hidden">
-        <Link href={`/${params.lang}/staff`}>
+        <Link href={`/${lang}/staff`}>
           <Button variant="outline" className="gap-2 bg-white hover:bg-slate-50 border-slate-300">
             <ArrowRight size={16} className={isArabic ? 'rotate-180' : ''} />
             {isArabic ? 'رجوع' : 'Back'}
@@ -96,7 +96,7 @@ export default function ReportViewPage({ params }: { params: { lang: string } })
 
       {/* The Printable A4 Page */}
       <div className="print:shadow-none">
-        {data && <PrintableA4Report data={data} lang={params.lang} />}
+        {data && <PrintableA4Report data={data} lang={lang} />}
       </div>
 
       {/* Print-specific CSS */}
@@ -107,5 +107,19 @@ export default function ReportViewPage({ params }: { params: { lang: string } })
         }
       `}} />
     </div>
+  );
+}
+
+export default function ReportViewPage({ params }: { params: { lang: string } }) {
+  const isArabic = params.lang === 'ar';
+  
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4" dir={isArabic ? 'rtl' : 'ltr'}>
+        <Loader2 size={48} className="animate-spin text-indigo-600" />
+      </div>
+    }>
+      <ReportViewContent lang={params.lang} />
+    </Suspense>
   );
 }
