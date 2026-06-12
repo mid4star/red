@@ -22,7 +22,8 @@ import {
   Sun,
   Moon,
   Map,
-  Mail
+  Mail,
+  Radio
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
@@ -150,6 +151,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
     { name: 'User Management', nameAr: 'إدارة المستخدمين', href: `/${lang}/staff/users`, icon: Users, sectionKey: 'users' },
     { name: 'Email Routing', nameAr: 'توجيه البريد', href: `/${lang}/staff/email-routing`, icon: Mail, sectionKey: 'email-routing' },
     { name: 'Media Center', nameAr: 'المركز الإعلامي', href: `/${lang}/staff/media`, icon: Megaphone, sectionKey: 'media' },
+    { name: 'News Radar', nameAr: 'الرادار الإخباري', href: `/${lang}/staff/radar`, icon: Radio, sectionKey: 'media' },
     { name: 'System Settings', nameAr: 'إعدادات النظام', href: `/${lang}/staff/settings`, icon: Settings, sectionKey: 'settings' },
   ];
 
