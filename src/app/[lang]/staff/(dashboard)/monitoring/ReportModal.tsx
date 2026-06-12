@@ -70,42 +70,42 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
   };
 
   const FieldCard = ({ icon: Icon, label, value }: { icon: any, label: string, value: React.ReactNode }) => (
-    <div className="bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-2xl p-4 flex flex-col gap-1 transition-all hover:bg-slate-100 dark:hover:bg-white/[0.04]">
+    <div className="bg-th-surface2 border border-th-border rounded-2xl p-4 flex flex-col gap-1 transition-all hover:bg-slate-100 dark:hover:bg-white/[0.04]">
       <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mb-1">
          <Icon size={12} className="text-teal-600 dark:text-teal-400" /> {label}
       </span>
-      <p className="text-sm md:text-base font-bold text-slate-900 dark:text-white break-words">
+      <p className="text-sm md:text-base font-bold text-th-text break-words">
         {value}
       </p>
     </div>
   );
 
   const modalContent = (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-md bg-black/60 dark:bg-[#050b14]/80 transition-all duration-300 print-portal-root">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-md bg-black/60 transition-all duration-300 print-portal-root">
       
       {/* Background click to close (no-print) */}
       <div className="absolute inset-0 no-print cursor-pointer" onClick={onClose} />
 
       {/* Modal Container */}
       <div 
-        className="relative w-full max-w-3xl bg-white dark:bg-[#0a1628] shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-3xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-200 dark:border-white/10 print-modal-container"
+        className="relative w-full max-w-3xl bg-th-surface shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-3xl overflow-hidden flex flex-col max-h-[90vh] border border-th-border print-modal-container"
         dir={isAr ? 'rtl' : 'ltr'}
       >
         
         {/* Custom Scroll Buttons - No Print */}
         <div className={`absolute ${isAr ? 'left-6' : 'right-6'} bottom-6 flex flex-col gap-3 z-20 no-print`}>
-           <button onClick={handleScrollUp} className="w-11 h-11 rounded-full bg-slate-900/90 hover:bg-slate-800 dark:bg-[#0a1628] dark:hover:bg-[#0d1b2a] text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 backdrop-blur-md border border-white/10">
+           <button onClick={handleScrollUp} className="w-11 h-11 rounded-full bg-th-surface2 hover:bg-th-surface text-th-text flex items-center justify-center shadow-xl transition-transform hover:scale-110 backdrop-blur-md border border-white/10">
              <ChevronUp size={22} />
            </button>
-           <button onClick={handleScrollDown} className="w-11 h-11 rounded-full bg-slate-900/90 hover:bg-slate-800 dark:bg-[#0a1628] dark:hover:bg-[#0d1b2a] text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 backdrop-blur-md border border-white/10">
+           <button onClick={handleScrollDown} className="w-11 h-11 rounded-full bg-th-surface2 hover:bg-th-surface text-th-text flex items-center justify-center shadow-xl transition-transform hover:scale-110 backdrop-blur-md border border-white/10">
              <ChevronDown size={22} />
            </button>
         </div>
 
         {/* Header - No Print (Action bar) */}
-        <div className="no-print flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-white/5 bg-slate-50/80 dark:bg-[#0d1b2a]/80 backdrop-blur-xl z-10">
+        <div className="no-print flex items-center justify-between px-6 py-4 border-b border-th-border bg-th-surface/80 backdrop-blur-xl z-10">
           <div className="flex items-center gap-3.5">
-             <div className="w-12 h-12 rounded-2xl bg-white dark:bg-white/5 shadow-sm border border-slate-200 dark:border-white/10 flex items-center justify-center">
+             <div className="w-12 h-12 rounded-2xl bg-th-surface shadow-sm border border-th-border flex items-center justify-center">
                {getIcon()}
              </div>
              <div>
@@ -123,7 +123,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
             </button>
             <button 
               onClick={onClose}
-              className="p-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-white bg-slate-200/50 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl transition-all"
+              className="p-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-white bg-th-surface2 hover:bg-th-surface rounded-xl transition-all"
             >
               <X size={20} />
             </button>
@@ -133,7 +133,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
         {/* Scrollable Printable Content */}
         <div 
           ref={scrollRef}
-          className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 flex-1 min-h-0 w-full bg-white dark:bg-transparent"
+          className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 flex-1 min-h-0 w-full bg-transparent dark:bg-transparent"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
            <style>{`
@@ -146,18 +146,18 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
            <div className="border-b-2 border-slate-800 dark:border-white/20 pb-6 mb-8 print-header">
              <div className="flex justify-between items-start mb-5">
                 <div>
-                   <h1 className="text-2xl font-black uppercase tracking-widest text-slate-900 dark:text-white mb-1">
+                   <h1 className="text-2xl font-black uppercase tracking-widest text-th-text mb-1">
                      {isAr ? 'محميات البحر الأحمر' : 'Red Sea Reserves'}
                    </h1>
                    <p className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest">
                      {isAr ? 'إدارة الرصد البيئي' : 'Environmental Monitoring Dept.'}
                    </p>
                 </div>
-                <div className="text-right text-slate-500 dark:text-slate-400 text-sm font-mono font-bold bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10">
+                <div className="text-right text-slate-500 dark:text-slate-400 text-sm font-mono font-bold bg-th-surface2 px-3 py-1.5 rounded-lg border border-th-border">
                   {formatDate(new Date().toISOString())}
                 </div>
              </div>
-             <h2 className="text-3xl font-black text-slate-900 dark:text-white mt-6 mb-1">{getReportTitle()}</h2>
+             <h2 className="text-3xl font-black text-th-text mt-6 mb-1">{getReportTitle()}</h2>
              <p className="text-slate-500 dark:text-slate-400 font-mono text-sm tracking-wide">REF: {item.id}</p>
            </div>
 
@@ -172,7 +172,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
                 value={
                   <>
                     {isAr ? (item.locationNameAr || item.locationName) : item.locationName}
-                    <span className="block text-xs text-slate-500 dark:text-slate-400 font-mono mt-1 font-medium bg-slate-200/50 dark:bg-black/20 inline-block px-2 py-0.5 rounded">
+                    <span className="block text-xs text-slate-500 dark:text-slate-400 font-mono mt-1 font-medium bg-th-surface2 inline-block px-2 py-0.5 rounded">
                       {item.latitude}, {item.longitude}
                     </span>
                   </>
@@ -207,7 +207,7 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
 
            {/* Descriptive Text Area */}
            {(item.details || item.description || item.notes) && (
-             <div className="mb-8 bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-2xl p-5 md:p-6">
+             <div className="mb-8 bg-th-surface2 border border-th-border rounded-2xl p-5 md:p-6">
                 <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 dark:text-slate-400 flex items-center gap-2 mb-4 border-b border-slate-200 dark:border-white/10 pb-3">
                    <FileText size={14} className="text-teal-600 dark:text-teal-400" /> {isAr ? 'تفاصيل وملاحظات التقرير' : 'Report Details & Notes'}
                 </span>
@@ -227,9 +227,9 @@ export default function ReportModal({ isOpen, onClose, item, lang }: ReportModal
                   href={item.attachedFileUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 px-5 py-3 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white rounded-xl text-sm font-bold transition-all group"
+                  className="inline-flex items-center gap-3 px-5 py-3 bg-th-surface2 hover:bg-th-surface border border-th-border text-th-text rounded-xl text-sm font-bold transition-all group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-white dark:bg-black/20 flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform">
+                  <div className="w-8 h-8 rounded-lg bg-th-surface flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform">
                      <FileText size={16} />
                   </div>
                   {isAr ? 'عرض أو تحميل الملف المرفق' : 'View / Download Attached File'}

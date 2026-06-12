@@ -9,7 +9,7 @@ export default function GISPage({ params: { lang } }: { params: { lang: string }
 
   return (
     <div className={`p-6 md:p-12 min-h-[80vh] flex items-center justify-center ${isArabic ? 'text-right' : 'text-left'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-      <Card className="max-w-2xl w-full p-10 md:p-16 flex flex-col items-center justify-center text-center bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-2xl rounded-3xl relative overflow-hidden group">
+      <Card className="max-w-2xl w-full p-10 md:p-16 flex flex-col items-center justify-center text-center bg-th-surface backdrop-blur-xl border border-th-border shadow-2xl rounded-3xl relative overflow-hidden group">
         
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full filter blur-[80px] -z-10 group-hover:bg-teal-500/20 transition-all duration-1000" />
@@ -24,11 +24,11 @@ export default function GISPage({ params: { lang } }: { params: { lang: string }
           <Navigation size={24} className="text-emerald-400 absolute -bottom-4 -left-4 animate-bounce" />
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tight drop-shadow-sm">
+        <h1 className="text-4xl md:text-5xl font-black text-th-text mb-6 tracking-tight drop-shadow-sm">
           {isArabic ? 'نظم المعلومات الجغرافية' : 'GIS & Maps'}
         </h1>
         
-        <p className="text-lg text-slate-500 dark:text-slate-400 font-medium mb-10 max-w-lg leading-relaxed">
+        <p className="text-lg text-th-muted font-medium mb-10 max-w-lg leading-relaxed">
           {isArabic 
             ? 'هذا القسم مخصص للخرائط التفاعلية وتحليل البيانات الجغرافية للمحميات. يجري حالياً بناء وتجهيز هذا النظام وسيكون متاحاً قريباً.' 
             : 'This section is dedicated to interactive mapping and spatial data analysis for the reserves. The system is currently under construction and will be available soon.'}

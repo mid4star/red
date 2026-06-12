@@ -10,6 +10,14 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
+const colorMap: Record<string, { text: string; bg: string; hoverBg: string }> = {
+  blue: { text: 'text-blue-500 dark:text-blue-400', bg: 'bg-blue-500/10', hoverBg: 'group-hover:bg-blue-500/20' },
+  emerald: { text: 'text-emerald-500 dark:text-emerald-400', bg: 'bg-emerald-500/10', hoverBg: 'group-hover:bg-emerald-500/20' },
+  amber: { text: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-500/10', hoverBg: 'group-hover:bg-amber-500/20' },
+  indigo: { text: 'text-indigo-500 dark:text-indigo-400', bg: 'bg-indigo-500/10', hoverBg: 'group-hover:bg-indigo-500/20' },
+  rose: { text: 'text-rose-500 dark:text-rose-400', bg: 'bg-rose-500/10', hoverBg: 'group-hover:bg-rose-500/20' },
+};
+
 const MODULES = [
   { 
     key: 'homepage', collection: 'homepage',
@@ -78,10 +86,10 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
             {isAr ? 'مركز إدارة المحتوى' : 'Content Management Hub'}
           </span>
         </div>
-        <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+        <h1 className="text-4xl font-black text-th-text dark:text-white tracking-tighter uppercase italic">
           {isAr ? 'المركز الإعلامي' : 'Media Center'}
         </h1>
-        <p className="text-sm text-slate-400 max-w-xl">
+        <p className="text-sm text-th-muted dark:text-slate-400 max-w-xl">
           {isAr 
             ? 'تحكم كامل في محتوى الموقع العام: الصفحة الرئيسية، المحميات، الأخبار، البيانات المفتوحة ودليل الزوار.'
             : 'Full control over public website content: homepage, reserves, news, open data and visitor guide.'}
@@ -92,17 +100,18 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {MODULES.map((m, i) => {
           const Icon = m.icon;
+          const styleConfig = colorMap[m.color] || colorMap.blue;
           return (
             <motion.div
               key={m.key}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-slate-900/40 backdrop-blur-xl rounded-2xl p-4 border border-white/5 text-center"
+              className="bg-th-surface border border-th-border backdrop-blur-xl rounded-2xl p-4 text-center transition-colors duration-300"
             >
-              <Icon size={18} className={`mx-auto mb-2 text-${m.color}-400`} />
-              <p className="text-2xl font-black text-white">{counts[m.key] ?? '—'}</p>
-              <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+              <Icon size={18} className={`mx-auto mb-2 ${styleConfig.text}`} />
+              <p className="text-2xl font-black text-th-text dark:text-white">{counts[m.key] ?? '—'}</p>
+              <p className="text-[9px] font-bold text-th-muted dark:text-slate-500 uppercase tracking-widest mt-1">
                 {isAr ? m.nameAr.split(' ')[0] : m.name.split(' ')[0]}
               </p>
             </motion.div>
@@ -115,6 +124,7 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
         {MODULES.map((m, i) => {
           const Icon = m.icon;
           const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
+          const styleConfig = colorMap[m.color] || colorMap.blue;
           return (
             <motion.div
               key={m.key}
@@ -123,19 +133,19 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
               transition={{ delay: i * 0.08, type: 'spring', stiffness: 200 }}
             >
               <Link href={`/${params.lang}/staff/${m.href}`} className="block group no-underline">
-                <Card className="relative overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-xl hover:border-white/10 hover:shadow-[0_0_40px_rgba(45,212,191,0.08)] transition-all duration-500 p-0">
+                <Card className="relative overflow-hidden hover:border-th-border/80 hover:shadow-[0_0_40px_rgba(45,212,191,0.08)] transition-all duration-500 p-0">
                   {/* Top gradient accent */}
                   <div className={`h-1.5 w-full bg-gradient-to-r ${m.gradient}`} />
 
                   <div className="p-6 space-y-5">
                     {/* Icon + Count */}
                     <div className="flex items-start justify-between">
-                      <div className={`p-3.5 rounded-2xl bg-${m.color}-500/10 group-hover:bg-${m.color}-500/20 transition-colors`}>
-                        <Icon size={28} className={`text-${m.color}-400`} />
+                      <div className={`p-3.5 rounded-2xl ${styleConfig.bg} ${styleConfig.hoverBg} transition-colors`}>
+                        <Icon size={28} className={styleConfig.text} />
                       </div>
                       <div className="text-right">
-                        <span className="text-3xl font-black text-white">{counts[m.key] ?? 0}</span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                        <span className="text-3xl font-black text-th-text dark:text-white">{counts[m.key] ?? 0}</span>
+                        <p className="text-[9px] font-bold text-th-muted dark:text-slate-500 uppercase tracking-widest">
                           {isAr ? 'عنصر' : 'items'}
                         </p>
                       </div>
@@ -143,20 +153,20 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
 
                     {/* Title & Description */}
                     <div>
-                      <h3 className="text-lg font-bold text-white tracking-tight mb-1.5 group-hover:text-teal-300 transition-colors">
+                      <h3 className="text-lg font-bold text-th-text dark:text-white tracking-tight mb-1.5 group-hover:text-teal-500 dark:group-hover:text-teal-400 transition-colors">
                         {isAr ? m.nameAr : m.name}
                       </h3>
-                      <p className="text-[12px] text-slate-400 leading-relaxed line-clamp-2">
+                      <p className="text-[12px] text-th-muted dark:text-slate-400 leading-relaxed line-clamp-2">
                         {isAr ? m.descAr : m.desc}
                       </p>
                     </div>
 
                     {/* Action */}
-                    <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                      <span className="text-[11px] font-bold text-teal-400 uppercase tracking-widest group-hover:tracking-[0.15em] transition-all">
+                    <div className="flex items-center justify-between pt-3 border-t border-th-border dark:border-white/5">
+                      <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest group-hover:tracking-[0.15em] transition-all">
                         {isAr ? 'إدارة' : 'Manage'}
                       </span>
-                      <ArrowIcon size={16} className="text-teal-400 group-hover:translate-x-1 transition-transform" />
+                      <ArrowIcon size={16} className="text-teal-600 dark:text-teal-400 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </Card>

@@ -106,7 +106,7 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white flex items-center gap-3">
+          <h1 className="text-3xl font-black uppercase italic tracking-tighter text-th-text flex items-center gap-3">
             <Server className="text-orange-500" size={32} />
             {isAr ? 'توجيه البريد الإلكتروني' : 'Email Routing'}
           </h1>
@@ -124,7 +124,7 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
 
       {/* Stats/Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 flex items-center gap-4">
+        <Card className="p-6 bg-th-surface2 border-th-border flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center text-orange-600 dark:text-orange-400">
             <Mail size={24} />
           </div>
@@ -136,11 +136,11 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
       </div>
 
       {/* Data Table */}
-      <Card className="bg-white dark:bg-[#0a1628] border-slate-200 dark:border-white/5 overflow-hidden">
+      <Card className="bg-th-surface border border-th-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-[11px] uppercase tracking-widest">
+              <tr className="bg-th-surface2 text-slate-500 text-[11px] uppercase tracking-widest">
                 <th className="p-4 font-bold">{isAr ? 'البريد الوهمي' : 'Alias'}</th>
                 <th className="p-4 font-bold">{isAr ? 'إلى البريد الشخصي' : 'Forwards To'}</th>
                 <th className="p-4 font-bold">{isAr ? 'الحالة' : 'Status'}</th>
@@ -163,9 +163,9 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
                 </tr>
               ) : (
                 routes.map((route) => (
-                  <tr key={route.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
+                  <tr key={route.id} className="hover:bg-th-surface2/50 transition-colors group">
                     <td className="p-4">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <div className="font-bold text-th-text flex items-center gap-2">
                         {route.alias}@rsmp-eg.com
                       </div>
                       <div className="text-xs text-slate-500">{route.description || '--'}</div>
@@ -223,7 +223,7 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setIsModalOpen(false)}
             />
             
@@ -231,10 +231,10 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-white dark:bg-[#0a1628] rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-white/10"
+              className="relative w-full max-w-md bg-th-surface rounded-3xl shadow-2xl overflow-hidden border border-th-border"
             >
               <div className="p-6 sm:p-8">
-                <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-6 text-slate-900 dark:text-white">
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-6 text-th-text">
                   {isAr ? 'إنشاء بريد جديد' : 'Create New Alias'}
                 </h2>
 

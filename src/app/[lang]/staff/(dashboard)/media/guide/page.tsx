@@ -434,11 +434,11 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         /* ── INLINE GUIDE EDITOR VIEW ── */
         <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
           {/* Header with Back Button */}
-          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+          <div className="flex items-center gap-4 pb-4 border-b border-th-border">
             <button 
               onClick={() => setShowGuideEditor(false)}
               type="button"
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+              className="p-2.5 rounded-2xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 transition-all flex items-center justify-center shrink-0"
             >
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
@@ -446,7 +446,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
               <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
                 {isAr ? 'دليل الإرشادات' : 'Field Briefing'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
                 <BookOpen className="text-teal-500" size={20} />
                 {editingId ? (isAr ? 'تعديل القسم' : 'Edit Section') : (isAr ? 'قسم جديد' : 'New Section')}
               </h2>
@@ -454,13 +454,13 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
           </div>
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
-            <div className="flex gap-2 bg-white/5 p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>English</button>
+            <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'عنوان القسم (عربي)' : 'Section Title (English)'}
               </label>
               <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -470,12 +470,12 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             <div className="w-32">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'الترتيب' : 'Order'}</label>
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'الترتيب' : 'Order'}</label>
               <Input type="number" value={guideForm.order || 0} onChange={(e) => setGuideForm(p => ({ ...p, order: Number(e.target.value) }))} />
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'المحتوى (عربي)' : 'Content (English)'}
               </label>
               <RichTextEditor
@@ -487,27 +487,27 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             {/* Nested Links Manager */}
-            <div className="space-y-4 border-t border-white/5 pt-6">
+            <div className="space-y-4 border-t border-th-border pt-6">
               <div>
-                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-th-muted uppercase tracking-wider">
                   {isAr ? 'الروابط الفرعية' : 'Sub Links'}
                 </h3>
-                <p className="text-[11px] text-slate-500 mt-1">
+                <p className="text-[11px] text-th-muted mt-1">
                   {isAr ? 'أضف روابط إضافية تابعة لهذا القسم.' : 'Add reference links to this section.'}
                 </p>
               </div>
 
               <div className="space-y-2">
                 {(guideForm.links || []).map((link, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 text-sm">
+                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-th-surface border border-th-border text-sm">
                     <div className="flex gap-4">
                       <div>
-                        <span className="text-[10px] text-slate-500 uppercase block">English</span>
-                        <span className="text-white font-medium">{link.n}</span>
+                        <span className="text-[10px] text-th-muted uppercase block">English</span>
+                        <span className="text-th-text font-medium">{link.n}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 uppercase block">العربية</span>
-                        <span className="text-white font-medium">{link.nAr}</span>
+                        <span className="text-[10px] text-th-muted uppercase block">العربية</span>
+                        <span className="text-th-text font-medium">{link.nAr}</span>
                       </div>
                     </div>
                     <button
@@ -531,9 +531,9 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end p-4 rounded-xl bg-white/[0.02] border border-white/5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end p-4 rounded-xl bg-white/[0.02] border border-th-border">
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">
+                  <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">
                     {isAr ? 'اسم الرابط بالإنجليزية' : 'Link Name (English)'}
                   </label>
                   <Input
@@ -545,7 +545,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                 </div>
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">
+                    <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">
                       {isAr ? 'اسم الرابط بالعربية' : 'Link Name (Arabic)'}
                     </label>
                     <Input
@@ -577,14 +577,14 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between pt-6 border-t border-white/10">
+            <div className="flex items-center justify-between pt-6 border-t border-th-border">
               {editingId && (
                 <button onClick={() => { setShowGuideEditor(false); handleDeleteGuide(editingId); }} className="px-4 py-2.5 rounded-xl text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 text-[12px] font-bold flex items-center gap-2">
                   <Trash2 size={14} /> {isAr ? 'حذف' : 'Delete'}
                 </button>
               )}
               <div className={`flex gap-3 ${!editingId ? 'ml-auto' : ''}`}>
-                <Button intent="outline" onClick={() => setShowGuideEditor(false)} className="border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">{isAr ? 'إلغاء' : 'Cancel'}</Button>
+                <Button intent="outline" onClick={() => setShowGuideEditor(false)} className="border-th-border bg-th-surface text-th-muted hover:bg-th-surface2">{isAr ? 'إلغاء' : 'Cancel'}</Button>
                 <Button intent="primary" onClick={handleSaveGuide} className="bg-teal-500 text-[#001529] hover:bg-teal-400 font-black flex items-center gap-2 shadow-[0_0_15px_rgba(45,212,191,0.2)]">
                   <Save size={16} /> {saving ? (isAr ? 'حفظ...' : 'Saving...') : (isAr ? 'حفظ' : 'Save')}
                 </Button>
@@ -596,11 +596,11 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         /* ── INLINE SPECIES EDITOR VIEW ── */
         <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
           {/* Header with Back Button */}
-          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+          <div className="flex items-center gap-4 pb-4 border-b border-th-border">
             <button 
               onClick={() => setShowSpeciesEditor(false)}
               type="button"
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+              className="p-2.5 rounded-2xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 transition-all flex items-center justify-center shrink-0"
             >
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
@@ -608,7 +608,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
               <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
                 {isAr ? 'الكائنات البحرية' : 'Marine Species'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
                 <Fish className="text-teal-500" size={20} />
                 {editingId ? (isAr ? 'تعديل الكائن' : 'Edit Marine Species') : (isAr ? 'كائن جديد' : 'New Marine Species')}
               </h2>
@@ -616,13 +616,13 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
           </div>
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
-            <div className="flex gap-2 bg-white/5 p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>English</button>
+            <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'اسم الكائن (عربي)' : 'Species Name (English)'}
               </label>
               <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -633,7 +633,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'النوع / التصنيف (عربي)' : 'Type / Category (English)'}
                 </label>
                 <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -642,7 +642,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                   placeholder={langTab === 'ar' ? 'مثال: ثدييات نادرة' : 'e.g. Rare Mammal'} />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'حالة الحفظ (عربي)' : 'Conservation Status (English)'}
                 </label>
                 <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -654,10 +654,10 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
             {/* Image Upload */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'صورة الكائن' : 'Cover Image'}</label>
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'صورة الكائن' : 'Cover Image'}</label>
               <div className="flex items-center gap-4">
-                {speciesForm.imageUrl && <img src={speciesForm.imageUrl} alt="" className="w-20 h-14 object-cover rounded-xl border border-white/10" />}
-                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all text-[12px] font-bold">
+                {speciesForm.imageUrl && <img src={speciesForm.imageUrl} alt="" className="w-20 h-14 object-cover rounded-xl border border-th-border" />}
+                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 cursor-pointer transition-all text-[12px] font-bold">
                   <ImageIcon size={16} />
                   {uploading ? (isAr ? 'جاري الرفع...' : 'Uploading...') : (isAr ? 'رفع صورة' : 'Upload')}
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'species')} className="hidden" />
@@ -666,7 +666,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'الوصف (عربي)' : 'Description (English)'}
               </label>
               <RichTextEditor
@@ -678,14 +678,14 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between pt-6 border-t border-white/10">
+            <div className="flex items-center justify-between pt-6 border-t border-th-border">
               {editingId && (
                 <button onClick={() => { setShowSpeciesEditor(false); handleDeleteSpecies(editingId); }} className="px-4 py-2.5 rounded-xl text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 text-[12px] font-bold flex items-center gap-2">
                   <Trash2 size={14} /> {isAr ? 'حذف' : 'Delete'}
                 </button>
               )}
               <div className={`flex gap-3 ${!editingId ? 'ml-auto' : ''}`}>
-                <Button intent="outline" onClick={() => setShowSpeciesEditor(false)} className="border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">{isAr ? 'إلغاء' : 'Cancel'}</Button>
+                <Button intent="outline" onClick={() => setShowSpeciesEditor(false)} className="border-th-border bg-th-surface text-th-muted hover:bg-th-surface2">{isAr ? 'إلغاء' : 'Cancel'}</Button>
                 <Button intent="primary" onClick={handleSaveSpecies} className="bg-teal-500 text-[#001529] hover:bg-teal-400 font-black flex items-center gap-2 shadow-[0_0_15px_rgba(45,212,191,0.2)]">
                   <Save size={16} /> {saving ? (isAr ? 'حفظ...' : 'Saving...') : (isAr ? 'حفظ' : 'Save')}
                 </Button>
@@ -697,11 +697,11 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         /* ── INLINE TERRAIN EDITOR VIEW ── */
         <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
           {/* Header with Back Button */}
-          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+          <div className="flex items-center gap-4 pb-4 border-b border-th-border">
             <button 
               onClick={() => setShowTerrainEditor(false)}
               type="button"
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+              className="p-2.5 rounded-2xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 transition-all flex items-center justify-center shrink-0"
             >
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
@@ -709,7 +709,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
               <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
                 {isAr ? 'استكشاف التضاريس' : 'Explore Terrain'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
                 <Compass className="text-teal-500" size={20} />
                 {editingId ? (isAr ? 'تعديل الموقع' : 'Edit Location') : (isAr ? 'موقع جديد' : 'New Location')}
               </h2>
@@ -717,13 +717,13 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
           </div>
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
-            <div className="flex gap-2 bg-white/5 p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>English</button>
+            <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'اسم الموقع (عربي)' : 'Location Name (English)'}
               </label>
               <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -735,7 +735,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             {/* Coordinates */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {isAr ? 'خط العرض (Latitude)' : 'Latitude'}
                 </label>
                 <Input type="number" step="any"
@@ -744,7 +744,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                   placeholder="e.g. 28.5721" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {isAr ? 'خط الطول (Longitude)' : 'Longitude'}
                 </label>
                 <Input type="number" step="any"
@@ -756,7 +756,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'النوع / التصنيف (عربي)' : 'Type (English)'}
                 </label>
                 <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -765,7 +765,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                   placeholder={langTab === 'ar' ? 'مثال: منطقة محمية' : 'e.g. PROTECTED_ZONE'} />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'الحالة (عربي)' : 'Status (English)'}
                 </label>
                 <Input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
@@ -777,10 +777,10 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
             {/* Location Image Upload */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'صورة الموقع' : 'Location Image'}</label>
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'صورة الموقع' : 'Location Image'}</label>
               <div className="flex items-center gap-4">
-                {terrainForm.imageUrl && <img src={terrainForm.imageUrl} alt="" className="w-20 h-14 object-cover rounded-xl border border-white/10" />}
-                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all text-[12px] font-bold">
+                {terrainForm.imageUrl && <img src={terrainForm.imageUrl} alt="" className="w-20 h-14 object-cover rounded-xl border border-th-border" />}
+                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 cursor-pointer transition-all text-[12px] font-bold">
                   <ImageIcon size={16} />
                   {uploading ? (isAr ? 'جاري الرفع...' : 'Uploading...') : (isAr ? 'رفع صورة' : 'Upload')}
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'terrain')} className="hidden" />
@@ -789,7 +789,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'الوصف (عربي)' : 'Description (English)'}
               </label>
               <RichTextEditor
@@ -801,14 +801,14 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between pt-6 border-t border-white/10">
+            <div className="flex items-center justify-between pt-6 border-t border-th-border">
               {editingId && (
                 <button onClick={() => { setShowTerrainEditor(false); handleDeleteTerrain(editingId); }} className="px-4 py-2.5 rounded-xl text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 text-[12px] font-bold flex items-center gap-2">
                   <Trash2 size={14} /> {isAr ? 'حذف' : 'Delete'}
                 </button>
               )}
               <div className={`flex gap-3 ${!editingId ? 'ml-auto' : ''}`}>
-                <Button intent="outline" onClick={() => setShowTerrainEditor(false)} className="border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">{isAr ? 'إلغاء' : 'Cancel'}</Button>
+                <Button intent="outline" onClick={() => setShowTerrainEditor(false)} className="border-th-border bg-th-surface text-th-muted hover:bg-th-surface2">{isAr ? 'إلغاء' : 'Cancel'}</Button>
                 <Button intent="primary" onClick={handleSaveTerrain} className="bg-teal-500 text-[#001529] hover:bg-teal-400 font-black flex items-center gap-2 shadow-[0_0_15px_rgba(45,212,191,0.2)]">
                   <Save size={16} /> {saving ? (isAr ? 'حفظ...' : 'Saving...') : (isAr ? 'حفظ' : 'Save')}
                 </Button>
@@ -820,11 +820,11 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
         /* ── MAIN DIRECTORY VIEW ── */
         <>
           {/* ── Tabs Navigation ───────────────────────────────── */}
-          <div className="flex border-b border-white/5 gap-6">
+          <div className="flex border-b border-th-border gap-6">
             <button
               onClick={() => setActiveTab('guide')}
               className={`pb-4 text-sm font-black tracking-wider uppercase transition-all relative flex items-center gap-2 ${
-                activeTab === 'guide' ? 'text-teal-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+                activeTab === 'guide' ? 'text-teal-400 font-bold' : 'text-th-muted hover:text-slate-200'
               }`}
             >
               <BookOpen size={16} />
@@ -836,7 +836,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             <button
               onClick={() => setActiveTab('species')}
               className={`pb-4 text-sm font-black tracking-wider uppercase transition-all relative flex items-center gap-2 ${
-                activeTab === 'species' ? 'text-teal-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+                activeTab === 'species' ? 'text-teal-400 font-bold' : 'text-th-muted hover:text-slate-200'
               }`}
             >
               <Fish size={16} />
@@ -848,7 +848,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             <button
               onClick={() => setActiveTab('terrain')}
               className={`pb-4 text-sm font-black tracking-wider uppercase transition-all relative flex items-center gap-2 ${
-                activeTab === 'terrain' ? 'text-teal-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+                activeTab === 'terrain' ? 'text-teal-400 font-bold' : 'text-th-muted hover:text-slate-200'
               }`}
             >
               <Compass size={16} />
@@ -868,7 +868,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                   {isAr ? 'إدارة المحتوى' : 'Content Manager'}
                 </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+              <h1 className="text-4xl font-black text-th-text tracking-tighter uppercase italic">
                 {activeTab === 'guide'
                   ? (isAr ? 'دليل الإرشادات' : 'Field Briefing')
                   : activeTab === 'species'
@@ -876,7 +876,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                   : (isAr ? 'استكشاف التضاريس' : 'Explore Terrain')
                 }
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-th-muted">
                 {activeTab === 'guide'
                   ? (isAr ? 'إدارة أقسام دليل الزوار وترتيبها وتحريرها والروابط المرفقة.' : 'Manage, reorder, and edit visitor guide sections and links.')
                   : activeTab === 'species'
@@ -906,7 +906,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             {activeTab === 'guide' && (
               <div className="space-y-3">
                 {sections.length === 0 && (
-                  <div className="py-20 text-center text-slate-500 text-sm italic">
+                  <div className="py-20 text-center text-th-muted text-sm italic">
                     {isAr ? 'لا توجد أقسام. أضف قسماً جديداً.' : 'No sections yet. Add a section to get started.'}
                   </div>
                 )}
@@ -920,29 +920,29 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                       transition={{ delay: i * 0.04 }}
                       layout
                     >
-                      <Card className="bg-slate-900/40 backdrop-blur-xl border-white/5 hover:border-white/10 transition-all overflow-hidden">
+                      <Card className="bg-th-surface2 backdrop-blur-xl border-th-border hover:border-th-border transition-all overflow-hidden">
                         <div className="flex items-center gap-4 p-5">
                           {/* Order Controls */}
                           <div className="flex flex-col items-center gap-1 shrink-0">
                             <button onClick={() => moveSection(section, 'up')} disabled={i === 0}
-                              className="p-1 rounded-md text-slate-500 hover:text-teal-400 hover:bg-white/5 transition-all disabled:opacity-20 disabled:cursor-not-allowed">
+                              className="p-1 rounded-md text-th-muted hover:text-teal-400 hover:bg-th-surface transition-all disabled:opacity-20 disabled:cursor-not-allowed">
                               <ChevronUp size={14} />
                             </button>
                             <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 font-black text-lg">
                               {section.order}
                             </div>
                             <button onClick={() => moveSection(section, 'down')} disabled={i === sections.length - 1}
-                              className="p-1 rounded-md text-slate-500 hover:text-teal-400 hover:bg-white/5 transition-all disabled:opacity-20 disabled:cursor-not-allowed">
+                              className="p-1 rounded-md text-th-muted hover:text-teal-400 hover:bg-th-surface transition-all disabled:opacity-20 disabled:cursor-not-allowed">
                               <ChevronDown size={14} />
                             </button>
                           </div>
 
                           {/* Main Title & Details */}
                           <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setExpandedSectionId(expandedSectionId === section.id ? null : section.id!)}>
-                            <h3 className="font-bold text-white tracking-tight text-sm">
+                            <h3 className="font-bold text-th-text tracking-tight text-sm">
                               {isAr ? (section.titleAr || section.title) : (section.title || section.titleAr)}
                             </h3>
-                            <p className="text-[11px] text-slate-500 mt-1 truncate max-w-lg">
+                            <p className="text-[11px] text-th-muted mt-1 truncate max-w-lg">
                               {stripHtml(isAr ? (section.contentAr || section.content) : (section.content || section.contentAr)).slice(0, 120)}...
                             </p>
                             
@@ -961,15 +961,15 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                           {/* Action buttons */}
                           <div className="flex gap-2 shrink-0">
                             <button onClick={() => setExpandedSectionId(expandedSectionId === section.id ? null : section.id!)}
-                              className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all">
+                              className="p-2 rounded-lg bg-th-surface text-th-muted hover:text-blue-400 hover:bg-blue-500/10 transition-all">
                               <Eye size={15} />
                             </button>
                             <button onClick={() => openEditGuide(section)}
-                              className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-teal-400 hover:bg-white/10 transition-all">
+                              className="p-2 rounded-lg bg-th-surface text-th-muted hover:text-teal-400 hover:bg-th-surface2 transition-all">
                               <Pencil size={15} />
                             </button>
                             <button onClick={() => handleDeleteGuide(section.id!)}
-                              className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
+                              className="p-2 rounded-lg bg-th-surface text-th-muted hover:text-rose-400 hover:bg-rose-500/10 transition-all">
                               <Trash2 size={15} />
                             </button>
                           </div>
@@ -982,9 +982,9 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: 'auto', opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
-                              className="border-t border-white/5 overflow-hidden"
+                              className="border-t border-th-border overflow-hidden"
                             >
-                              <div className="p-5 prose prose-sm prose-invert max-w-none text-slate-300 text-[13px] leading-relaxed"
+                              <div className="p-5 prose prose-sm prose-invert max-w-none text-th-muted text-[13px] leading-relaxed"
                                 dangerouslySetInnerHTML={{ __html: isAr ? (section.contentAr || section.content) : (section.content || section.contentAr) }}
                               />
                             </motion.div>
@@ -1001,7 +1001,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             {activeTab === 'species' && (
               <div>
                 {species.length === 0 && (
-                  <div className="py-20 text-center text-slate-500 text-sm italic">
+                  <div className="py-20 text-center text-th-muted text-sm italic">
                     {isAr ? 'لا توجد كائنات بحرية مضافة بعد.' : 'No marine species yet. Add a species to get started.'}
                   </div>
                 )}
@@ -1015,9 +1015,9 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         exit={{ opacity: 0 }}
                         transition={{ delay: i * 0.05 }}
                       >
-                        <Card className="group overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
+                        <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
                           {/* Image Header */}
-                          <div className="relative h-44 bg-[#0a1628] overflow-hidden">
+                          <div className="relative h-44 bg-th-surface2 overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
                             {sp.imageUrl ? (
                               <img src={sp.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -1035,7 +1035,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <span className="text-[9px] font-black text-teal-400 tracking-wider uppercase bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/10 block w-fit mb-1">
                                 {isAr ? (sp.typeAr || sp.type) : (sp.type || sp.typeAr)}
                               </span>
-                              <h3 className="text-white font-bold text-lg tracking-tight">
+                              <h3 className="text-th-text font-bold text-lg tracking-tight">
                                 {isAr ? sp.nameAr : sp.name}
                               </h3>
                             </div>
@@ -1043,14 +1043,14 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
                           {/* Content */}
                           <div className="p-5 flex-1 flex flex-col justify-between">
-                            <div className="text-xs text-slate-400 leading-relaxed mb-4">
+                            <div className="text-xs text-th-muted leading-relaxed mb-4">
                               <p className="line-clamp-3">
                                 {stripHtml(isAr ? (sp.descriptionAr || sp.description || '') : (sp.description || sp.descriptionAr || ''))}
                               </p>
                             </div>
-                            <div className="flex gap-2 border-t border-white/5 pt-4">
+                            <div className="flex gap-2 border-t border-th-border pt-4">
                               <Button intent="outline" onClick={() => openEditSpecies(sp)}
-                                className="flex-1 border-white/10 bg-white/5 text-white hover:bg-white/10 font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl py-2.5">
+                                className="flex-1 border-th-border bg-th-surface text-th-text hover:bg-th-surface2 font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl py-2.5">
                                 <Pencil size={13} /> {isAr ? 'تعديل' : 'Edit'}
                               </Button>
                               <Button intent="ghost" onClick={() => handleDeleteSpecies(sp.id!)}
@@ -1071,7 +1071,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             {activeTab === 'terrain' && (
               <div>
                 {locations.length === 0 && (
-                  <div className="py-20 text-center text-slate-500 text-sm italic">
+                  <div className="py-20 text-center text-th-muted text-sm italic">
                     {isAr ? 'لا توجد مواقع جغرافية مضافة بعد.' : 'No terrain locations yet. Add a location to get started.'}
                   </div>
                 )}
@@ -1085,9 +1085,9 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         exit={{ opacity: 0 }}
                         transition={{ delay: i * 0.05 }}
                       >
-                        <Card className="group overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
+                        <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
                           {/* Image Header */}
-                          <div className="relative h-44 bg-[#0a1628] overflow-hidden">
+                          <div className="relative h-44 bg-th-surface2 overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
                             {loc.imageUrl ? (
                               <img src={loc.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -1105,7 +1105,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <span className="text-[9px] font-black text-teal-400 tracking-wider uppercase bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/10 block w-fit mb-1">
                                 {isAr ? (loc.typeAr || loc.type) : (loc.type || loc.typeAr)}
                               </span>
-                              <h3 className="text-white font-bold text-lg tracking-tight">
+                              <h3 className="text-th-text font-bold text-lg tracking-tight">
                                 {isAr ? loc.nameAr : loc.name}
                               </h3>
                             </div>
@@ -1114,19 +1114,19 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                           {/* Content */}
                           <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                             <div className="space-y-2">
-                              <div className="flex gap-2 items-center text-[10px] text-slate-500 font-bold tracking-wide uppercase">
-                                <Globe size={11} className="text-slate-500" />
+                              <div className="flex gap-2 items-center text-[10px] text-th-muted font-bold tracking-wide uppercase">
+                                <Globe size={11} className="text-th-muted" />
                                 <span>Lat: {loc.latitude}</span>
                                 <span>•</span>
                                 <span>Lng: {loc.longitude}</span>
                               </div>
-                              <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
+                              <p className="text-xs text-th-muted leading-relaxed line-clamp-3">
                                 {stripHtml(isAr ? (loc.descriptionAr || loc.description || '') : (loc.description || loc.descriptionAr || ''))}
                               </p>
                             </div>
-                            <div className="flex gap-2 border-t border-white/5 pt-4">
+                            <div className="flex gap-2 border-t border-th-border pt-4">
                               <Button intent="outline" onClick={() => openEditTerrain(loc)}
-                                className="flex-1 border-white/10 bg-white/5 text-white hover:bg-white/10 font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl py-2.5">
+                                className="flex-1 border-th-border bg-th-surface text-th-text hover:bg-th-surface2 font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl py-2.5">
                                 <Pencil size={13} /> {isAr ? 'تعديل' : 'Edit'}
                               </Button>
                               <Button intent="ghost" onClick={() => handleDeleteTerrain(loc.id!)}
@@ -1152,10 +1152,10 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[250] flex items-center justify-center p-4">
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="w-full max-w-md bg-[#0d1b2a] border border-white/10 rounded-2xl p-6 shadow-2xl space-y-6">
+              className="w-full max-w-md bg-[#0d1b2a] border border-th-border rounded-2xl p-6 shadow-2xl space-y-6">
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-white">{confirmModal.title}</h3>
-                <p className="text-sm text-slate-400">{confirmModal.message}</p>
+                <h3 className="text-lg font-bold text-th-text">{confirmModal.title}</h3>
+                <p className="text-sm text-th-muted">{confirmModal.message}</p>
               </div>
               <div className="flex justify-end gap-3">
                 <Button intent="outline" onClick={() => setConfirmModal(p => ({ ...p, isOpen: false }))}>

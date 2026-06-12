@@ -180,7 +180,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
           className="no-print fixed bottom-0 left-0 right-0 z-[200] safe-area-bottom"
           dir={isArabic ? 'rtl' : 'ltr'}
         >
-          <div className="bg-[#0a1628]/90 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.5)]">
+          <div className="bg-th-surface/90 backdrop-blur-2xl border-t border-th-border dark:bg-[#0a1628]/90 dark:border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.5)] transition-colors duration-300">
             <div className="flex items-stretch justify-around px-1 pt-1.5 pb-1.5">
               {primaryMobileTabs.map((item) => {
                 const Icon = item.icon;
@@ -257,7 +257,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
                 className="fixed bottom-0 left-0 right-0 z-[260] max-h-[70vh] overflow-y-auto"
                 dir={isArabic ? 'rtl' : 'ltr'}
               >
-                <div className="bg-[#0d1b2a]/95 backdrop-blur-2xl rounded-t-3xl border-t border-x border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.6)]">
+                <div className="bg-th-surface/95 backdrop-blur-2xl rounded-t-3xl border-t border-x border-th-border dark:bg-[#0d1b2a]/95 dark:border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.6)] transition-colors duration-300">
                   {/* Drag Handle */}
                   <div className="flex justify-center pt-3 pb-2">
                     <div className="w-10 h-1 rounded-full bg-white/20" />
@@ -359,7 +359,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
         </AnimatePresence>
 
         <aside
-          className={`fixed inset-y-0 ${isArabic ? 'right-0' : 'left-0'} bg-[#0a1628] text-white flex flex-col z-[100] transition-all duration-300 ${tabletExpanded ? 'w-64' : 'w-[72px]'} shadow-[4px_0_24px_rgba(0,0,0,0.3)]`}
+          className={`fixed inset-y-0 ${isArabic ? 'right-0' : 'left-0'} bg-th-sidebar text-th-text dark:bg-[#0a1628] dark:text-white flex flex-col z-[100] transition-all duration-300 ${tabletExpanded ? 'w-64' : 'w-[72px]'} shadow-[4px_0_24px_rgba(0,0,0,0.3)] transition-colors duration-300`}
           onMouseEnter={() => setTabletExpanded(true)}
           onMouseLeave={() => setTabletExpanded(false)}
         >
@@ -539,7 +539,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
   // ───────────── DESKTOP: Full Sidebar (Original) ─────────────
   return (
     <aside
-      className={`no-print w-72 bg-[#0a1628] text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${isArabic ? 'right-0' : 'left-0'}`}
+      className={`no-print w-72 bg-th-sidebar text-th-text dark:bg-[#0a1628] dark:text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${isArabic ? 'right-0' : 'left-0'} transition-colors duration-300`}
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* ── Header / Branding ────────────────────────────────────────────────── */}

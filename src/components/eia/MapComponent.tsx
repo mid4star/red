@@ -161,7 +161,7 @@ export default function MapComponent({ items, activeItem, onItemSelect, lang }: 
     <div className="w-full h-full relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
       {isClient && (
         <div 
-          className="absolute top-4 right-4 z-[1000] flex gap-1.5 bg-[#0a1628]/90 backdrop-blur-xl border border-white/10 p-1.5 rounded-2xl shadow-2xl pointer-events-auto"
+          className="absolute top-4 right-4 z-[1000] flex gap-1.5 bg-th-surface/90 backdrop-blur-xl border border-th-border p-1.5 rounded-2xl shadow-2xl pointer-events-auto dark:bg-[#0a1628]/90 dark:border-white/10 transition-colors duration-300"
           dir={isArabic ? 'rtl' : 'ltr'}
         >
           {mapStyles.map((style) => {
@@ -304,11 +304,11 @@ export default function MapComponent({ items, activeItem, onItemSelect, lang }: 
 
           {/* Premium GIS Legend Overlay */}
           <div 
-            className={`absolute bottom-6 ${isArabic ? 'left-6' : 'right-6'} z-[1000] bg-[#0a1628]/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl space-y-3 min-w-[180px] pointer-events-auto transition-all hover:border-teal-500/30 animate-in fade-in slide-in-from-bottom-2 duration-300`}
+            className={`absolute bottom-6 ${isArabic ? 'left-6' : 'right-6'} z-[1000] bg-th-surface/90 backdrop-blur-xl border border-th-border p-4 rounded-2xl shadow-2xl space-y-3 min-w-[180px] pointer-events-auto transition-all hover:border-teal-500/30 animate-in fade-in slide-in-from-bottom-2 duration-300 dark:bg-[#0a1628]/90 dark:border-white/10 transition-colors duration-300`}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
-            <div className="flex items-center justify-between border-b border-white/10 pb-2">
-              <h5 className="text-[10px] font-black text-slate-300 tracking-wider uppercase flex items-center gap-1.5">
+            <div className="flex items-center justify-between border-b border-th-border dark:border-white/10 pb-2">
+              <h5 className="text-[10px] font-black text-th-muted dark:text-slate-300 tracking-wider uppercase flex items-center gap-1.5">
                 <span className="w-1.5 h-3 bg-teal-500 rounded-full" />
                 {isArabic ? 'مفتاح الخريطة' : 'GIS Legend'}
               </h5>
@@ -322,7 +322,7 @@ export default function MapComponent({ items, activeItem, onItemSelect, lang }: 
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-white/20 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                 </span>
-                <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
+                <span className="text-xs font-bold text-th-text/90 group-hover:text-th-text dark:text-slate-200 dark:group-hover:text-white transition-colors">
                   {isArabic ? 'معاينات ميدانية' : 'Field Inspections'}
                 </span>
               </div>
@@ -331,7 +331,7 @@ export default function MapComponent({ items, activeItem, onItemSelect, lang }: 
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-60"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border border-white/20 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span>
                 </span>
-                <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
+                <span className="text-xs font-bold text-th-text/90 group-hover:text-th-text dark:text-slate-200 dark:group-hover:text-white transition-colors">
                   {isArabic ? 'مخالفات بيئية' : 'Violations'}
                 </span>
               </div>
@@ -340,7 +340,7 @@ export default function MapComponent({ items, activeItem, onItemSelect, lang }: 
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500 border border-white/20 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
                 </span>
-                <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
+                <span className="text-xs font-bold text-th-text/90 group-hover:text-th-text dark:text-slate-200 dark:group-hover:text-white transition-colors">
                   {isArabic ? 'حوادث وبلاغات الشعاب' : 'Accidents & Spills'}
                 </span>
               </div>

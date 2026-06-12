@@ -42,10 +42,10 @@ import EIAReportModal from './EIAReportModal';
 const MapComponent = dynamic(() => import('@/components/eia/MapComponent'), { 
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-[#0d1e36] flex items-center justify-center rounded-2xl border border-white/10">
+    <div className="w-full h-full bg-th-surface flex items-center justify-center rounded-2xl border border-th-border">
       <div className="flex flex-col items-center gap-3">
         <Loader2 className="animate-spin text-teal-400" size={32} />
-        <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">Loading GIS Interface...</span>
+        <span className="text-[12px] font-bold text-th-muted uppercase tracking-widest">Loading GIS Interface...</span>
       </div>
     </div>
   )
@@ -229,10 +229,10 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
     setLoading(true);
     try {
       const [resCosts, resInsps, resViols, resAccs] = await Promise.all([
-        fetch('/api/eia/costs').then(res => res.json()),
-        fetch('/api/eia/inspections').then(res => res.json()),
-        fetch('/api/eia/violations').then(res => res.json()),
-        fetch('/api/eia/accidents').then(res => res.json())
+        fetch('/api/eia/costs', { cache: 'no-store' }).then(res => res.json()),
+        fetch('/api/eia/inspections', { cache: 'no-store' }).then(res => res.json()),
+        fetch('/api/eia/violations', { cache: 'no-store' }).then(res => res.json()),
+        fetch('/api/eia/accidents', { cache: 'no-store' }).then(res => res.json())
       ]);
 
       setCosts(Array.isArray(resCosts) ? resCosts : []);
@@ -250,34 +250,6 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
     fetchData();
   }, []);
 
-  // Handle file uploads
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string, name: string) => void) => {
-    const filesList = e.target.files;
-    if (!filesList || filesList.length === 0) return;
-    
-    setSubmitting(true);
-    try {
-      const file = filesList[0];
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (data.success) {
-        callback(data.url, file.name);
-      } else {
-        alert(isArabic ? 'فشل رفع الملف' : 'File upload failed');
-      }
-    } catch (err) {
-      console.error('Upload error:', err);
-      alert(isArabic ? 'حدث خطأ أثناء الرفع' : 'Error occurred during upload');
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   // Toggle cost status
   const toggleCostStatus = async (id: string, currentStatus: 'UNANSWERED' | 'ANSWERED') => {
@@ -835,9 +807,9 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
   const renderDetailedView = () => {
     if (!selectedDetailItem) return null;
     return (
-      <Card className="p-6 border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-xl space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+      <Card className="p-6 border border-th-border bg-th-surface backdrop-blur-xl rounded-3xl shadow-xl space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
         {/* Back & Role Switcher Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200 dark:border-white/10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-th-border">
           <button 
             type="button"
             onClick={() => { setSelectedDetailItem(null); setSelectedDetailType(null); }}
@@ -848,7 +820,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
           </button>
           
           {/* Role Switcher */}
-          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-white/5 rounded-xl p-1 text-[11px] self-stretch sm:self-auto justify-between">
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-950/80 border border-th-border rounded-xl p-1 text-[11px] self-stretch sm:self-auto justify-between">
             <span className="text-slate-500 dark:text-slate-400 px-2 font-medium">{isArabic ? 'صلاحية التجربة:' : 'Test Role:'}</span>
             <div className="flex gap-1">
               <button 
@@ -900,7 +872,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       id="edit-cost-subject"
                       value={editSubject}
                       onChange={(e) => setEditSubject(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -911,7 +883,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -923,7 +895,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     value={editDetails}
                     onChange={(e) => setEditDetails(e.target.value)}
                     rows={4}
-                    className="w-full bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
+                    className="w-full bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
                     required
                   />
                 </div>
@@ -933,7 +905,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     id="edit-cost-status"
                     value={editCostStatus}
                     onChange={(e) => setEditCostStatus(e.target.value as any)}
-                    className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                    className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                   >
                     <option value="UNANSWERED">{isArabic ? 'لم يتم الرد' : 'Unanswered'}</option>
                     <option value="ANSWERED">{isArabic ? 'تم الرد' : 'Answered'}</option>
@@ -944,21 +916,23 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                 <div className="space-y-2 pt-2">
                   <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'تعديل الملفات المرفقة' : 'Modify Attached Files'}</label>
                   <div className="flex flex-wrap gap-2 items-center">
-                    <label className="h-10 px-4 rounded-xl border border-dashed border-teal-500/40 text-teal-400 hover:bg-teal-500/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                      <Upload size={14} />
-                      {isArabic ? 'إضافة ملف جديد' : 'Add New File'}
-                      <input 
-                        type="file" 
-                        className="hidden" 
-                        onChange={(e) => handleFileUpload(e, (url, name) => {
-                          setEditFiles(prev => [...prev, { name, url }]);
-                        })} 
-                      />
-                    </label>
+                    <FileUpload 
+                      endpoint="mediaUploader"
+                      lang={isArabic ? 'ar' : 'en'}
+                      onUploadBegin={() => setIsSubmitting(true)}
+                      onUploadComplete={(files) => {
+                        setEditFiles(prev => [...prev, ...files.map(f => ({ name: f.name, url: f.url }))]);
+                        setIsSubmitting(false);
+                      }}
+                      onUploadError={(err) => {
+                        console.error(err);
+                        setIsSubmitting(false);
+                      }}
+                    />
                   </div>
                   <div className="flex flex-wrap gap-2 pt-2">
                     {editFiles.map((file, idx) => (
-                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-700 dark:text-slate-300">
+                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-th-border rounded-xl text-xs text-th-muted">
                         <FileText size={12} className="text-teal-400" />
                         <span className="truncate max-w-[150px]">{file.name}</span>
                         <button 
@@ -984,7 +958,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       id="edit-insp-locname"
                       value={editLocationName}
                       onChange={(e) => setEditLocationName(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -995,7 +969,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1007,7 +981,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       step="any"
                       value={editLatitude}
                       onChange={(e) => setEditLatitude(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1019,7 +993,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       step="any"
                       value={editLongitude}
                       onChange={(e) => setEditLongitude(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1029,7 +1003,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       id="edit-insp-inspector"
                       value={editInspectorName}
                       onChange={(e) => setEditInspectorName(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1040,15 +1014,19 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   <div className="space-y-2">
                     <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'دراسة الأثر البيئي (EIA Study)' : 'EIA Study Document'}</label>
                     <div className="flex items-center gap-2">
-                      <label className="h-10 px-4 rounded-xl border border-dashed border-white/20 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                        <Upload size={14} />
-                        {isArabic ? 'رفع دراسة جديدة' : 'Upload New Study'}
-                        <input 
-                          type="file" 
-                          className="hidden" 
-                          onChange={(e) => handleFileUpload(e, (url) => setEditStudyFileUrl(url))} 
-                        />
-                      </label>
+                      <FileUpload 
+                        endpoint="documentUploader"
+                        lang={isArabic ? 'ar' : 'en'}
+                        onUploadBegin={() => setIsSubmitting(true)}
+                        onUploadComplete={(files) => {
+                          setEditStudyFileUrl(files[0]?.url || '');
+                          setIsSubmitting(false);
+                        }}
+                        onUploadError={(err) => {
+                          console.error(err);
+                          setIsSubmitting(false);
+                        }}
+                      />
                       {editStudyFileUrl && <CheckCircle2 className="text-emerald-400" size={18} />}
                       {editStudyFileUrl && (
                         <button 
@@ -1065,15 +1043,19 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   <div className="space-y-2">
                     <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'تقرير الرد النهائي (Final Response)' : 'Final Response Report'}</label>
                     <div className="flex items-center gap-2">
-                      <label className="h-10 px-4 rounded-xl border border-dashed border-white/20 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                        <Upload size={14} />
-                        {isArabic ? 'رفع تقرير جديد' : 'Upload New Report'}
-                        <input 
-                          type="file" 
-                          className="hidden" 
-                          onChange={(e) => handleFileUpload(e, (url) => setEditReportFileUrl(url))} 
-                        />
-                      </label>
+                      <FileUpload 
+                        endpoint="documentUploader"
+                        lang={isArabic ? 'ar' : 'en'}
+                        onUploadBegin={() => setIsSubmitting(true)}
+                        onUploadComplete={(files) => {
+                          setEditReportFileUrl(files[0]?.url || '');
+                          setIsSubmitting(false);
+                        }}
+                        onUploadError={(err) => {
+                          console.error(err);
+                          setIsSubmitting(false);
+                        }}
+                      />
                       {editReportFileUrl && <CheckCircle2 className="text-emerald-400" size={18} />}
                       {editReportFileUrl && (
                         <button 
@@ -1098,7 +1080,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <select
                       value={editType}
                       onChange={(e) => setEditType(e.target.value)}
-                      className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                      className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                       required
                     >
                       <option value="ردم وتغير في حرم الشاطئ">{isArabic ? 'ردم وتغير في حرم الشاطئ' : 'Backfilling & Beach Encroachment'}</option>
@@ -1112,7 +1094,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1121,7 +1103,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <Input 
                       value={editLocationName}
                       onChange={(e) => setEditLocationName(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1130,7 +1112,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <select
                       value={editEntityType}
                       onChange={(e) => setEditEntityType(e.target.value as any)}
-                      className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                      className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                       required
                     >
                       <option value="PROJECT">{isArabic ? 'مشروع' : 'Project'}</option>
@@ -1144,7 +1126,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       step="any"
                       value={editLatitude}
                       onChange={(e) => setEditLatitude(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1155,7 +1137,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       step="any"
                       value={editLongitude}
                       onChange={(e) => setEditLongitude(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1164,7 +1146,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <Input 
                       value={editEntityName}
                       onChange={(e) => setEditEntityName(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1173,22 +1155,24 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   <div className="space-y-2 pt-2 md:col-span-2">
                     <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'تعديل الملفات المرفقة' : 'Modify Attached Files'}</label>
                     <div className="flex flex-wrap gap-2 items-center">
-                      <label className="h-10 px-4 rounded-xl border border-dashed border-teal-500/40 text-teal-400 hover:bg-teal-500/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                        <Upload size={14} />
-                        {isArabic ? 'إضافة ملف جديد' : 'Add New File'}
-                        <input 
-                          type="file" 
-                          className="hidden" 
-                          onChange={(e) => handleFileUpload(e, (url, name) => {
-                            setEditFiles(prev => [...prev, { name, url }]);
-                          })} 
-                        />
-                      </label>
+                      <FileUpload 
+                        endpoint="mediaUploader"
+                        lang={isArabic ? 'ar' : 'en'}
+                        onUploadBegin={() => setIsSubmitting(true)}
+                        onUploadComplete={(files) => {
+                          setEditFiles(prev => [...prev, ...files.map(f => ({ name: f.name, url: f.url }))]);
+                          setIsSubmitting(false);
+                        }}
+                        onUploadError={(err) => {
+                          console.error(err);
+                          setIsSubmitting(false);
+                        }}
+                      />
                       {submitting && <Loader2 className="animate-spin text-teal-400" size={18} />}
                     </div>
                     <div className="flex flex-wrap gap-2 pt-2">
                       {editFiles.map((file, idx) => (
-                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-700 dark:text-slate-300">
+                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-th-border rounded-xl text-xs text-th-muted">
                           <FileText size={12} className="text-teal-400" />
                           <span className="truncate max-w-[150px]">{file.name}</span>
                           <button 
@@ -1214,7 +1198,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <select
                       value={editType}
                       onChange={(e) => setEditType(e.target.value)}
-                      className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                      className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                       required
                     >
                       <option value="حوادث شحط أو ربط على الشعاب">{isArabic ? 'حوادث شحط أو ربط على الشعاب' : 'Grounding / Anchoring on Reef'}</option>
@@ -1228,7 +1212,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1237,7 +1221,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <Input 
                       value={editLocationName}
                       onChange={(e) => setEditLocationName(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1248,7 +1232,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       step="any"
                       value={editLatitude}
                       onChange={(e) => setEditLatitude(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
@@ -1259,22 +1243,26 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       step="any"
                       value={editLongitude}
                       onChange={(e) => setEditLongitude(e.target.value)}
-                      className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                      className="bg-th-input border-th-border text-th-text rounded-xl"
                       required
                     />
                   </div>
                   <div className="space-y-2 md:col-span-2">
                     <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'التقرير الفني (Technical Report)' : 'Technical Report PDF'}</label>
                     <div className="flex items-center gap-2">
-                      <label className="h-10 px-4 rounded-xl border border-dashed border-white/20 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                        <Upload size={14} />
-                        {isArabic ? 'رفع تقرير فني جديد' : 'Upload New Report'}
-                        <input 
-                          type="file" 
-                          className="hidden" 
-                          onChange={(e) => handleFileUpload(e, (url) => setEditReportFileUrl(url))} 
-                        />
-                      </label>
+                      <FileUpload 
+                        endpoint="documentUploader"
+                        lang={isArabic ? 'ar' : 'en'}
+                        onUploadBegin={() => setIsSubmitting(true)}
+                        onUploadComplete={(files) => {
+                          setEditReportFileUrl(files[0]?.url || '');
+                          setIsSubmitting(false);
+                        }}
+                        onUploadError={(err) => {
+                          console.error(err);
+                          setIsSubmitting(false);
+                        }}
+                      />
                       {editReportFileUrl && <CheckCircle2 className="text-emerald-400" size={18} />}
                       {editReportFileUrl && (
                         <button 
@@ -1294,7 +1282,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     value={editDetails}
                     onChange={(e) => setEditDetails(e.target.value)}
                     rows={4}
-                    className="w-full bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
+                    className="w-full bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
                     required
                   />
                 </div>
@@ -1396,7 +1384,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                 <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                   {isArabic ? 'الموقع الجغرافي (GIS)' : 'Geographic Location'}
                 </h4>
-                <div className="flex items-center justify-between p-3 bg-[#0d1e36]/40 border border-white/5 rounded-2xl">
+                <div className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border rounded-2xl">
                   <div className="flex items-center gap-2 text-xs">
                     <MapPin className="text-teal-400" size={16} />
                     <span className="text-slate-300 font-bold">{isArabic ? 'الإحداثيات:' : 'Coordinates:'}</span>
@@ -1745,7 +1733,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   onChange={(e) => setDeleteReasonText(e.target.value)}
                   placeholder={isArabic ? 'اكتب سبب طلب الحذف بالتفصيل...' : 'Specify why this record should be deleted...'}
                   rows={3}
-                  className="w-full bg-[#0b1329] border border-white/10 text-white rounded-xl p-3 text-xs focus:outline-none focus:border-rose-500 font-medium"
+                  className="w-full bg-th-input border border-th-border text-th-text rounded-xl p-3 text-xs focus:outline-none focus:border-rose-500 font-medium"
                   required
                 />
                 <div className="flex justify-end gap-2 text-xs">
@@ -1777,7 +1765,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
   return (
     <div className="max-w-[1600px] mx-auto space-y-6" dir={isArabic ? 'rtl' : 'ltr'}>
       {/* ── Page Header ────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-slate-200 dark:border-white/10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-th-border">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="w-8 h-1 bg-teal-500 rounded-full" />
@@ -1785,7 +1773,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
               {isArabic ? 'تقييم الأثر البيئي' : 'Environmental Impact Assessment'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-th-text tracking-tighter">
             {isArabic ? 'قسم تقييم الأثر البيئي' : 'EIA Administration Department'}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
@@ -1817,7 +1805,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
 
       {/* Mobile View Toggle: Map vs Data */}
       {isMobile && (
-        <div className="flex p-1 bg-slate-100 dark:bg-[#0a1628]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-2xl mb-4 gap-1.5 shadow-xl">
+        <div className="flex p-1 bg-th-surface backdrop-blur-2xl border border-th-border rounded-2xl mb-4 gap-1.5 shadow-xl">
           <button
             onClick={() => setMobilePanel('data')}
             className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
@@ -1877,31 +1865,31 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
           ) : (
             <>
               {/* Section Navigation Tabs */}
-              <div className="grid grid-cols-4 bg-slate-100 dark:bg-[#0d1e36] p-1.5 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner gap-1">
+              <div className="grid grid-cols-4 bg-th-surface p-1.5 rounded-2xl border border-th-border shadow-inner gap-1">
                 <button 
                   onClick={() => { setActiveTab('costs'); setShowAddForm(false); }}
-                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'costs' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5'}`}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'costs' ? 'bg-teal-500 text-white shadow-md' : 'text-th-muted hover:text-th-text hover:bg-th-surface2'}`}
                 >
                   <DollarSign size={14} className="shrink-0" />
                   <span className="truncate">{isArabic ? 'التكاليف' : 'Costs'}</span>
                 </button>
                 <button 
                   onClick={() => { setActiveTab('inspections'); setShowAddForm(false); }}
-                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'inspections' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5'}`}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'inspections' ? 'bg-teal-500 text-white shadow-md' : 'text-th-muted hover:text-th-text hover:bg-th-surface2'}`}
                 >
                   <ClipboardList size={14} className="shrink-0" />
                   <span className="truncate">{isArabic ? 'المعاينات' : 'Inspections'}</span>
                 </button>
                 <button 
                   onClick={() => { setActiveTab('violations'); setShowAddForm(false); }}
-                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'violations' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5'}`}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'violations' ? 'bg-teal-500 text-white shadow-md' : 'text-th-muted hover:text-th-text hover:bg-th-surface2'}`}
                 >
                   <AlertTriangle size={14} className="shrink-0" />
                   <span className="truncate">{isArabic ? 'المخالفات' : 'Violations'}</span>
                 </button>
                 <button 
                   onClick={() => { setActiveTab('accidents'); setShowAddForm(false); }}
-                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'accidents' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5'}`}
+                  className={`py-2 md:py-3 px-1 md:px-4 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 ${activeTab === 'accidents' ? 'bg-teal-500 text-white shadow-md' : 'text-th-muted hover:text-th-text hover:bg-th-surface2'}`}
                 >
                   <Waves size={14} className="shrink-0" />
                   <span className="truncate">{isArabic ? 'الحوادث' : 'Accidents'}</span>
@@ -1910,8 +1898,8 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
 
           {/* Form Panel: Shows up when clicking 'New ...' button */}
           {showAddForm && (
-            <Card className="p-6 border border-teal-500/30 bg-white dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-white/5">
+            <Card className="p-6 border border-teal-500/30 bg-th-surface2 backdrop-blur-xl rounded-2xl shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
+              <h3 className="font-bold text-lg text-th-text mb-4 flex items-center gap-2 pb-3 border-b border-th-border">
                 <span className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
                 {isArabic ? 'إدخال سجل جديد' : 'New Record Entry'}
               </h3>
@@ -1925,7 +1913,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={costSubject}
                         onChange={(e) => setCostSubject(e.target.value)}
                         placeholder={isArabic ? 'مثال: تقييم مشروع مارينا الجونة' : 'e.g. Marina El Gouna EIA assessment'}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -1935,7 +1923,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         type="date"
                         value={costDate}
                         onChange={(e) => setCostDate(e.target.value)}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -1947,7 +1935,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       onChange={(e) => setCostDetails(e.target.value)}
                       placeholder={isArabic ? 'اكتب تفاصيل التكليف هنا...' : 'Describe assignment details...'}
                       rows={4}
-                      className="w-full bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
+                      className="w-full bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
                       required
                     />
                   </div>
@@ -1956,23 +1944,25 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   <div className="space-y-2">
                     <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'الملفات المرفقة (PDF, صور)' : 'Attached Files (PDF, Images)'}</label>
                     <div className="flex flex-wrap gap-2 items-center">
-                      <label className="h-10 px-4 rounded-xl border border-dashed border-teal-500/40 text-teal-400 hover:bg-teal-500/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                        <Upload size={14} />
-                        {isArabic ? 'اختر ملف للرفع' : 'Choose File to Upload'}
-                        <input 
-                          type="file" 
-                          className="hidden" 
-                          onChange={(e) => handleFileUpload(e, (url, name) => {
-                            setCostFiles(prev => [...prev, { name, url }]);
-                          })} 
-                        />
-                      </label>
+                      <FileUpload 
+                        endpoint="mediaUploader"
+                        lang={isArabic ? 'ar' : 'en'}
+                        onUploadBegin={() => setIsSubmitting(true)}
+                        onUploadComplete={(files) => {
+                          setCostFiles(prev => [...prev, ...files.map(f => ({ name: f.name, url: f.url }))]);
+                          setIsSubmitting(false);
+                        }}
+                        onUploadError={(err) => {
+                          console.error(err);
+                          setIsSubmitting(false);
+                        }}
+                      />
                       {submitting && <Loader2 className="animate-spin text-teal-400" size={18} />}
                     </div>
 
                     <div className="flex flex-wrap gap-2 pt-2">
                       {costFiles.map((file, idx) => (
-                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-700 dark:text-slate-300">
+                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-th-border rounded-xl text-xs text-th-muted">
                           <FileText size={12} className="text-teal-400" />
                           <span className="truncate max-w-[150px]">{file.name}</span>
                           <button 
@@ -2003,7 +1993,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={inspLocName}
                         onChange={(e) => setInspLocName(e.target.value)}
                         placeholder={isArabic ? 'مثال: أبو دباب، شعاب الفانوس' : 'e.g. Abu Dabab, Fanous Reef'}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2014,7 +2004,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         type="date"
                         value={inspDate}
                         onChange={(e) => setInspDate(e.target.value)}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2027,7 +2017,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={inspLat}
                         onChange={(e) => setInspLat(e.target.value)}
                         placeholder="e.g. 27.2891"
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2040,7 +2030,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={inspLng}
                         onChange={(e) => setInspLng(e.target.value)}
                         placeholder="e.g. 33.9182"
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2051,7 +2041,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={inspInspector}
                         onChange={(e) => setInspInspector(e.target.value)}
                         placeholder={isArabic ? 'مثال: د. أحمد علي' : 'e.g. Dr. Ahmed Ali'}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2062,15 +2052,19 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'دراسة الأثر البيئي (EIA Study)' : 'EIA Study Document'}</label>
                       <div className="flex items-center gap-2">
-                        <label className="h-10 px-4 rounded-xl border border-dashed border-white/20 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                          <Upload size={14} />
-                          {isArabic ? 'رفع دراسة الأثر' : 'Upload Study File'}
-                          <input 
-                            type="file" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, (url) => setInspStudyFile(url))} 
-                          />
-                        </label>
+                        <FileUpload 
+                          endpoint="documentUploader"
+                          lang={isArabic ? 'ar' : 'en'}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setInspStudyFile(files[0]?.url || '');
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
+                        />
                         {inspStudyFile && <CheckCircle2 className="text-emerald-400" size={18} />}
                       </div>
                       {inspStudyFile && (
@@ -2083,15 +2077,19 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'تقرير الرد النهائي (Final Response)' : 'Final Response Report'}</label>
                       <div className="flex items-center gap-2">
-                        <label className="h-10 px-4 rounded-xl border border-dashed border-white/20 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                          <Upload size={14} />
-                          {isArabic ? 'رفع تقرير الرد' : 'Upload Report File'}
-                          <input 
-                            type="file" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, (url) => setInspReportFile(url))} 
-                          />
-                        </label>
+                        <FileUpload 
+                          endpoint="documentUploader"
+                          lang={isArabic ? 'ar' : 'en'}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setInspReportFile(files[0]?.url || '');
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
+                        />
                         {inspReportFile && <CheckCircle2 className="text-emerald-400" size={18} />}
                       </div>
                       {inspReportFile && (
@@ -2119,7 +2117,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         id="add-viol-type"
                         value={violType}
                         onChange={(e) => setViolType(e.target.value)}
-                        className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                        className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                         required
                       >
                         <option value="ردم وتغير في حرم الشاطئ">{isArabic ? 'ردم وتغير في حرم الشاطئ' : 'Backfilling & Beach Encroachment'}</option>
@@ -2134,7 +2132,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         type="date"
                         value={violDate}
                         onChange={(e) => setViolDate(e.target.value)}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2145,7 +2143,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={violLocName}
                         onChange={(e) => setViolLocName(e.target.value)}
                         placeholder={isArabic ? 'مثال: ساحل الجونة' : 'e.g. El Gouna Beach'}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2155,7 +2153,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         id="add-viol-entitytype"
                         value={violEntityType}
                         onChange={(e) => setViolEntityType(e.target.value as any)}
-                        className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                        className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                         required
                       >
                         <option value="PROJECT">{isArabic ? 'مشروع' : 'Project'}</option>
@@ -2171,7 +2169,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={violLat}
                         onChange={(e) => setViolLat(e.target.value)}
                         placeholder="e.g. 27.2579"
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2184,7 +2182,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={violLng}
                         onChange={(e) => setViolLng(e.target.value)}
                         placeholder="e.g. 33.8116"
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2195,7 +2193,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={violEntityName}
                         onChange={(e) => setViolEntityName(e.target.value)}
                         placeholder={isArabic ? 'مثال: شركة التطوير السياحي الكبرى' : 'e.g. Grand Tourism Development Co.'}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2204,23 +2202,25 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'الملفات المرفقة (مستندات)' : 'Attached Files (Documents)'}</label>
                       <div className="flex flex-wrap gap-2 items-center">
-                        <label className="h-10 px-4 rounded-xl border border-dashed border-teal-500/40 text-teal-400 hover:bg-teal-500/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                          <Upload size={14} />
-                          {isArabic ? 'اختر ملف للرفع' : 'Choose File to Upload'}
-                          <input 
-                            type="file" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, (url, name) => {
-                              setViolFiles(prev => [...prev, { name, url }]);
-                            })} 
-                          />
-                        </label>
+                        <FileUpload 
+                          endpoint="mediaUploader"
+                          lang={isArabic ? 'ar' : 'en'}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setViolFiles(prev => [...prev, ...files.map(f => ({ name: f.name, url: f.url }))]);
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
+                        />
                         {submitting && <Loader2 className="animate-spin text-teal-400" size={18} />}
                       </div>
 
                       <div className="flex flex-wrap gap-2 pt-2">
                         {violFiles.map((file, idx) => (
-                          <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-700 dark:text-slate-300">
+                          <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-th-border rounded-xl text-xs text-th-muted">
                             <FileText size={12} className="text-teal-400" />
                             <span className="truncate max-w-[150px]">{file.name}</span>
                             <button 
@@ -2252,7 +2252,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       <select
                         value={accType}
                         onChange={(e) => setAccType(e.target.value)}
-                        className="w-full h-11 bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
+                        className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-sm"
                         required
                       >
                         <option value="حوادث شحط أو ربط على الشعاب">{isArabic ? 'حوادث شحط أو ربط على الشعاب' : 'Grounding / Anchoring on Reef'}</option>
@@ -2266,7 +2266,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         type="date"
                         value={accDate}
                         onChange={(e) => setAccDate(e.target.value)}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2276,7 +2276,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={accLocName}
                         onChange={(e) => setAccLocName(e.target.value)}
                         placeholder={isArabic ? 'مثال: شعاب ريجنسي' : 'e.g. Regency Reef'}
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2288,7 +2288,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={accLat}
                         onChange={(e) => setAccLat(e.target.value)}
                         placeholder="e.g. 27.9152"
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
@@ -2300,22 +2300,26 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         value={accLng}
                         onChange={(e) => setAccLng(e.target.value)}
                         placeholder="e.g. 34.3541"
-                        className="bg-slate-50 dark:bg-[#0b1329] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl"
+                        className="bg-th-input border-th-border text-th-text rounded-xl"
                         required
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">{isArabic ? 'التقرير الفني (Technical Report)' : 'Technical Report PDF'}</label>
                       <div className="flex items-center gap-2">
-                        <label className="h-10 px-4 rounded-xl border border-dashed border-white/20 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-center gap-2 text-xs font-bold uppercase">
-                          <Upload size={14} />
-                          {isArabic ? 'رفع التقرير الفني' : 'Upload Report File'}
-                          <input 
-                            type="file" 
-                            className="hidden" 
-                            onChange={(e) => handleFileUpload(e, (url) => setAccReportFile(url))} 
-                          />
-                        </label>
+                        <FileUpload 
+                          endpoint="documentUploader"
+                          lang={isArabic ? 'ar' : 'en'}
+                          onUploadBegin={() => setIsSubmitting(true)}
+                          onUploadComplete={(files) => {
+                            setAccReportFile(files[0]?.url || '');
+                            setIsSubmitting(false);
+                          }}
+                          onUploadError={(err) => {
+                            console.error(err);
+                            setIsSubmitting(false);
+                          }}
+                        />
                         {accReportFile && <CheckCircle2 className="text-emerald-400" size={18} />}
                       </div>
                       {accReportFile && (
@@ -2332,7 +2336,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       onChange={(e) => setAccDesc(e.target.value)}
                       placeholder={isArabic ? 'اكتب وصف الحادث والتقرير الأولي للأضرار...' : 'Write accident details and coral damage reports...'}
                       rows={4}
-                      className="w-full bg-slate-50 dark:bg-[#0b1329] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
+                      className="w-full bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-sm"
                       required
                     />
                   </div>
@@ -2368,7 +2372,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         placeholder={isArabic ? 'بحث في التكاليف والتفاصيل...' : 'Search subjects & details...'}
                         value={searchCostSubject}
                         onChange={(e) => setSearchCostSubject(e.target.value)}
-                        className={`w-full bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl ${isArabic ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-2 text-xs focus:outline-none focus:border-teal-500`}
+                        className={`w-full bg-th-input border border-th-border text-th-text rounded-xl ${isArabic ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-2 text-xs focus:outline-none focus:border-teal-500`}
                       />
                     </div>
 
@@ -2376,13 +2380,13 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       type="date"
                       value={searchCostDate}
                       onChange={(e) => setSearchCostDate(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <select
                       value={searchCostStatus}
                       onChange={(e) => setSearchCostStatus(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     >
                       <option value="ALL">{isArabic ? 'جميع الحالات' : 'All Statuses'}</option>
                       <option value="ANSWERED">{isArabic ? 'تم الرد' : 'Answered'}</option>
@@ -2391,18 +2395,18 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   </div>
 
                   {filteredCosts.length === 0 ? (
-                    <div className="py-12 text-center text-slate-500 dark:text-slate-500 text-sm italic font-medium uppercase tracking-widest bg-slate-100 dark:bg-slate-900/10 rounded-2xl border border-dashed border-slate-300 dark:border-white/5">
+                    <div className="py-12 text-center text-th-muted text-sm italic font-medium uppercase tracking-widest bg-th-input rounded-2xl border border-dashed border-th-border">
                       {isArabic ? 'لا توجد تكاليف مطابقة للبحث' : 'No matching cost assignments'}
                     </div>
                   ) : (
                     filteredCosts.map((cost) => (
                       <Card 
                         key={cost.id} 
-                        className="p-5 border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/40 backdrop-blur-xl hover:border-teal-300 dark:hover:border-white/10 transition-all relative overflow-hidden group cursor-pointer shadow-sm hover:shadow-md"
+                        className="p-5 border border-th-border bg-th-surface backdrop-blur-xl hover:border-teal-300 dark:hover:border-th-border transition-all relative overflow-hidden group cursor-pointer shadow-sm hover:shadow-md"
                         onClick={() => handleOpenDetail(cost, 'costs')}
                       >
                         <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-base leading-snug">{cost.subject}</h4>
+                          <h4 className="font-bold text-th-text text-base leading-snug">{cost.subject}</h4>
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleCostStatus(cost.id, cost.status); }}
                             className={`px-3 py-1.5 rounded-xl text-[10px] font-black tracking-wider uppercase transition-colors ${
@@ -2416,7 +2420,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         </div>
                         <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-4">{cost.details}</p>
                         
-                        <div className="flex flex-wrap justify-between items-center pt-4 border-t border-slate-200 dark:border-white/5 gap-3">
+                        <div className="flex flex-wrap justify-between items-center pt-4 border-t border-th-border gap-3">
                           <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1.5">
                             <Calendar size={13} />
                             {new Date(cost.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}
@@ -2455,7 +2459,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         placeholder={isArabic ? 'الباحث المعاين...' : 'Inspector name...'}
                         value={inspectorFilter}
                         onChange={(e) => setInspectorFilter(e.target.value)}
-                        className={`w-full bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl ${isArabic ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-2 text-xs focus:outline-none focus:border-teal-500`}
+                        className={`w-full bg-th-input border border-th-border text-th-text rounded-xl ${isArabic ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-2 text-xs focus:outline-none focus:border-teal-500`}
                       />
                     </div>
 
@@ -2464,20 +2468,20 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       placeholder={isArabic ? 'الموقع...' : 'Location name...'}
                       value={searchInspectionLoc}
                       onChange={(e) => setSearchInspectionLoc(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <input 
                       type="date"
                       value={searchInspectionDate}
                       onChange={(e) => setSearchInspectionDate(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <select
                       value={searchInspectionDocStatus}
                       onChange={(e) => setSearchInspectionDocStatus(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     >
                       <option value="ALL">{isArabic ? 'حالة المستندات...' : 'All Documents'}</option>
                       <option value="STUDY">{isArabic ? 'يحتوي دراسة أثر بيئي' : 'Has EIA Study'}</option>
@@ -2488,7 +2492,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   </div>
 
                   {filteredInspections.length === 0 ? (
-                    <div className="py-12 text-center text-slate-500 dark:text-slate-500 text-sm italic font-medium uppercase tracking-widest bg-slate-100 dark:bg-slate-900/10 rounded-2xl border border-dashed border-slate-300 dark:border-white/5">
+                    <div className="py-12 text-center text-th-muted text-sm italic font-medium uppercase tracking-widest bg-th-input rounded-2xl border border-dashed border-th-border">
                       {isArabic ? 'لا توجد معاينات مطابقة للبحث' : 'No matching inspections found'}
                     </div>
                   ) : (
@@ -2497,25 +2501,25 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         key={ins.id + (activeMapItem?.id === ins.id ? '-active' : '')}
                         interactive 
                         onClick={() => handleOpenDetail(ins, 'inspections')}
-                        className={`p-4 border bg-white dark:bg-slate-900/40 backdrop-blur-xl transition-all relative border-l-4 border-l-emerald-500 shadow-sm ${
-                          activeMapItem?.id === ins.id ? 'highlight-active-card' : 'border-white/5 hover:border-white/10'
+                        className={`p-4 border bg-th-surface backdrop-blur-xl transition-all relative border-l-4 border-l-emerald-500 shadow-sm ${
+                          activeMapItem?.id === ins.id ? 'highlight-active-card' : 'border-th-border hover:border-th-border/80'
                         }`}
                       >
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h4 className="font-bold text-slate-900 dark:text-white text-base leading-snug">{ins.locationName}</h4>
+                            <h4 className="font-bold text-th-text text-base leading-snug">{ins.locationName}</h4>
                             <span className="text-[10px] text-teal-400 font-bold tracking-tight uppercase flex items-center gap-1 mt-1">
                               📍 {ins.latitude.toFixed(4)}, {ins.longitude.toFixed(4)}
                             </span>
                           </div>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 px-2 py-1 rounded-lg">
+                          <span className="text-[10px] text-th-muted font-bold flex items-center gap-1 bg-th-input border border-th-border px-2 py-1 rounded-lg">
                             <Calendar size={11} />
                             {new Date(ins.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}
                           </span>
                         </div>
 
-                        <div className="flex flex-wrap justify-between items-center pt-3 border-t border-slate-200 dark:border-white/5 mt-3 gap-2">
-                          <span className="text-xs text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1.5">
+                        <div className="flex flex-wrap justify-between items-center pt-3 border-t border-th-border mt-3 gap-2">
+                          <span className="text-xs text-th-text font-medium flex items-center gap-1.5">
                             <User size={13} className="text-slate-500" />
                             <strong>{isArabic ? 'الباحث:' : 'Inspector:'}</strong> {ins.inspectorName}
                           </span>
@@ -2561,7 +2565,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <select
                       value={searchViolationType}
                       onChange={(e) => setSearchViolationType(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     >
                       <option value="">{isArabic ? 'تصنيف المخالفة...' : 'All Violation Types'}</option>
                       <option value="ردم وتغير في حرم الشاطئ">{isArabic ? 'ردم وتغير في حرم الشاطئ' : 'Backfilling & Beach Encroachment'}</option>
@@ -2574,14 +2578,14 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       placeholder={isArabic ? 'الموقع...' : 'Location name...'}
                       value={searchViolationLocation}
                       onChange={(e) => setSearchViolationLocation(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <input 
                       type="date"
                       value={searchViolationDate}
                       onChange={(e) => setSearchViolationDate(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <input 
@@ -2589,13 +2593,13 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       placeholder={isArabic ? 'الجهة المخالفة...' : 'Violator entity...'}
                       value={searchViolationEntity}
                       onChange={(e) => setSearchViolationEntity(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <select
                       value={searchViolationEntityType}
                       onChange={(e) => setSearchViolationEntityType(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     >
                       <option value="ALL">{isArabic ? 'نوع الجهة...' : 'Entity Type'}</option>
                       <option value="PROJECT">{isArabic ? 'مشروع سياحي' : 'Tourism Project'}</option>
@@ -2604,7 +2608,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                   </div>
 
                   {filteredViolations.length === 0 ? (
-                    <div className="py-12 text-center text-slate-500 dark:text-slate-500 text-sm italic font-medium uppercase tracking-widest bg-slate-100 dark:bg-slate-900/10 rounded-2xl border border-dashed border-slate-300 dark:border-white/5">
+                    <div className="py-12 text-center text-th-muted text-sm italic font-medium uppercase tracking-widest bg-th-input rounded-2xl border border-dashed border-th-border">
                       {isArabic ? 'لا توجد مخالفات مطابقة للبحث' : 'No violations match criteria'}
                     </div>
                   ) : (
@@ -2615,7 +2619,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                           interactive
                           onClick={() => handleOpenDetail(viol, 'violations')}
                           className={`p-4 border bg-[#0d1e36]/60 backdrop-blur-xl transition-all relative border-l-4 border-l-rose-500 flex flex-col justify-between ${
-                            activeMapItem?.id === viol.id ? 'highlight-active-card' : 'border-white/5 hover:border-white/10'
+                            activeMapItem?.id === viol.id ? 'highlight-active-card' : 'border-th-border hover:border-th-border/80'
                           }`}
                         >
                           <div>
@@ -2623,14 +2627,14 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                               <Badge size="sm" color="danger" className="text-[9px] font-black px-2 uppercase tracking-wide">
                                 {viol.type}
                               </Badge>
-                              <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1">
+                              <span className="text-[10px] text-th-muted font-bold flex items-center gap-1">
                                 <Calendar size={11} />
                                 {new Date(viol.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}
                               </span>
                             </div>
 
-                            <h4 className="font-bold text-white text-base leading-snug mb-1">{viol.entityName}</h4>
-                            <p className="text-xs text-slate-400 mb-4 flex items-center gap-1">
+                            <h4 className="font-bold text-th-text text-base leading-snug mb-1">{viol.entityName}</h4>
+                            <p className="text-xs text-th-muted mb-4 flex items-center gap-1">
                               📍 {viol.locationName}
                             </p>
 
@@ -2643,7 +2647,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                                     href={file.url} 
                                     target="_blank" 
                                     rel="noreferrer" 
-                                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors text-[9.5px] font-bold flex items-center gap-1"
+                                    className="px-2 py-1 rounded bg-th-input border border-th-border text-th-muted hover:text-th-text transition-colors text-[9.5px] font-bold flex items-center gap-1"
                                   >
                                     <FileText size={9} className="text-teal-400" />
                                     <span className="truncate max-w-[100px]">{file.name}</span>
@@ -2680,7 +2684,7 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                     <select
                       value={searchAccidentType}
                       onChange={(e) => setSearchAccidentType(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     >
                       <option value="">{isArabic ? 'تصنيف الحادث...' : 'All Accident Types'}</option>
                       <option value="حوادث شحط أو ربط على الشعاب">{isArabic ? 'شحط أو ربط على الشعاب' : 'Grounding / Anchoring on Reef'}</option>
@@ -2693,14 +2697,14 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       placeholder={isArabic ? 'الموقع...' : 'Location name...'}
                       value={searchAccidentLocation}
                       onChange={(e) => setSearchAccidentLocation(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <input 
                       type="date"
                       value={searchAccidentDate}
                       onChange={(e) => setSearchAccidentDate(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
 
                     <input 
@@ -2708,12 +2712,12 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                       placeholder={isArabic ? 'بحث في وصف الحادث...' : 'Search description...'}
                       value={searchAccidentDesc}
                       onChange={(e) => setSearchAccidentDesc(e.target.value)}
-                      className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
+                      className="bg-th-input border border-th-border text-th-text rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:border-teal-500 w-full"
                     />
                   </div>
 
                   {filteredAccidents.length === 0 ? (
-                    <div className="py-12 text-center text-slate-500 dark:text-slate-500 text-sm italic font-medium uppercase tracking-widest bg-slate-100 dark:bg-slate-900/10 rounded-2xl border border-dashed border-slate-300 dark:border-white/5">
+                    <div className="py-12 text-center text-th-muted text-sm italic font-medium uppercase tracking-widest bg-th-input rounded-2xl border border-dashed border-th-border">
                       {isArabic ? 'لا توجد حوادث بيئية مطابقة للبحث' : 'No matching environmental accidents'}
                     </div>
                   ) : (
@@ -2722,8 +2726,8 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                         key={acc.id + (activeMapItem?.id === acc.id ? '-active' : '')}
                         interactive
                         onClick={() => handleOpenDetail(acc, 'accidents')}
-                        className={`p-4 border bg-white dark:bg-slate-900/40 backdrop-blur-xl transition-all relative border-l-4 border-l-amber-500 shadow-sm ${
-                          activeMapItem?.id === acc.id ? 'highlight-active-card' : 'border-white/5 hover:border-white/10'
+                        className={`p-4 border bg-th-surface backdrop-blur-xl transition-all relative border-l-4 border-l-amber-500 shadow-sm ${
+                          activeMapItem?.id === acc.id ? 'highlight-active-card' : 'border-th-border hover:border-th-border/80'
                         }`}
                       >
                         <div className="flex justify-between items-start mb-2">
@@ -2732,16 +2736,16 @@ export default function EIAPage({ params }: { params: { lang: string } }) {
                               {acc.type}
                             </Badge>
                           </div>
-                          <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1">
+                          <span className="text-[10px] text-th-muted font-bold flex items-center gap-1">
                             <Calendar size={11} />
                             {new Date(acc.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}
                           </span>
                         </div>
 
-                        <h4 className="font-bold text-white text-base leading-snug mb-1">📍 {acc.locationName}</h4>
-                        <p className="text-xs text-slate-300 font-medium line-clamp-3 leading-relaxed mt-1.5 mb-3">{acc.description}</p>
+                        <h4 className="font-bold text-th-text text-base leading-snug mb-1">📍 {acc.locationName}</h4>
+                        <p className="text-xs text-th-muted font-medium line-clamp-3 leading-relaxed mt-1.5 mb-3">{acc.description}</p>
                         
-                        <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-white/5 mt-3 gap-2">
+                        <div className="flex justify-between items-center pt-3 border-t border-th-border mt-3 gap-2">
                           <span className="text-[10px] text-teal-400 font-bold">
                             🌐 {acc.latitude.toFixed(4)}, {acc.longitude.toFixed(4)}
                           </span>

@@ -42,7 +42,7 @@ import type { EcoMapItem } from '@/components/monitoring/EcoMap';
 const EcoMap = dynamic(() => import('@/components/monitoring/EcoMap'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950/40 border border-white/5 rounded-2xl min-h-[250px] md:min-h-[500px]">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-th-surface border border-th-border rounded-2xl min-h-[250px] md:min-h-[500px]">
       <Loader2 className="animate-spin text-teal-400 mb-2" size={32} />
       <span className="text-teal-400 text-xs font-semibold tracking-widest uppercase">
         Loading GIS interactive map...
@@ -580,7 +580,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
 
       {/* Statistics Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-5">
-        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+        <Card className="p-3 md:p-5 border-none bg-th-surface2 backdrop-blur-xl group hover:bg-th-surface transition-all duration-500">
           <div className="flex items-center gap-2.5 md:gap-4">
             <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-teal-500/10 text-teal-400">
               <Activity size={isMobile ? 18 : 24} />
@@ -592,7 +592,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
           </div>
         </Card>
 
-        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+        <Card className="p-3 md:p-5 border-none bg-th-surface2 backdrop-blur-xl group hover:bg-th-surface transition-all duration-500">
           <div className="flex items-center gap-2.5 md:gap-4">
             <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-rose-500/10 text-rose-400">
               <AlertCircle size={isMobile ? 18 : 24} />
@@ -604,7 +604,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
           </div>
         </Card>
 
-        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+        <Card className="p-3 md:p-5 border-none bg-th-surface2 backdrop-blur-xl group hover:bg-th-surface transition-all duration-500">
           <div className="flex items-center gap-2.5 md:gap-4">
             <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-indigo-500/10 text-indigo-400">
               <Navigation size={isMobile ? 18 : 24} />
@@ -616,7 +616,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
           </div>
         </Card>
 
-        <Card className="p-3 md:p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-500">
+        <Card className="p-3 md:p-5 border-none bg-th-surface2 backdrop-blur-xl group hover:bg-th-surface transition-all duration-500">
           <div className="flex items-center gap-2.5 md:gap-4">
             <div className="p-2 md:p-3 rounded-xl md:rounded-2xl bg-amber-500/10 text-amber-400">
               <Waves size={isMobile ? 18 : 24} />
@@ -631,13 +631,13 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
 
       {/* Mobile View Toggle: Map vs Data */}
       {isMobile && (
-        <div className="flex gap-1 p-1 bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-xl">
+        <div className="flex gap-1 p-1 bg-th-surface2 backdrop-blur-xl border border-th-border rounded-xl">
           <button
             onClick={() => setMobilePanel('map')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
               mobilePanel === 'map'
                 ? 'bg-teal-500 text-[#001529] shadow-lg'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                : 'text-th-muted hover:text-th-text hover:bg-th-surface2'
             }`}
           >
             <Map size={14} />
@@ -648,7 +648,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
               mobilePanel === 'data'
                 ? 'bg-teal-500 text-[#001529] shadow-lg'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                : 'text-th-muted hover:text-th-text hover:bg-th-surface2'
             }`}
           >
             <Database size={14} />
@@ -662,7 +662,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
         
         {/* Left Column: GIS Map (7 Cols) — hidden on mobile when mobilePanel !== 'map' */}
         <div className={`lg:col-span-7 space-y-3 md:space-y-4 ${isMobile && mobilePanel !== 'map' ? 'hidden' : ''}`}>
-          <div className="h-[260px] md:h-[400px] lg:h-[550px] relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="h-[260px] md:h-[400px] lg:h-[550px] relative rounded-2xl overflow-hidden border border-th-border shadow-2xl">
             <EcoMap 
               items={allMapItems}
               activeItem={activeItem}
@@ -672,7 +672,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
             />
           </div>
 
-          <Card className="p-3 md:p-4 bg-slate-950/60 border border-white/5 rounded-2xl flex items-start gap-2.5 md:gap-3">
+          <Card className="p-3 md:p-4 bg-th-surface border border-th-border rounded-2xl flex items-start gap-2.5 md:gap-3">
             <MapPin className="text-teal-400 shrink-0 mt-0.5" size={14} />
             <div>
               <h4 className="text-[10px] md:text-xs font-bold text-teal-400 uppercase tracking-widest mb-0.5 md:mb-1">
@@ -691,7 +691,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
         <div className={`lg:col-span-5 space-y-4 md:space-y-6 ${isMobile && mobilePanel !== 'data' ? 'hidden' : ''}`}>
           
           {/* Main Tabs Navigation */}
-          <div className="grid grid-cols-4 gap-1 p-1 bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-xl md:rounded-2xl">
+          <div className="grid grid-cols-4 gap-1 p-1 bg-th-surface2 backdrop-blur-xl border border-th-border rounded-xl md:rounded-2xl">
             {[
               { id: 'eco_programs', label: isAr ? 'برامج' : 'Programs', icon: Activity },
               { id: 'stranding_cases', label: isAr ? 'جنوح' : 'Stranding', icon: AlertCircle },
@@ -709,7 +709,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                   className={`flex flex-col items-center justify-center py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-wider transition-all duration-300 gap-1 md:gap-1.5 ${
                     activeTab === tab.id 
                       ? 'bg-teal-500 text-[#001529] shadow-lg' 
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      : 'text-th-muted hover:text-th-text hover:bg-th-surface2'
                   }`}
                 >
                   <Icon size={isMobile ? 13 : 14} />
@@ -720,7 +720,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
           </div>
 
           {/* Form / List Mode Sub-Tabs */}
-          <div className="flex items-center justify-between border-b border-white/5 pb-2 md:pb-3">
+          <div className="flex items-center justify-between border-b border-th-border pb-2 md:pb-3">
             <h3 className="text-xs md:text-sm font-black text-white uppercase italic tracking-wider flex items-center gap-1.5 md:gap-2">
               <Layers size={isMobile ? 13 : 16} className="text-teal-400" />
               {activeTab === 'eco_programs' && (isAr ? 'البرامج البيئية' : 'Eco Programs')}
@@ -729,7 +729,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
               {activeTab === 'beach_surveys' && (isAr ? 'مسح الشواطئ' : 'Beach Surveys')}
             </h3>
 
-            <div className="flex gap-1 md:gap-2 p-0.5 bg-slate-950/60 rounded-lg md:rounded-xl border border-white/5">
+            <div className="flex gap-1 md:gap-2 p-0.5 bg-th-surface rounded-lg md:rounded-xl border border-th-border">
               <button
                 onClick={() => setSubMode('form')}
                 className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md md:rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-wider transition-all ${
@@ -763,7 +763,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="p-4 md:p-6 border-none bg-slate-900/40 backdrop-blur-xl space-y-4 md:space-y-6">
+                <Card className="p-4 md:p-6 border-none bg-th-surface2 backdrop-blur-xl space-y-4 md:space-y-6">
                   
                   {/* Eco Programs Registration Form */}
                   {activeTab === 'eco_programs' && (
@@ -776,7 +776,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           <select
                             value={epForm.program}
                             onChange={(e) => setEpForm(prev => ({ ...prev, program: e.target.value }))}
-                            className="w-full h-11 bg-[#050b14]/75 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-xs cursor-pointer"
+                            className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-xs cursor-pointer"
                           >
                             <option value="MANGROVE">{isAr ? 'المانجروف' : 'Mangroves'}</option>
                             <option value="MARINE_CREATURES">{isAr ? 'الكائنات البحرية' : 'Marine Creatures'}</option>
@@ -792,7 +792,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           <select
                             value={epForm.subType}
                             onChange={(e) => setEpForm(prev => ({ ...prev, subType: e.target.value }))}
-                            className="w-full h-11 bg-[#050b14]/75 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-xs cursor-pointer"
+                            className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-xs cursor-pointer"
                           >
                             <option value="">{isAr ? 'بدون (عام)' : 'None (General)'}</option>
                             <option value="DOLPHIN">{isAr ? 'الدلافين' : 'Dolphins'}</option>
@@ -920,7 +920,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           value={epForm.details}
                           onChange={(e) => setEpForm(prev => ({ ...prev, details: e.target.value }))}
                           placeholder={isAr ? 'أدخل تفاصيل حالة المعاينة...' : 'Enter survey observation details...'}
-                          className="w-full h-24 bg-[#050b14]/75 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
+                          className="w-full h-24 bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
                         />
                       </div>
 
@@ -984,7 +984,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           <select
                             value={scForm.status}
                             onChange={(e) => setScForm(prev => ({ ...prev, status: e.target.value }))}
-                            className="w-full h-11 bg-[#050b14]/75 border border-white/10 text-white rounded-xl px-3 focus:outline-none focus:border-teal-500 text-xs cursor-pointer"
+                            className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:outline-none focus:border-teal-500 text-xs cursor-pointer"
                           >
                             <option value="ALIVE">{isAr ? 'حي' : 'ALIVE'}</option>
                             <option value="DEAD">{isAr ? 'نافق (ميت)' : 'DEAD'}</option>
@@ -1091,7 +1091,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           value={scForm.description}
                           onChange={(e) => setScForm(prev => ({ ...prev, description: e.target.value }))}
                           placeholder={isAr ? 'أدخل تفاصيل الحالة وعملية الإنقاذ أو أسباب النفوق...' : 'Describe case, rescue operations or cause of death...'}
-                          className="w-full h-24 bg-[#050b14]/75 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
+                          className="w-full h-24 bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
                         />
                       </div>
 
@@ -1256,7 +1256,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           value={sForm.notes}
                           onChange={(e) => setSForm(prev => ({ ...prev, notes: e.target.value }))}
                           placeholder={isAr ? 'سلوك الكائن، الحجم المقدر، الحالة الصحية العامة...' : 'Sighting behavior, estimated size, general health condition...'}
-                          className="w-full h-24 bg-[#050b14]/75 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
+                          className="w-full h-24 bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
                         />
                       </div>
 
@@ -1386,7 +1386,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                           value={bsForm.description}
                           onChange={(e) => setBsForm(prev => ({ ...prev, description: e.target.value }))}
                           placeholder={isAr ? 'أدخل كمية النفايات البلاستيكية أو حالة الطيور البحرية المهاجرة في هذا القطاع...' : 'Detail microplastics levels, human impact, bird nesting activities...'}
-                          className="w-full h-24 bg-[#050b14]/75 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
+                          className="w-full h-24 bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-teal-500 text-xs"
                         />
                       </div>
 
@@ -1434,7 +1434,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                       setActiveItem(mapItem as EcoMapItem);
                       setIsReportModalOpen(true);
                     }}
-                    className={`p-5 border-none bg-slate-900/40 backdrop-blur-xl group hover:bg-slate-900/60 transition-all duration-300 relative border-l-4 cursor-pointer ${
+                    className={`p-5 border-none bg-th-surface2 backdrop-blur-xl group hover:bg-th-surface transition-all duration-300 relative border-l-4 cursor-pointer ${
                       activeItem?.id === item.id ? 'ring-1 ring-teal-500 bg-slate-900/80' : ''
                     } ${
                       activeTab === 'eco_programs' ? 'border-l-teal-500' :
@@ -1466,7 +1466,7 @@ export default function MonitoringClient({ lang }: MonitoringClientProps) {
                       <div className="flex gap-1 shrink-0">
                         <button 
                           onClick={() => handleEditRecord(item, activeTab)}
-                          className="p-2 rounded-lg bg-white/5 border border-transparent hover:border-white/10 text-slate-400 hover:text-white transition-all"
+                          className="p-2 rounded-lg bg-white/5 border border-transparent hover:border-white/10 text-th-muted hover:text-th-text transition-all"
                           title={isAr ? 'تعديل السجل' : 'Edit Record'}
                         >
                           <Edit3 size={12} />

@@ -88,7 +88,7 @@ export default function EnvironmentalConditions({ isArabic = false }: { isArabic
         const WeatherIcon = cond.icon;
         return (
           <motion.div key={idx} variants={itemVariants} whileHover={{ y: -5 }} className="relative h-full">
-            <Card className="h-full bg-th-surface/80 dark:bg-[#0a1628]/80 backdrop-blur-2xl border-th-border dark:border-white/5 hover:border-th-border/80 dark:hover:border-white/20 transition-all p-5 md:p-6 relative overflow-hidden group shadow-xl dark:shadow-2xl">
+            <Card className="h-full bg-th-surface/80 backdrop-blur-2xl border-th-border hover:border-th-border/80 transition-all p-5 md:p-6 relative overflow-hidden group shadow-xl dark:shadow-2xl">
               
               {/* Dynamic Animated Background Gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${cond.bgGradient} opacity-40 group-hover:opacity-80 transition-opacity duration-700`}></div>

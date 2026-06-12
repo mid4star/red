@@ -139,7 +139,7 @@ function formatDate(date: any): string {
 function StatCard({ icon: Icon, value, label, labelAr, color, bg, trend, isAr }: any) {
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-      <Card className="p-5 border border-white/5 bg-slate-900/40 backdrop-blur-xl hover:border-white/10 hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+      <Card className="p-5 hover:shadow-lg hover:border-th-border/80 transition-all duration-300 group relative overflow-hidden">
         <div className="flex items-start justify-between mb-4">
           <div className={`p-2.5 rounded-xl ${bg} ${color} group-hover:scale-110 transition-transform duration-300`}>
             <Icon size={20} />
@@ -151,10 +151,10 @@ function StatCard({ icon: Icon, value, label, labelAr, color, bg, trend, isAr }:
             </div>
           )}
         </div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+        <p className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1">
           {isAr ? labelAr : label}
         </p>
-        <h3 className="text-2xl font-black text-white tracking-tight">{value}</h3>
+        <h3 className="text-2xl font-black text-th-text tracking-tight">{value}</h3>
         <div className={`absolute -bottom-3 -right-3 opacity-[0.04] ${color}`}>
           <Icon size={80} />
         </div>
@@ -182,14 +182,14 @@ function ViolationDetailPanel({ violation, isAr, onEdit, onDelete, onClose }: {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col overflow-hidden h-full"
+      className="bg-th-surface2 border border-th-border rounded-2xl flex flex-col overflow-hidden h-full"
     >
       {/* Panel Header */}
-      <div className={`p-5 border-b border-white/10 bg-gradient-to-r from-slate-950/60 to-slate-900/20`}>
+      <div className={`p-5 border-b border-th-border bg-th-surface/50`}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className={`text-[10px] font-black tracking-widest uppercase ${sev.text} bg-white/5 px-2 py-0.5 rounded-full border ${sev.border}`}>
+              <span className={`text-[10px] font-black tracking-widest uppercase ${sev.text} bg-th-input px-2 py-0.5 rounded-full border ${sev.border}`}>
                 {isAr ? sev.labelAr : sev.label}
               </span>
               <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${sta.bg}`}>
@@ -199,16 +199,16 @@ function ViolationDetailPanel({ violation, isAr, onEdit, onDelete, onClose }: {
                 </span>
               </div>
             </div>
-            <h3 className="text-base font-black text-white tracking-tight leading-tight">
+            <h3 className="text-base font-black text-th-text tracking-tight leading-tight">
               {isAr ? violation.typeAr : violation.types}
             </h3>
-            <p className="text-[11px] font-bold text-slate-500 mt-0.5 font-mono">
+            <p className="text-[11px] font-bold text-th-muted mt-0.5 font-mono">
               #{violation.code || violation.id?.slice(0, 8)}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all shrink-0"
+            className="p-1.5 rounded-lg bg-th-input hover:bg-th-surface/80 text-th-muted hover:text-th-text transition-all shrink-0"
             aria-label="Close panel"
           >
             <X size={14} />
@@ -221,14 +221,14 @@ function ViolationDetailPanel({ violation, isAr, onEdit, onDelete, onClose }: {
 
         {/* Date & Location */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-xl bg-white/5 border border-white/5">
-            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">
+          <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
+            <p className="text-[9px] font-black text-th-muted uppercase tracking-widest mb-1">
               {isAr ? 'تاريخ البلاغ' : 'Report Date'}
             </p>
-            <p className="text-xs font-bold text-white">{formatDate(violation.date)}</p>
+            <p className="text-xs font-bold text-th-text">{formatDate(violation.date)}</p>
           </div>
-          <div className="p-3 rounded-xl bg-white/5 border border-white/5">
-            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">
+          <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
+            <p className="text-[9px] font-black text-th-muted uppercase tracking-widest mb-1">
               {isAr ? 'الإحداثيات' : 'Coordinates'}
             </p>
             <p className="text-[10px] font-bold text-teal-400 font-mono">
@@ -238,14 +238,14 @@ function ViolationDetailPanel({ violation, isAr, onEdit, onDelete, onClose }: {
         </div>
 
         {/* Location */}
-        <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+        <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
           <div className="flex items-center gap-2 mb-1">
             <MapPin size={13} className="text-teal-400 shrink-0" />
-            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+            <p className="text-[9px] font-black text-th-muted uppercase tracking-widest">
               {isAr ? 'الموقع' : 'Location'}
             </p>
           </div>
-          <p className="text-xs font-bold text-white">
+          <p className="text-xs font-bold text-th-text">
             {isAr ? violation.locationAr : violation.location}
           </p>
         </div>
@@ -254,25 +254,25 @@ function ViolationDetailPanel({ violation, isAr, onEdit, onDelete, onClose }: {
         {(violation.violatorName || violation.vesselName) && (
           <div className="grid grid-cols-1 gap-3">
             {violation.violatorName && (
-              <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+              <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
                 <div className="flex items-center gap-2 mb-1">
                   <User size={13} className="text-indigo-400 shrink-0" />
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                  <p className="text-[9px] font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'اسم المخالف' : 'Violator'}
                   </p>
                 </div>
-                <p className="text-xs font-bold text-white">{violation.violatorName}</p>
+                <p className="text-xs font-bold text-th-text">{violation.violatorName}</p>
               </div>
             )}
             {violation.vesselName && (
-              <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+              <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
                 <div className="flex items-center gap-2 mb-1">
                   <Ship size={13} className="text-cyan-400 shrink-0" />
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                  <p className="text-[9px] font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'القارب / الوسيلة' : 'Vessel'}
                   </p>
                 </div>
-                <p className="text-xs font-bold text-white">{violation.vesselName}</p>
+                <p className="text-xs font-bold text-th-text">{violation.vesselName}</p>
               </div>
             )}
           </div>
@@ -295,36 +295,36 @@ function ViolationDetailPanel({ violation, isAr, onEdit, onDelete, onClose }: {
 
         {/* Action Taken */}
         {violation.actionTaken && (
-          <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
             <div className="flex items-center gap-2 mb-1">
               <Gavel size={13} className="text-rose-400 shrink-0" />
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+              <p className="text-[9px] font-black text-th-muted uppercase tracking-widest">
                 {isAr ? 'الإجراء المتخذ' : 'Action Taken'}
               </p>
             </div>
-            <p className="text-xs font-bold text-white leading-relaxed">{violation.actionTaken}</p>
+            <p className="text-xs font-bold text-th-text leading-relaxed">{violation.actionTaken}</p>
           </div>
         )}
 
         {/* Description */}
         {violation.description && (
-          <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="p-3 rounded-xl bg-th-surface/50 border border-th-border/40">
             <div className="flex items-center gap-2 mb-1">
               <FileText size={13} className="text-slate-400 shrink-0" />
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+              <p className="text-[9px] font-black text-th-muted uppercase tracking-widest">
                 {isAr ? 'تفاصيل الانتهاك' : 'Description'}
               </p>
             </div>
-            <p className="text-xs text-slate-300 font-medium leading-relaxed">{violation.description}</p>
+            <p className="text-xs text-th-muted font-medium leading-relaxed">{violation.description}</p>
           </div>
         )}
       </div>
 
       {/* Panel Footer — Actions */}
-      <div className="p-4 border-t border-white/10 flex gap-2 shrink-0">
+      <div className="p-4 border-t border-th-border flex gap-2 shrink-0">
         <button
           onClick={() => onEdit(violation)}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition-all text-xs font-bold uppercase tracking-wider"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-th-input border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 transition-all text-xs font-bold uppercase tracking-wider"
         >
           <Edit3 size={13} />
           {isAr ? 'تعديل' : 'Edit'}
@@ -566,12 +566,12 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
       <div className="max-w-[1200px] mx-auto space-y-6 pb-12 animate-in slide-in-from-bottom-4 duration-500" dir={isAr ? 'rtl' : 'ltr'}>
 
         {/* Back Header */}
-        <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+        <div className="flex items-center gap-4 pb-4 border-b border-th-border">
           <button
             onClick={() => { resetForm(); setShowForm(false); }}
             type="button"
             aria-label={isAr ? 'رجوع' : 'Go back'}
-            className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+            className="p-2.5 rounded-2xl bg-th-input border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface/80 transition-all flex items-center justify-center shrink-0"
           >
             <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
           </button>
@@ -579,7 +579,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
             <span className="text-[10px] font-black tracking-[0.2em] text-rose-400 uppercase italic">
               {isAr ? 'مركز الانتهاكات والتسجيل' : 'Infractions Registry'}
             </span>
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
               <ShieldAlert className="text-rose-500" size={20} />
               {editingViolation
                 ? (isAr ? 'تعديل تقرير المخالفة' : 'Edit Violation Report')
@@ -601,24 +601,24 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label htmlFor="v-code" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-code" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'رقم البلاغ' : 'Report Code'}
                   </label>
                   <Input id="v-code" value={code} onChange={e => setCode(e.target.value)}
                     placeholder="e.g. VIO-2026-110"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-officer" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-officer" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'الضابط المسؤول *' : 'Reporting Officer *'}
                   </label>
                   {users.length > 0 ? (
                     <select id="v-officer" value={officerId} onChange={e => setOfficerId(e.target.value)} required
-                      className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:border-rose-500/50 transition-all text-xs font-bold cursor-pointer">
-                      <option value="" className="bg-[#0a1628]">{isAr ? 'اختر الضابط...' : 'Select Officer...'}</option>
+                      className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:border-rose-500/50 transition-all text-xs font-bold cursor-pointer">
+                      <option value="" className="bg-th-surface text-th-text">{isAr ? 'اختر الضابط...' : 'Select Officer...'}</option>
                       {users.map(u => (
-                        <option key={u.id} value={u.id} className="bg-[#0a1628]">
+                        <option key={u.id} value={u.id} className="bg-th-surface text-th-text">
                           {isAr ? u.nameAr || u.name : u.name} ({u.employeeId})
                         </option>
                       ))}
@@ -626,7 +626,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                   ) : (
                     <Input id="v-officer" value={officerId} onChange={e => setOfficerId(e.target.value)}
                       placeholder="Officer ID" required
-                      className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                      className="h-11 rounded-xl focus:border-rose-500/50" />
                   )}
                 </div>
               </div>
@@ -649,35 +649,35 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-type-ar" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-type-ar" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'نوع الانتهاك (AR)' : 'Infraction Type (AR)'}
                   </label>
                   <Input id="v-type-ar" value={typeAr} onChange={e => setTypeAr(e.target.value)}
                     placeholder="مثال: صيد غير قانوني"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-severity" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-severity" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'درجة الخطورة' : 'Severity Level'}
                   </label>
                   <select id="v-severity" value={severity} onChange={e => setSeverity(e.target.value)}
-                    className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:border-rose-500/50 transition-all text-xs font-bold cursor-pointer">
-                    <option value="LOW" className="bg-[#0a1628]">{isAr ? 'منخفضة (LOW)' : 'Low'}</option>
-                    <option value="MEDIUM" className="bg-[#0a1628]">{isAr ? 'متوسطة (MEDIUM)' : 'Medium'}</option>
-                    <option value="HIGH" className="bg-[#0a1628]">{isAr ? 'حرجة (HIGH)' : 'High'}</option>
+                    className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:border-rose-500/50 transition-all text-xs font-bold cursor-pointer">
+                    <option value="LOW" className="bg-th-surface text-th-text">{isAr ? 'منخفضة (LOW)' : 'Low'}</option>
+                    <option value="MEDIUM" className="bg-th-surface text-th-text">{isAr ? 'متوسطة (MEDIUM)' : 'Medium'}</option>
+                    <option value="HIGH" className="bg-th-surface text-th-text">{isAr ? 'حرجة (HIGH)' : 'High'}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-status" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-status" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'حالة البلاغ' : 'Case Status'}
                   </label>
                   <select id="v-status" value={status} onChange={e => setStatus(e.target.value)}
-                    className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:border-rose-500/50 transition-all text-xs font-bold cursor-pointer">
-                    <option value="OPEN" className="bg-[#0a1628]">{isAr ? 'جديد / مفتوح' : 'New / Open'}</option>
-                    <option value="INVESTIGATING" className="bg-[#0a1628]">{isAr ? 'قيد التحقيق' : 'Investigating'}</option>
-                    <option value="RESOLVED" className="bg-[#0a1628]">{isAr ? 'تم الحل' : 'Resolved'}</option>
+                    className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:border-rose-500/50 transition-all text-xs font-bold cursor-pointer">
+                    <option value="OPEN" className="bg-th-surface text-th-text">{isAr ? 'جديد / مفتوح' : 'New / Open'}</option>
+                    <option value="INVESTIGATING" className="bg-th-surface text-th-text">{isAr ? 'قيد التحقيق' : 'Investigating'}</option>
+                    <option value="RESOLVED" className="bg-th-surface text-th-text">{isAr ? 'تم الحل' : 'Resolved'}</option>
                   </select>
                 </div>
               </div>
@@ -691,21 +691,21 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label htmlFor="v-violator" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-violator" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'اسم المخالف' : 'Violator Name'}
                   </label>
                   <Input id="v-violator" value={violatorName} onChange={e => setViolatorName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-vessel" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-vessel" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'اسم القارب / الوسيلة' : 'Vessel / Vehicle Name'}
                   </label>
                   <Input id="v-vessel" value={vesselName} onChange={e => setVesselName(e.target.value)}
                     placeholder="e.g. Al-Jareh"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
               </div>
             </div>
@@ -718,37 +718,37 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label htmlFor="v-loc-en" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-loc-en" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'الموقع بالإنجليزية *' : 'Location (EN) *'}
                   </label>
                   <Input id="v-loc-en" value={location} onChange={e => setLocation(e.target.value)} required
                     placeholder="e.g. Sector 4 - Protected Reef"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-loc-ar" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-loc-ar" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'الموقع بالعربية *' : 'Location (AR) *'}
                   </label>
                   <Input id="v-loc-ar" value={locationAr} onChange={e => setLocationAr(e.target.value)} required
                     placeholder="القطاع 4 - الشعاب المحمية"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-lat" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-lat" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'خط العرض *' : 'Latitude *'}
                   </label>
                   <Input id="v-lat" type="number" step="0.0001" value={locationLat} onChange={e => setLocationLat(e.target.value)} required
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3 font-mono" />
+                    className="h-11 rounded-xl focus:border-rose-500/50 font-mono" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-lng" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-lng" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'خط الطول *' : 'Longitude *'}
                   </label>
                   <Input id="v-lng" type="number" step="0.0001" value={locationLng} onChange={e => setLocationLng(e.target.value)} required
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3 font-mono" />
+                    className="h-11 rounded-xl focus:border-rose-500/50 font-mono" />
                 </div>
               </div>
             </div>
@@ -761,37 +761,37 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label htmlFor="v-fine" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-fine" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'قيمة الغرامة المالية (ج.م)' : 'Fine Amount (EGP)'}
                   </label>
                   <Input id="v-fine" type="number" min="0" value={fineAmount} onChange={e => setFineAmount(e.target.value)}
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="v-action" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-action" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'الإجراء المتخذ' : 'Action Taken'}
                   </label>
                   <Input id="v-action" value={actionTaken} onChange={e => setActionTaken(e.target.value)}
                     placeholder={isAr ? 'مثال: إنذار رسمي وغرامة' : 'e.g. Issued citation and warning'}
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:border-rose-500/50 py-3" />
+                    className="h-11 rounded-xl focus:border-rose-500/50" />
                 </div>
 
                 <div className="space-y-1.5 md:col-span-2">
-                  <label htmlFor="v-desc" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="v-desc" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isAr ? 'تفاصيل ووصف الانتهاك' : 'Description of Violation'}
                   </label>
                   <textarea id="v-desc" value={description} onChange={e => setDescription(e.target.value)} rows={4}
                     placeholder={isAr ? 'اكتب وصفاً تفصيلياً للمخالفة المشهودة...' : 'Write a detailed description of the observed violation...'}
-                    className="w-full bg-[#050b14]/40 border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-rose-500/50 transition-all text-xs font-medium placeholder:text-slate-600 resize-none" />
+                    className="w-full bg-th-input border border-th-border text-th-text rounded-xl p-3 focus:outline-none focus:border-rose-500/50 transition-all text-xs font-medium placeholder:text-th-dim resize-none" />
                 </div>
               </div>
             </div>
 
             {/* Submit Row */}
-            <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
+            <div className="flex justify-end gap-3 pt-6 border-t border-th-border">
               <button type="button" onClick={() => { resetForm(); setShowForm(false); }} disabled={submitting}
-                className="px-6 py-3 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">
+                className="px-6 py-3 rounded-xl text-xs font-bold text-th-muted hover:text-th-text transition-colors">
                 {isAr ? 'إلغاء' : 'Cancel'}
               </button>
               <Button type="submit" disabled={submitting}
@@ -831,7 +831,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
     <div className="max-w-[1600px] mx-auto space-y-6" dir={isAr ? 'rtl' : 'ltr'}>
 
       {/* ── Page Header ── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-4 border-b border-white/10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-4 border-b border-th-border">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <div className="w-8 h-1 bg-rose-500 rounded-full" />
@@ -839,10 +839,10 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               {isAr ? 'مركز الانتهاكات' : 'Infractions Center'}
             </span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase italic">
+          <h1 className="text-3xl md:text-4xl font-black text-th-text tracking-tighter uppercase italic">
             {isAr ? 'سجل المخالفات' : 'Violations Tracker'}
           </h1>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-xs text-th-muted font-medium">
             {isAr
               ? `${violations.length} بلاغ مسجل في النظام — آخر تحديث الآن`
               : `${violations.length} reports in system — live data`}
@@ -892,16 +892,16 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
       </div>
 
       {/* ── Toolbar: Search + Filters ── */}
-      <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3">
+      <div className="bg-th-surface border border-th-border rounded-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-0 group">
-          <Search className={`absolute ${isAr ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-rose-400 transition-colors`} size={16} />
+          <Search className={`absolute ${isAr ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-th-muted group-focus-within:text-rose-400 transition-colors`} size={16} />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={isAr ? 'بحث عن مخالفة، مخالف، موقع...' : 'Search violations, violator, location...'}
-            className={`w-full bg-white/5 border border-white/10 rounded-xl py-2.5 ${isAr ? 'pr-10 pl-4' : 'pl-10 pr-4'} text-xs font-medium text-white placeholder:text-slate-500 outline-none focus:border-rose-500/30 focus:ring-2 focus:ring-rose-500/10 transition-all`}
+            className={`w-full bg-th-input border border-th-border rounded-xl py-2.5 ${isAr ? 'pr-10 pl-4' : 'pl-10 pr-4'} text-xs font-medium text-th-text placeholder:text-th-dim outline-none focus:border-rose-500/30 focus:ring-2 focus:ring-rose-500/10 transition-all`}
           />
         </div>
 
@@ -917,9 +917,9 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                 className={`px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wide transition-all ${
                   active
                     ? s === 'ALL'
-                      ? 'bg-white/10 text-white border border-white/20'
+                      ? 'bg-th-input text-th-text border border-th-border'
                       : `${cfg?.bg} ${cfg?.text} border ${cfg?.border}`
-                    : 'text-slate-500 hover:text-white hover:bg-white/5 border border-transparent'
+                    : 'text-th-muted hover:text-th-text hover:bg-th-surface2 border border-transparent'
                 }`}
               >
                 {s === 'ALL' ? (isAr ? 'الكل' : 'All') : (isAr ? cfg?.labelAr : cfg?.label)}
@@ -929,7 +929,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-white/10 hidden md:block shrink-0" />
+        <div className="w-px h-8 bg-th-border hidden md:block shrink-0" />
 
         {/* Status tabs */}
         <div className="flex items-center gap-1 shrink-0">
@@ -939,8 +939,8 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               onClick={() => setFilterStatus(tab.key)}
               className={`px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wide transition-all ${
                 filterStatus === tab.key
-                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                  : 'text-slate-500 hover:text-white hover:bg-white/5 border border-transparent'
+                  ? 'bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/20'
+                  : 'text-th-muted hover:text-th-text hover:bg-th-surface2 border border-transparent'
               }`}
             >
               {isAr ? tab.labelAr : tab.label}
@@ -949,7 +949,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
         </div>
 
         {/* Count */}
-        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest shrink-0 hidden md:block">
+        <span className="text-[11px] font-bold text-th-muted uppercase tracking-widest shrink-0 hidden md:block">
           {filtered.length} {isAr ? 'نتيجة' : 'results'}
         </span>
       </div>
@@ -958,16 +958,16 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
       <div className={`grid gap-5 transition-all duration-300 ${selectedViolation ? 'grid-cols-1 lg:grid-cols-[1fr_380px]' : 'grid-cols-1'}`}>
 
         {/* LEFT: Violations Table */}
-        <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden">
+        <div className="bg-th-surface border border-th-border rounded-2xl overflow-hidden">
           {/* Table Header */}
-          <div className="px-5 py-3.5 border-b border-white/5 flex items-center justify-between">
+          <div className="px-5 py-3.5 border-b border-th-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ShieldAlert size={16} className="text-rose-400" />
-              <span className="text-[11px] font-black text-white uppercase tracking-widest">
+              <span className="text-[11px] font-black text-th-text uppercase tracking-widest">
                 {isAr ? 'سجل المخالفات' : 'Violations Log'}
               </span>
             </div>
-            <span className="text-[10px] font-bold text-slate-500">
+            <span className="text-[10px] font-bold text-th-muted">
               {filtered.length} / {violations.length}
             </span>
           </div>
@@ -978,10 +978,10 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
               <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
                 <ShieldAlert size={28} className="text-rose-400/50" />
               </div>
-              <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
+              <p className="text-th-muted text-sm font-bold uppercase tracking-widest">
                 {isAr ? 'لا توجد مخالفات' : 'No Violations Found'}
               </p>
-              <p className="text-slate-600 text-xs font-medium">
+              <p className="text-th-dim text-xs font-medium">
                 {isAr ? 'جرب تغيير معايير البحث أو الفلتر' : 'Try adjusting search or filter criteria'}
               </p>
             </div>
@@ -989,23 +989,23 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/5">
-                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-slate-500 uppercase tracking-widest w-[120px]`}>
+                  <tr className="border-b border-th-border">
+                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-th-muted uppercase tracking-widest w-[120px]`}>
                       {isAr ? 'رمز البلاغ' : 'Code'}
                     </th>
-                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-slate-500 uppercase tracking-widest`}>
+                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-th-muted uppercase tracking-widest`}>
                       {isAr ? 'نوع المخالفة' : 'Type'}
                     </th>
-                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-slate-500 uppercase tracking-widest hidden md:table-cell`}>
+                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-th-muted uppercase tracking-widest hidden md:table-cell`}>
                       {isAr ? 'الموقع' : 'Location'}
                     </th>
-                    <th className="px-4 py-3 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                    <th className="px-4 py-3 text-center text-[10px] font-black text-th-muted uppercase tracking-widest">
                       {isAr ? 'الخطورة' : 'Severity'}
                     </th>
-                    <th className="px-4 py-3 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest hidden sm:table-cell">
+                    <th className="px-4 py-3 text-center text-[10px] font-black text-th-muted uppercase tracking-widest hidden sm:table-cell">
                       {isAr ? 'الحالة' : 'Status'}
                     </th>
-                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-slate-500 uppercase tracking-widest hidden lg:table-cell`}>
+                    <th className={`px-4 py-3 ${isAr ? 'text-right' : 'text-left'} text-[10px] font-black text-th-muted uppercase tracking-widest hidden lg:table-cell`}>
                       {isAr ? 'الغرامة' : 'Fine'}
                     </th>
                     <th className="px-4 py-3 w-10" />
@@ -1024,15 +1024,15 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.03 }}
                           onClick={() => setSelectedViolation(isSelected ? null : v)}
-                          className={`border-b border-white/5 cursor-pointer transition-all duration-200 border-l-[3px] ${sev.rowBorder} ${
+                          className={`border-b border-th-border cursor-pointer transition-all duration-200 border-l-[3px] ${sev.rowBorder} ${
                             isSelected
-                              ? 'bg-rose-500/8 border-white/10'
-                              : 'hover:bg-white/[0.03]'
+                              ? 'bg-rose-500/8 border-th-border/50'
+                              : 'hover:bg-th-surface2'
                           }`}
                         >
                           {/* Code */}
                           <td className="px-4 py-3.5">
-                            <span className="text-[10px] font-black text-slate-400 font-mono tracking-wider">
+                            <span className="text-[10px] font-black text-th-muted font-mono tracking-wider">
                               #{v.code || v.id?.slice(0, 8)}
                             </span>
                           </td>
@@ -1040,11 +1040,11 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                           {/* Type */}
                           <td className="px-4 py-3.5">
                             <div>
-                              <p className="text-xs font-bold text-white leading-tight line-clamp-1">
+                              <p className="text-xs font-bold text-th-text leading-tight line-clamp-1">
                                 {isAr ? v.typeAr : v.types}
                               </p>
                               {(v.violatorName || v.vesselName) && (
-                                <p className="text-[10px] text-slate-500 font-medium mt-0.5 line-clamp-1">
+                                <p className="text-[10px] text-th-dim font-medium mt-0.5 line-clamp-1">
                                   {v.violatorName && `👤 ${v.violatorName}`}
                                   {v.violatorName && v.vesselName && ' · '}
                                   {v.vesselName && `🚢 ${v.vesselName}`}
@@ -1057,7 +1057,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                           <td className="px-4 py-3.5 hidden md:table-cell">
                             <div className="flex items-center gap-1.5">
                               <MapPin size={11} className="text-teal-400 shrink-0" />
-                              <span className="text-[11px] font-medium text-slate-400 line-clamp-1">
+                              <span className="text-[11px] font-medium text-th-muted line-clamp-1">
                                 {isAr ? v.locationAr : v.location}
                               </span>
                             </div>
@@ -1088,7 +1088,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                                 {v.fineAmount.toLocaleString()} {isAr ? 'ج.م' : 'EGP'}
                               </span>
                             ) : (
-                              <span className="text-[10px] text-slate-600">—</span>
+                              <span className="text-[10px] text-th-dim">—</span>
                             )}
                           </td>
 
@@ -1096,7 +1096,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
                           <td className="px-3 py-3.5">
                             <ChevronRight
                               size={14}
-                              className={`transition-all duration-200 ${isSelected ? 'text-rose-400 rotate-90' : 'text-slate-600 group-hover:text-slate-400'}`}
+                              className={`transition-all duration-200 ${isSelected ? 'text-rose-400 rotate-90' : 'text-th-dim group-hover:text-th-muted'}`}
                             />
                           </td>
                         </motion.tr>

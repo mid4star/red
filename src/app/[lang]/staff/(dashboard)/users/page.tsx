@@ -80,6 +80,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const [certificationsText, setCertificationsText] = useState('');
   const [allowedSections, setAllowedSections] = useState<string[]>(['patrols', 'monitoring']);
   const [password, setPassword] = useState('');
+  const [isEmailManuallyEdited, setIsEmailManuallyEdited] = useState(false);
 
   // Fetch users from API
   const fetchUsers = async () => {
@@ -105,10 +106,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
   // Auto-generate custom domain email when Employee ID changes (for new users)
   useEffect(() => {
-    if (!editingUser && employeeId) {
+    if (!editingUser && employeeId && !isEmailManuallyEdited) {
       setCustomDomainEmail(employeeId.toLowerCase().replace(/\s+/g, '') + '@rsmp-eg.com');
     }
-  }, [employeeId, editingUser]);
+  }, [employeeId, editingUser, isEmailManuallyEdited]);
 
   // Form Resets
   const resetFormFields = () => {
@@ -125,6 +126,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setCertificationsText('');
     setAllowedSections(['patrols', 'monitoring']);
     setPassword('');
+    setIsEmailManuallyEdited(false);
     setEditingUser(null);
   };
 
@@ -144,6 +146,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setCertificationsText(user.certifications ? user.certifications.join(', ') : '');
     setAllowedSections(user.allowedSections || []);
     setPassword('');
+    setIsEmailManuallyEdited(true);
     setShowAddForm(true);
     
     // Scroll to top mobile
@@ -212,11 +215,11 @@ export default function UserManagementPage({ params }: { params: { lang: string 
       }
 
       const userData: any = {
-        employeeId,
+        employeeId: employeeId.trim(),
         name,
         nameAr,
-        email,
-        customDomainEmail,
+        email: email.trim(),
+        customDomainEmail: customDomainEmail.toLowerCase().trim(),
         profilePictureUrl,
         badges: badgesArray,
         role: userRole,
@@ -452,7 +455,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                       </div>
                       <div className="space-y-1">
                         <label className="text-[10px] font-black text-teal-600 dark:text-teal-400 uppercase tracking-widest flex items-center gap-1.5"><ShieldAlert size={12}/> {isArabic ? 'بريد المنصة الرسمي' : 'Official Domain Email'}</label>
-                        <Input value={customDomainEmail} onChange={e => setCustomDomainEmail(e.target.value)} placeholder="user@rsmp-eg.com" className="bg-teal-50 dark:bg-teal-900/10 border-teal-200 dark:border-teal-500/20 text-teal-900 dark:text-teal-100 rounded-xl font-mono text-xs" />
+                        <Input value={customDomainEmail} onChange={e => { setCustomDomainEmail(e.target.value); setIsEmailManuallyEdited(true); }} placeholder="user@rsmp-eg.com" className="bg-teal-50 dark:bg-teal-900/10 border-teal-200 dark:border-teal-500/20 text-teal-900 dark:text-teal-100 rounded-xl font-mono text-xs" />
                       </div>
                     </div>
 

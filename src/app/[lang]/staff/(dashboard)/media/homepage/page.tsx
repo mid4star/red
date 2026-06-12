@@ -310,21 +310,21 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
               {isAr ? 'تخصيص الواجهة' : 'Interface Customization'}
             </span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+          <h1 className="text-4xl font-black text-th-text tracking-tighter uppercase italic">
             {isAr ? 'تخصيص الصفحة الرئيسية' : 'Homepage Customization'}
           </h1>
         </div>
         <Button intent="primary" onClick={handleSave}
           className={`rounded-2xl py-3.5 px-8 flex items-center gap-2.5 uppercase italic font-black transition-all ${
             saved ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:bg-blue-400'
-          } text-white`}>
+          } text-th-text`}>
           <Save size={18} />
           {saving ? (isAr ? 'جاري الحفظ...' : 'Saving...') : saved ? (isAr ? 'تم الحفظ ✓' : 'Saved ✓') : (isAr ? 'حفظ التغييرات' : 'Save Changes')}
         </Button>
       </div>
 
       {/* ── Tabs Navigation ───────────────────────────────── */}
-      <div className="flex overflow-x-auto gap-2 pb-2 border-b border-white/5 no-scrollbar scroll-smooth">
+      <div className="flex overflow-x-auto gap-2 pb-2 border-b border-th-border no-scrollbar scroll-smooth">
         {TABS.map(tab => {
           const TabIcon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -335,7 +335,7 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
               className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap border shrink-0 ${
                 isActive
                   ? 'bg-teal-500/10 text-teal-400 border-teal-500/20 shadow-[0_0_15px_rgba(20,184,166,0.1)]'
-                  : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
+                  : 'text-th-muted border-transparent hover:text-th-text hover:bg-th-surface'
               }`}
             >
               <TabIcon size={16} />
@@ -350,10 +350,10 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
         <AnimatePresence mode="wait">
           {activeTab === 'hero' && (
             <motion.div key="hero" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <Card className="p-6 bg-slate-900/40 backdrop-blur-xl border-white/5 space-y-6">
-                <div className="pb-4 border-b border-white/5">
-                  <h2 className="text-lg font-bold text-white">{isAr ? 'قسم البطل (Hero Section)' : 'Hero Section'}</h2>
-                  <p className="text-xs text-slate-500">{isAr ? 'التحكم بنصوص وخلفية وأزرار بداية الصفحة' : 'Customize top page texts, buttons, and visual background'}</p>
+              <Card className="p-6 bg-th-surface2 backdrop-blur-xl border-th-border space-y-6">
+                <div className="pb-4 border-b border-th-border">
+                  <h2 className="text-lg font-bold text-th-text">{isAr ? 'قسم البطل (Hero Section)' : 'Hero Section'}</h2>
+                  <p className="text-xs text-th-muted">{isAr ? 'التحكم بنصوص وخلفية وأزرار بداية الصفحة' : 'Customize top page texts, buttons, and visual background'}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -361,22 +361,22 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4">
                     <p className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">English Content</p>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Authority Title</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Authority Title</label>
                       <input type="text" value={settings.heroAuthority}
                         onChange={(e) => setSettings(p => ({ ...p, heroAuthority: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Hero Title</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Hero Title</label>
                       <input type="text" value={settings.heroTitle}
                         onChange={(e) => setSettings(p => ({ ...p, heroTitle: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Hero Subtitle</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Hero Subtitle</label>
                       <textarea rows={3} value={settings.heroSubtitle}
                         onChange={(e) => setSettings(p => ({ ...p, heroSubtitle: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all resize-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all resize-none" />
                     </div>
                   </div>
 
@@ -384,82 +384,82 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4" dir="rtl">
                     <p className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">المحتوى العربي</p>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">الجهة الراعية</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">الجهة الراعية</label>
                       <input type="text" value={settings.heroAuthorityAr}
                         onChange={(e) => setSettings(p => ({ ...p, heroAuthorityAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">العنوان الرئيسي</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">العنوان الرئيسي</label>
                       <input type="text" value={settings.heroTitleAr}
                         onChange={(e) => setSettings(p => ({ ...p, heroTitleAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">العنوان الفرعي</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">العنوان الفرعي</label>
                       <textarea rows={3} value={settings.heroSubtitleAr}
                         onChange={(e) => setSettings(p => ({ ...p, heroSubtitleAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all resize-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all resize-none" />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-white/5 pt-6 space-y-6">
+                <div className="border-t border-th-border pt-6 space-y-6">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">{isAr ? 'رابط الصورة الخلفية' : 'Hero Background Image URL'}</label>
+                    <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">{isAr ? 'رابط الصورة الخلفية' : 'Hero Background Image URL'}</label>
                     <input type="text" value={settings.heroBgUrl}
                       onChange={(e) => setSettings(p => ({ ...p, heroBgUrl: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                      className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Button 1 */}
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-4">
+                    <div className="p-4 rounded-xl bg-th-surface border border-th-border space-y-4">
                       <h3 className="text-xs font-bold text-teal-400">{isAr ? 'الزر الرئيسي (الأول)' : 'Primary Action Button (1)'}</h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Text (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Text (EN)</label>
                           <input type="text" value={settings.heroBtn1Text}
                             onChange={(e) => setSettings(p => ({ ...p, heroBtn1Text: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">النص (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">النص (عربي)</label>
                           <input type="text" value={settings.heroBtn1TextAr}
                             onChange={(e) => setSettings(p => ({ ...p, heroBtn1TextAr: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Link Path / URL</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Link Path / URL</label>
                         <input type="text" value={settings.heroBtn1Link}
                           onChange={(e) => setSettings(p => ({ ...p, heroBtn1Link: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                       </div>
                     </div>
 
                     {/* Button 2 */}
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-4">
+                    <div className="p-4 rounded-xl bg-th-surface border border-th-border space-y-4">
                       <h3 className="text-xs font-bold text-teal-400">{isAr ? 'الزر الثانوي (الثاني)' : 'Secondary Action Button (2)'}</h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Text (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Text (EN)</label>
                           <input type="text" value={settings.heroBtn2Text}
                             onChange={(e) => setSettings(p => ({ ...p, heroBtn2Text: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">النص (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">النص (عربي)</label>
                           <input type="text" value={settings.heroBtn2TextAr}
                             onChange={(e) => setSettings(p => ({ ...p, heroBtn2TextAr: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Link Path / URL</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Link Path / URL</label>
                         <input type="text" value={settings.heroBtn2Link}
                           onChange={(e) => setSettings(p => ({ ...p, heroBtn2Link: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                       </div>
                     </div>
                   </div>
@@ -470,32 +470,32 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
           {activeTab === 'stats' && (
             <motion.div key="stats" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <Card className="p-6 bg-slate-900/40 backdrop-blur-xl border-white/5 space-y-6">
-                <div className="pb-4 border-b border-white/5">
-                  <h2 className="text-lg font-bold text-white">{isAr ? 'الإحصائيات (Statistics Grid)' : 'Impact Statistics'}</h2>
-                  <p className="text-xs text-slate-500">{isAr ? 'تحرير البطاقات الأربع للمؤشرات والإنجازات' : 'Configure the four counters displayed below the hero'}</p>
+              <Card className="p-6 bg-th-surface2 backdrop-blur-xl border-th-border space-y-6">
+                <div className="pb-4 border-b border-th-border">
+                  <h2 className="text-lg font-bold text-th-text">{isAr ? 'الإحصائيات (Statistics Grid)' : 'Impact Statistics'}</h2>
+                  <p className="text-xs text-th-muted">{isAr ? 'تحرير البطاقات الأربع للمؤشرات والإنجازات' : 'Configure the four counters displayed below the hero'}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {settings.stats?.map((stat, idx) => (
-                    <div key={idx} className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-4">
-                      <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div key={idx} className="p-5 rounded-2xl bg-th-surface border border-th-border space-y-4">
+                      <div className="flex items-center justify-between border-b border-th-border pb-2">
                         <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">
                           {isAr ? `البطاقة ${idx + 1}` : `Stat Counter ${idx + 1}`}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1.5 block">Stat Value</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1.5 block">Stat Value</label>
                           <input type="text" value={stat.value}
                             onChange={(e) => updateStat(idx, 'value', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1.5 block">Icon Class</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1.5 block">Icon Class</label>
                           <select value={stat.icon}
                             onChange={(e) => updateStat(idx, 'icon', e.target.value)}
-                            className="w-full bg-[#0d1627] border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none">
+                            className="w-full bg-th-input border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none">
                             {AVAILABLE_ICONS.map(ic => (
                               <option key={ic} value={ic}>{ic}</option>
                             ))}
@@ -504,16 +504,16 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1.5 block">Label (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1.5 block">Label (EN)</label>
                           <input type="text" value={stat.label}
                             onChange={(e) => updateStat(idx, 'label', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1.5 block">التسمية (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1.5 block">التسمية (عربي)</label>
                           <input type="text" value={stat.labelAr}
                             onChange={(e) => updateStat(idx, 'labelAr', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                     </div>
@@ -525,10 +525,10 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
           {activeTab === 'mission' && (
             <motion.div key="mission" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <Card className="p-6 bg-slate-900/40 backdrop-blur-xl border-white/5 space-y-6">
-                <div className="pb-4 border-b border-white/5">
-                  <h2 className="text-lg font-bold text-white">{isAr ? 'المهمة الاستراتيجية (Strategic Mission)' : 'Strategic Mission Section'}</h2>
-                  <p className="text-xs text-slate-500">{isAr ? 'تخصيص نصوص المهمة والقائمة والبطاقة العائمة والصورة' : 'Customize mission statements, checklist, floats, and side image'}</p>
+              <Card className="p-6 bg-th-surface2 backdrop-blur-xl border-th-border space-y-6">
+                <div className="pb-4 border-b border-th-border">
+                  <h2 className="text-lg font-bold text-th-text">{isAr ? 'المهمة الاستراتيجية (Strategic Mission)' : 'Strategic Mission Section'}</h2>
+                  <p className="text-xs text-th-muted">{isAr ? 'تخصيص نصوص المهمة والقائمة والبطاقة العائمة والصورة' : 'Customize mission statements, checklist, floats, and side image'}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -536,22 +536,22 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4">
                     <p className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">English Content</p>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Section Tag</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Section Tag</label>
                       <input type="text" value={settings.missionTag}
                         onChange={(e) => setSettings(p => ({ ...p, missionTag: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Section Title</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Section Title</label>
                       <input type="text" value={settings.missionTitle}
                         onChange={(e) => setSettings(p => ({ ...p, missionTitle: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Section Description</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Section Description</label>
                       <textarea rows={4} value={settings.missionDesc}
                         onChange={(e) => setSettings(p => ({ ...p, missionDesc: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none resize-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none resize-none" />
                     </div>
                   </div>
 
@@ -559,27 +559,27 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4" dir="rtl">
                     <p className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">المحتوى العربي</p>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">الوسم العلوي</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">الوسم العلوي</label>
                       <input type="text" value={settings.missionTagAr}
                         onChange={(e) => setSettings(p => ({ ...p, missionTagAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">العنوان الرئيسي</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">العنوان الرئيسي</label>
                       <input type="text" value={settings.missionTitleAr}
                         onChange={(e) => setSettings(p => ({ ...p, missionTitleAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">وصف القسم</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">وصف القسم</label>
                       <textarea rows={4} value={settings.missionDescAr}
                         onChange={(e) => setSettings(p => ({ ...p, missionDescAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none resize-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none resize-none" />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-white/5 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border-t border-th-border pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Checklist */}
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-teal-400">{isAr ? 'قائمة عناصر التحقق (Checklist)' : 'Checklist Items (4 Items)'}</h3>
@@ -587,10 +587,10 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                       <div key={idx} className="flex gap-2">
                         <input type="text" value={item.text} placeholder="Text (EN)"
                           onChange={(e) => updateMissionChecklist(idx, 'text', e.target.value)}
-                          className="flex-1 bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="flex-1 bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         <input type="text" dir="rtl" value={item.textAr} placeholder="النص (عربي)"
                           onChange={(e) => updateMissionChecklist(idx, 'textAr', e.target.value)}
-                          className="flex-1 bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                          className="flex-1 bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                       </div>
                     ))}
                   </div>
@@ -599,37 +599,37 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-teal-400">{isAr ? 'الصورة والبطاقة الجانبية' : 'Image & Float Card Settings'}</h3>
                     <div>
-                      <label className="text-[9px] font-bold text-slate-500 mb-1 block">Side Image URL</label>
+                      <label className="text-[9px] font-bold text-th-muted mb-1 block">Side Image URL</label>
                       <input type="text" value={settings.missionImgUrl}
                         onChange={(e) => setSettings(p => ({ ...p, missionImgUrl: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                     </div>
-                    <div className="grid grid-cols-2 gap-3 border-t border-white/5 pt-3">
+                    <div className="grid grid-cols-2 gap-3 border-t border-th-border pt-3">
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Card Tag (EN)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Card Tag (EN)</label>
                         <input type="text" value={settings.missionCardTag}
                           onChange={(e) => setSettings(p => ({ ...p, missionCardTag: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">وسم البطاقة (عربي)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">وسم البطاقة (عربي)</label>
                         <input type="text" value={settings.missionCardTagAr}
                           onChange={(e) => setSettings(p => ({ ...p, missionCardTagAr: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Card Title (EN)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Card Title (EN)</label>
                         <input type="text" value={settings.missionCardTitle}
                           onChange={(e) => setSettings(p => ({ ...p, missionCardTitle: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">عنوان البطاقة (عربي)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">عنوان البطاقة (عربي)</label>
                         <input type="text" value={settings.missionCardTitleAr}
                           onChange={(e) => setSettings(p => ({ ...p, missionCardTitleAr: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                       </div>
                     </div>
                   </div>
@@ -640,101 +640,101 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
           {activeTab === 'highlights' && (
             <motion.div key="highlights" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <Card className="p-6 bg-slate-900/40 backdrop-blur-xl border-white/5 space-y-6">
-                <div className="pb-4 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <Card className="p-6 bg-th-surface2 backdrop-blur-xl border-th-border space-y-6">
+                <div className="pb-4 border-b border-th-border flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-lg font-bold text-white">{isAr ? 'عجائب المحميات المميزة (Highlights)' : 'Highlight Destinations'}</h2>
-                    <p className="text-xs text-slate-500">{isAr ? 'تحرير البطاقات الأربع للمحميات المميزة المعروضة' : 'Configure the four card highlights shown on the homepage'}</p>
+                    <h2 className="text-lg font-bold text-th-text">{isAr ? 'عجائب المحميات المميزة (Highlights)' : 'Highlight Destinations'}</h2>
+                    <p className="text-xs text-th-muted">{isAr ? 'تحرير البطاقات الأربع للمحميات المميزة المعروضة' : 'Configure the four card highlights shown on the homepage'}</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-white/5 pb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-th-border pb-6">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Section Title</label>
+                    <label className="text-[10px] font-bold text-th-muted uppercase block mb-1.5">Section Title</label>
                     <input type="text" value={settings.highlightsTitle}
                       onChange={(e) => setSettings(p => ({ ...p, highlightsTitle: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                      className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">العنوان الرئيسي</label>
+                    <label className="text-[10px] font-bold text-th-muted uppercase block mb-1.5">العنوان الرئيسي</label>
                     <input type="text" dir="rtl" value={settings.highlightsTitleAr}
                       onChange={(e) => setSettings(p => ({ ...p, highlightsTitleAr: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none text-right" />
+                      className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none text-right" />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Section Tag</label>
+                    <label className="text-[10px] font-bold text-th-muted uppercase block mb-1.5">Section Tag</label>
                     <input type="text" value={settings.highlightsTag}
                       onChange={(e) => setSettings(p => ({ ...p, highlightsTag: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                      className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">الوسم الفرعي</label>
+                    <label className="text-[10px] font-bold text-th-muted uppercase block mb-1.5">الوسم الفرعي</label>
                     <input type="text" dir="rtl" value={settings.highlightsTagAr}
                       onChange={(e) => setSettings(p => ({ ...p, highlightsTagAr: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none text-right" />
+                      className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none text-right" />
                   </div>
                 </div>
 
                 {/* Grid for Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                   {settings.highlights?.map((hl, idx) => (
-                    <div key={idx} className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-4">
-                      <h3 className="text-xs font-bold text-teal-400 border-b border-white/5 pb-2">
+                    <div key={idx} className="p-5 rounded-2xl bg-th-surface border border-th-border space-y-4">
+                      <h3 className="text-xs font-bold text-teal-400 border-b border-th-border pb-2">
                         {isAr ? `البطاقة المميزة ${idx + 1}` : `Spotlight Card ${idx + 1}`}
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Reserve ID (Link)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Reserve ID (Link)</label>
                           <input type="text" value={hl.id}
                             onChange={(e) => updateHighlight(idx, 'id', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Image URL</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Image URL</label>
                           <input type="text" value={hl.img}
                             onChange={(e) => updateHighlight(idx, 'img', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Tag (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Tag (EN)</label>
                           <input type="text" value={hl.tag}
                             onChange={(e) => updateHighlight(idx, 'tag', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">الوسم (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">الوسم (عربي)</label>
                           <input type="text" value={hl.tagAr}
                             onChange={(e) => updateHighlight(idx, 'tagAr', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Title (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Title (EN)</label>
                           <input type="text" value={hl.title}
                             onChange={(e) => updateHighlight(idx, 'title', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">العنوان (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">العنوان (عربي)</label>
                           <input type="text" value={hl.titleAr}
                             onChange={(e) => updateHighlight(idx, 'titleAr', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Description (EN)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Description (EN)</label>
                         <textarea rows={2} value={hl.desc}
                           onChange={(e) => updateHighlight(idx, 'desc', e.target.value)}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none resize-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none resize-none" />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">الوصف (عربي)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">الوصف (عربي)</label>
                         <textarea rows={2} dir="rtl" value={hl.descAr}
                           onChange={(e) => updateHighlight(idx, 'descAr', e.target.value)}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none resize-none text-right" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none resize-none text-right" />
                       </div>
                     </div>
                   ))}
@@ -745,10 +745,10 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
           {activeTab === 'cta' && (
             <motion.div key="cta" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <Card className="p-6 bg-slate-900/40 backdrop-blur-xl border-white/5 space-y-6">
-                <div className="pb-4 border-b border-white/5">
-                  <h2 className="text-lg font-bold text-white">{isAr ? 'دعوة العمل (Call to Action - CTA)' : 'Call to Action Section'}</h2>
-                  <p className="text-xs text-slate-500">{isAr ? 'تحرير العنوان والخلفية والأزرار للقسم الختامي' : 'Configure backgrounds and action paths for the bottom section'}</p>
+              <Card className="p-6 bg-th-surface2 backdrop-blur-xl border-th-border space-y-6">
+                <div className="pb-4 border-b border-th-border">
+                  <h2 className="text-lg font-bold text-th-text">{isAr ? 'دعوة العمل (Call to Action - CTA)' : 'Call to Action Section'}</h2>
+                  <p className="text-xs text-th-muted">{isAr ? 'تحرير العنوان والخلفية والأزرار للقسم الختامي' : 'Configure backgrounds and action paths for the bottom section'}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -756,16 +756,16 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4">
                     <p className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">English Content</p>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">CTA Title</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">CTA Title</label>
                       <input type="text" value={settings.ctaTitle}
                         onChange={(e) => setSettings(p => ({ ...p, ctaTitle: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">CTA Subtitle</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">CTA Subtitle</label>
                       <textarea rows={3} value={settings.ctaSubtitle}
                         onChange={(e) => setSettings(p => ({ ...p, ctaSubtitle: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none resize-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none resize-none" />
                     </div>
                   </div>
 
@@ -773,76 +773,76 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                   <div className="space-y-4" dir="rtl">
                     <p className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">المحتوى العربي</p>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">العنوان الرئيسي</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">العنوان الرئيسي</label>
                       <input type="text" value={settings.ctaTitleAr}
                         onChange={(e) => setSettings(p => ({ ...p, ctaTitleAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">الوصف الفرعي</label>
+                      <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">الوصف الفرعي</label>
                       <textarea rows={3} value={settings.ctaSubtitleAr}
                         onChange={(e) => setSettings(p => ({ ...p, ctaSubtitleAr: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none resize-none" />
+                        className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none resize-none" />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-white/5 pt-6 space-y-6">
+                <div className="border-t border-th-border pt-6 space-y-6">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Background Image URL</label>
+                    <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1.5 block">Background Image URL</label>
                     <input type="text" value={settings.ctaBgUrl}
                       onChange={(e) => setSettings(p => ({ ...p, ctaBgUrl: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none" />
+                      className="w-full bg-th-surface border border-th-border rounded-xl py-3 px-4 text-sm text-th-text outline-none" />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* CTA Button 1 */}
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-4">
+                    <div className="p-4 rounded-xl bg-th-surface border border-th-border space-y-4">
                       <h3 className="text-xs font-bold text-teal-400">{isAr ? 'الزر الأول لـ CTA' : 'Action Button 1'}</h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Text (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Text (EN)</label>
                           <input type="text" value={settings.ctaBtn1Text}
                             onChange={(e) => setSettings(p => ({ ...p, ctaBtn1Text: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">النص (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">النص (عربي)</label>
                           <input type="text" value={settings.ctaBtn1TextAr}
                             onChange={(e) => setSettings(p => ({ ...p, ctaBtn1TextAr: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Link Path / URL</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Link Path / URL</label>
                         <input type="text" value={settings.ctaBtn1Link}
                           onChange={(e) => setSettings(p => ({ ...p, ctaBtn1Link: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                       </div>
                     </div>
 
                     {/* CTA Button 2 */}
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-4">
+                    <div className="p-4 rounded-xl bg-th-surface border border-th-border space-y-4">
                       <h3 className="text-xs font-bold text-teal-400">{isAr ? 'الزر الثاني لـ CTA' : 'Action Button 2'}</h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Text (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Text (EN)</label>
                           <input type="text" value={settings.ctaBtn2Text}
                             onChange={(e) => setSettings(p => ({ ...p, ctaBtn2Text: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">النص (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">النص (عربي)</label>
                           <input type="text" value={settings.ctaBtn2TextAr}
                             onChange={(e) => setSettings(p => ({ ...p, ctaBtn2TextAr: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none text-right" />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Link Path / URL</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Link Path / URL</label>
                         <input type="text" value={settings.ctaBtn2Link}
                           onChange={(e) => setSettings(p => ({ ...p, ctaBtn2Link: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none" />
+                          className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none" />
                       </div>
                     </div>
                   </div>
@@ -853,11 +853,11 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
           {activeTab === 'announcements' && (
             <motion.div key="announcements" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <Card className="p-6 bg-slate-900/40 backdrop-blur-xl border-white/5 space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-white/5">
+              <Card className="p-6 bg-th-surface2 backdrop-blur-xl border-th-border space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-th-border">
                   <div>
-                    <h2 className="text-lg font-bold text-white">{isAr ? 'الإعلانات والشريط العلوي' : 'Announcements Banner'}</h2>
-                    <p className="text-xs text-slate-500">{isAr ? 'إعلانات تظهر في شريط أعلى الصفحة الرئيسية للموقع' : 'Top banners displayed to all site visitors'}</p>
+                    <h2 className="text-lg font-bold text-th-text">{isAr ? 'الإعلانات والشريط العلوي' : 'Announcements Banner'}</h2>
+                    <p className="text-xs text-th-muted">{isAr ? 'إعلانات تظهر في شريط أعلى الصفحة الرئيسية للموقع' : 'Top banners displayed to all site visitors'}</p>
                   </div>
                   <button onClick={addAnnouncement}
                     className="px-4 py-2 rounded-xl bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-all text-xs font-bold flex items-center gap-2">
@@ -866,7 +866,7 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                 </div>
 
                 {settings.announcements.length === 0 && (
-                  <p className="text-center text-slate-500 text-sm italic py-8">
+                  <p className="text-center text-th-muted text-sm italic py-8">
                     {isAr ? 'لا توجد إعلانات نشطة حالياً.' : 'No announcements created yet.'}
                   </p>
                 )}
@@ -874,9 +874,9 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                 <div className="space-y-4">
                   {settings.announcements.map((ann, i) => (
                     <motion.div key={ann.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                      className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-3">
+                      className="p-5 rounded-2xl bg-th-surface border border-th-border space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        <span className="text-[10px] font-bold text-th-muted uppercase tracking-widest">
                           {isAr ? `إعلان ${i + 1}` : `Announcement ${i + 1}`}
                         </span>
                         <div className="flex items-center gap-2">
@@ -885,7 +885,7 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                             {ann.active ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
                           </button>
                           <button onClick={() => removeAnnouncement(ann.id)}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
+                            className="p-1.5 rounded-lg text-th-muted hover:text-rose-400 hover:bg-rose-500/10 transition-all">
                             <Trash2 size={14} />
                           </button>
                         </div>
@@ -893,25 +893,25 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block">Text (EN)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block">Text (EN)</label>
                           <input type="text" value={ann.text} placeholder="Announcement text"
                             onChange={(e) => updateAnnouncement(ann.id, 'text', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3.5 text-xs text-white" />
+                            className="w-full bg-th-surface border border-th-border rounded-xl py-2.5 px-3.5 text-xs text-th-text" />
                         </div>
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 mb-1 block text-right">النص (عربي)</label>
+                          <label className="text-[9px] font-bold text-th-muted mb-1 block text-right">النص (عربي)</label>
                           <input type="text" dir="rtl" value={ann.textAr} placeholder="نص الإعلان بالعربية"
                             onChange={(e) => updateAnnouncement(ann.id, 'textAr', e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3.5 text-xs text-white text-right" />
+                            className="w-full bg-th-surface border border-th-border rounded-xl py-2.5 px-3.5 text-xs text-th-text text-right" />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-slate-500 mb-1 block">Redirect Link (Optional)</label>
+                        <label className="text-[9px] font-bold text-th-muted mb-1 block">Redirect Link (Optional)</label>
                         <div className="flex items-center gap-2">
-                          <LinkIcon size={14} className="text-slate-500 shrink-0" />
+                          <LinkIcon size={14} className="text-th-muted shrink-0" />
                           <input type="text" value={ann.link || ''} placeholder="e.g. /reserves or https://..."
                             onChange={(e) => updateAnnouncement(ann.id, 'link', e.target.value)}
-                            className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2.5 px-3.5 text-xs text-white" />
+                            className="flex-1 bg-th-surface border border-th-border rounded-xl py-2.5 px-3.5 text-xs text-th-text" />
                         </div>
                       </div>
                     </motion.div>
@@ -924,11 +924,11 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
         {/* ── Dynamic Live Preview Card ─────────────────────────────── */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="p-0 overflow-hidden bg-slate-900/40 backdrop-blur-xl border-white/5">
-            <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
+          <Card className="p-0 overflow-hidden bg-th-surface2 backdrop-blur-xl border-th-border">
+            <div className="px-5 py-3 border-b border-th-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Eye size={14} className="text-slate-500" />
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <Eye size={14} className="text-th-muted" />
+                <span className="text-[10px] font-bold text-th-muted uppercase tracking-widest">
                   {isAr 
                     ? `معاينة مباشرة: ${TABS.find(t => t.id === activeTab)?.name}` 
                     : `Live Preview: ${TABS.find(t => t.id === activeTab)?.nameEn}`}
@@ -951,7 +951,7 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
               </div>
             )}
 
-            <div className="p-6 bg-[#0a1628]/95 min-h-[240px] flex items-center justify-center relative overflow-hidden">
+            <div className="p-6 bg-th-surface2/95 min-h-[240px] flex items-center justify-center relative overflow-hidden">
               {activeTab === 'hero' && (
                 <div className="w-full text-center relative z-10 py-6">
                   <div className="absolute inset-0 z-0">
@@ -962,17 +962,17 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] text-teal-400 italic">
                       {isAr ? settings.heroAuthorityAr : settings.heroAuthority}
                     </p>
-                    <h2 className="text-3xl font-black text-white tracking-tight leading-none uppercase italic">
+                    <h2 className="text-3xl font-black text-th-text tracking-tight leading-none uppercase italic">
                       {isAr ? settings.heroTitleAr : settings.heroTitle}
                     </h2>
-                    <p className="text-xs text-slate-400 max-w-xl mx-auto italic">
+                    <p className="text-xs text-th-muted max-w-xl mx-auto italic">
                       {isAr ? settings.heroSubtitleAr : settings.heroSubtitle}
                     </p>
                     <div className="pt-4 flex items-center justify-center gap-3">
                       <button className="px-5 py-2.5 rounded-xl bg-teal-500 text-[#001529] text-[10px] font-black uppercase italic">
                         {isAr ? settings.heroBtn1TextAr : settings.heroBtn1Text}
                       </button>
-                      <button className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase italic">
+                      <button className="px-5 py-2.5 rounded-xl bg-th-surface border border-th-border text-th-text text-[10px] font-black uppercase italic">
                         {isAr ? settings.heroBtn2TextAr : settings.heroBtn2Text}
                       </button>
                     </div>
@@ -983,12 +983,12 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
               {activeTab === 'stats' && (
                 <div className="w-full max-w-4xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 py-4">
                   {settings.stats?.map((stat, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-white/5 text-center">
+                    <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-th-border text-center">
                       <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 mx-auto mb-3">
                         <Globe size={16} />
                       </div>
-                      <div className="text-xl font-black text-white mb-1">{stat.value}</div>
-                      <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">{isAr ? stat.labelAr : stat.label}</div>
+                      <div className="text-xl font-black text-th-text mb-1">{stat.value}</div>
+                      <div className="text-[9px] font-bold text-th-muted uppercase tracking-wider">{isAr ? stat.labelAr : stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -998,20 +998,20 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                 <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-6 py-4 items-center">
                   <div className="flex-1 space-y-3">
                     <span className="text-[9px] font-black text-teal-500 uppercase tracking-widest italic">{isAr ? settings.missionTagAr : settings.missionTag}</span>
-                    <h3 className="text-xl font-black text-white italic">{isAr ? settings.missionTitleAr : settings.missionTitle}</h3>
-                    <p className="text-xs text-slate-400 line-clamp-3 italic">{isAr ? settings.missionDescAr : settings.missionDesc}</p>
+                    <h3 className="text-xl font-black text-th-text italic">{isAr ? settings.missionTitleAr : settings.missionTitle}</h3>
+                    <p className="text-xs text-th-muted line-clamp-3 italic">{isAr ? settings.missionDescAr : settings.missionDesc}</p>
                     <div className="grid grid-cols-2 gap-2 pt-2">
                       {settings.missionChecklist?.map((item, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5 text-white font-bold text-[10px] uppercase italic">
+                        <div key={idx} className="flex items-center gap-1.5 text-th-text font-bold text-[10px] uppercase italic">
                           <CheckCircle2 className="text-teal-400" size={12} />
                           {isAr ? item.textAr : item.text}
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div className="w-32 h-32 rounded-xl overflow-hidden border border-white/10 relative shrink-0">
+                  <div className="w-32 h-32 rounded-xl overflow-hidden border border-th-border relative shrink-0">
                     <img src={settings.missionImgUrl} alt="Mission" className="w-full h-full object-cover" />
-                    <div className="absolute bottom-1 left-1 right-1 p-1.5 rounded-lg bg-slate-900/80 border border-white/10 text-[8px] font-bold text-center">
+                    <div className="absolute bottom-1 left-1 right-1 p-1.5 rounded-lg bg-slate-900/80 border border-th-border text-[8px] font-bold text-center">
                       {isAr ? settings.missionCardTitleAr : settings.missionCardTitle}
                     </div>
                   </div>
@@ -1020,20 +1020,20 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
 
               {activeTab === 'highlights' && (
                 <div className="w-full max-w-4xl mx-auto space-y-4 py-4">
-                  <div className="flex items-end justify-between border-b border-white/5 pb-2">
+                  <div className="flex items-end justify-between border-b border-th-border pb-2">
                     <div>
                       <span className="text-[9px] font-black text-teal-400 uppercase tracking-wider">{isAr ? settings.highlightsTagAr : settings.highlightsTag}</span>
-                      <h3 className="text-lg font-black text-white italic leading-none">{isAr ? settings.highlightsTitleAr : settings.highlightsTitle}</h3>
+                      <h3 className="text-lg font-black text-th-text italic leading-none">{isAr ? settings.highlightsTitleAr : settings.highlightsTitle}</h3>
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-3">
                     {settings.highlights?.map((hl, idx) => (
-                      <div key={idx} className="relative h-40 rounded-xl overflow-hidden border border-white/5">
+                      <div key={idx} className="relative h-40 rounded-xl overflow-hidden border border-th-border">
                         <img src={hl.img} alt={hl.title} className="w-full h-full object-cover opacity-60" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent" />
                         <div className="absolute bottom-2 left-2 right-2">
                           <span className="text-[7px] font-bold text-teal-400 uppercase">{isAr ? hl.tagAr : hl.tag}</span>
-                          <h4 className="text-xs font-black text-white truncate leading-tight">{isAr ? hl.titleAr : hl.title}</h4>
+                          <h4 className="text-xs font-black text-th-text truncate leading-tight">{isAr ? hl.titleAr : hl.title}</h4>
                         </div>
                       </div>
                     ))}
@@ -1048,17 +1048,17 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
                     <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/95 to-[#0a1628]" />
                   </div>
                   <div className="relative z-10 space-y-4">
-                    <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">
+                    <h3 className="text-2xl font-black text-th-text uppercase italic tracking-tighter">
                       {isAr ? settings.ctaTitleAr : settings.ctaTitle}
                     </h3>
-                    <p className="text-xs text-slate-400 max-w-lg mx-auto italic">
+                    <p className="text-xs text-th-muted max-w-lg mx-auto italic">
                       {isAr ? settings.ctaSubtitleAr : settings.ctaSubtitle}
                     </p>
                     <div className="pt-2 flex items-center justify-center gap-3">
                       <button className="px-6 py-2 rounded-xl bg-teal-500 text-[#001529] text-[10px] font-black uppercase italic">
                         {isAr ? settings.ctaBtn1TextAr : settings.ctaBtn1Text}
                       </button>
-                      <button className="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase italic">
+                      <button className="px-6 py-2 rounded-xl bg-th-surface border border-th-border text-th-text text-[10px] font-black uppercase italic">
                         {isAr ? settings.ctaBtn2TextAr : settings.ctaBtn2Text}
                       </button>
                     </div>
@@ -1069,8 +1069,8 @@ export default function HomepageCMSPage({ params }: { params: { lang: string } }
               {activeTab === 'announcements' && (
                 <div className="w-full text-center py-8 space-y-2">
                   <Megaphone size={32} className="text-teal-400 mx-auto animate-bounce" />
-                  <h3 className="text-sm font-bold text-white">{isAr ? 'شريط الإعلانات العلوي' : 'Announcements Top Banner'}</h3>
-                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  <h3 className="text-sm font-bold text-th-text">{isAr ? 'شريط الإعلانات العلوي' : 'Announcements Top Banner'}</h3>
+                  <p className="text-xs text-th-muted max-w-md mx-auto">
                     {isAr 
                       ? 'يتم عرض الإعلان النشط في الشريط الملون بأعلى كافة صفحات الموقع لجذب انتباه الزوار.' 
                       : 'Active announcements will render at the top banner of all public pages.'}

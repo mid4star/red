@@ -178,11 +178,11 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
         /* ── INLINE EDITOR VIEW ── */
         <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
           {/* Header with Back Button */}
-          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+          <div className="flex items-center gap-4 pb-4 border-b border-th-border">
             <button 
               onClick={() => setShowEditor(false)}
               type="button"
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+              className="p-2.5 rounded-2xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 transition-all flex items-center justify-center shrink-0"
             >
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
@@ -190,7 +190,7 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
               <span className="text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase italic">
                 {isAr ? 'إدارة المحميات' : 'Reserves Manager'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
                 <TreePine className="text-emerald-500" size={20} />
                 {editingId ? (isAr ? 'تعديل المحمية' : 'Edit Reserve') : (isAr ? 'محمية جديدة' : 'New Reserve')}
               </h2>
@@ -199,49 +199,49 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
             {/* Lang Tabs */}
-            <div className="flex gap-2 bg-white/5 p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-slate-400 hover:text-white'}`}>English</button>
+            <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             {/* Name */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{langTab === 'ar' ? 'اسم المحمية (عربي)' : 'Reserve Name (English)'}</label>
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{langTab === 'ar' ? 'اسم المحمية (عربي)' : 'Reserve Name (English)'}</label>
               <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
                 value={langTab === 'ar' ? (form.nameAr || '') : (form.name || '')}
                 onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'nameAr' : 'name']: e.target.value }))}
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-teal-500/30 transition-all"
+                className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text placeholder:text-th-muted outline-none focus:border-teal-500/30 transition-all"
                 placeholder={langTab === 'ar' ? 'مثال: محمية رأس محمد' : 'e.g. Ras Mohammed Reserve'} />
             </div>
 
             {/* Location */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{langTab === 'ar' ? 'الموقع (عربي)' : 'Location (English)'}</label>
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{langTab === 'ar' ? 'الموقع (عربي)' : 'Location (English)'}</label>
               <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
                 value={langTab === 'ar' ? (form.locationAr || '') : (form.location || '')}
                 onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'locationAr' : 'location']: e.target.value }))}
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-teal-500/30 transition-all" />
+                className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text placeholder:text-th-muted outline-none focus:border-teal-500/30 transition-all" />
             </div>
 
             {/* Area + Year + Status */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'المساحة (كم²)' : 'Area (km²)'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'المساحة (كم²)' : 'Area (km²)'}</label>
                 <input type="number" value={form.area || 0} onChange={(e) => setForm(p => ({ ...p, area: Number(e.target.value) }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'سنة التأسيس' : 'Est. Year'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'سنة التأسيس' : 'Est. Year'}</label>
                 <input type="number" value={form.establishedYear || 2020} onChange={(e) => setForm(p => ({ ...p, establishedYear: Number(e.target.value) }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'الحالة' : 'Status'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'الحالة' : 'Status'}</label>
                 <select value={form.status || 'OPEN'} onChange={(e) => setForm(p => ({ ...p, status: e.target.value as any }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none appearance-none">
-                  <option value="OPEN" className="bg-slate-800">{isAr ? 'مفتوحة' : 'Open'}</option>
-                  <option value="CLOSED" className="bg-slate-800">{isAr ? 'مغلقة' : 'Closed'}</option>
-                  <option value="RESTRICTED" className="bg-slate-800">{isAr ? 'مقيدة' : 'Restricted'}</option>
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none appearance-none">
+                  <option value="OPEN" className="bg-th-surface2">{isAr ? 'مفتوحة' : 'Open'}</option>
+                  <option value="CLOSED" className="bg-th-surface2">{isAr ? 'مغلقة' : 'Closed'}</option>
+                  <option value="RESTRICTED" className="bg-th-surface2">{isAr ? 'مقيدة' : 'Restricted'}</option>
                 </select>
               </div>
             </div>
@@ -249,15 +249,15 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
             {/* Coordinates + Arabic Status Label */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'الإحداثيات الجغرافية' : 'Coordinates'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'الإحداثيات الجغرافية' : 'Coordinates'}</label>
                 <input type="text" value={form.coords || ''} onChange={(e) => setForm(p => ({ ...p, coords: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all"
                   placeholder="e.g. 27.2288° N, 33.8541° E" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'حالة الحماية (عربي)' : 'Arabic Status Title'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'حالة الحماية (عربي)' : 'Arabic Status Title'}</label>
                 <input type="text" value={form.statusAr || ''} onChange={(e) => setForm(p => ({ ...p, statusAr: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all"
                   placeholder="مثال: محمية ذات أولوية قصوى" />
               </div>
             </div>
@@ -265,37 +265,37 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
             {/* Species Count + Health Index */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'عدد الأنواع المحمية' : 'Species Count'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'عدد الأنواع المحمية' : 'Species Count'}</label>
                 <input type="number" value={form.speciesCount || 0} onChange={(e) => setForm(p => ({ ...p, speciesCount: Number(e.target.value) }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'مؤشر الصحة البيئية' : 'Health Index'}</label>
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'مؤشر الصحة البيئية' : 'Health Index'}</label>
                 <input type="number" step="0.1" value={form.healthIndex || 0} onChange={(e) => setForm(p => ({ ...p, healthIndex: Number(e.target.value) }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all" />
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all" />
               </div>
             </div>
 
             {/* Activities + Famous Species */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'الأنشطة المتاحة (عربي)' : 'Activities (English)'}
                 </label>
                 <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
                   value={langTab === 'ar' ? (form.activitiesAr || '') : (form.activities || '')}
                   onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'activitiesAr' : 'activities']: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all"
                   placeholder={langTab === 'ar' ? 'مثال: غوص، رصد الطيور' : 'e.g. Scuba diving, Bird watching'} />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'أشهر الكائنات (عربي)' : 'Famous Species (English)'}
                 </label>
                 <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
                   value={langTab === 'ar' ? (form.famousSpeciesAr || '') : (form.famousSpecies || '')}
                   onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'famousSpeciesAr' : 'famousSpecies']: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all"
                   placeholder={langTab === 'ar' ? 'مثال: الأطوم، السلاحف الخضراء' : 'e.g. Dugong, Green Turtles'} />
               </div>
             </div>
@@ -303,33 +303,33 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
             {/* Rules + Ticket Price */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'أهم القوانين (عربي)' : 'Rules (English)'}
                 </label>
                 <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
                   value={langTab === 'ar' ? (form.rulesAr || '') : (form.rules || '')}
                   onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'rulesAr' : 'rules']: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all"
                   placeholder={langTab === 'ar' ? 'مثال: يمنع الرسو على المرجان' : 'e.g. No anchoring on reefs'} />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                   {langTab === 'ar' ? 'أسعار التذاكر (عربي)' : 'Ticket Prices (English)'}
                 </label>
                 <input type="text" dir={langTab === 'ar' ? 'rtl' : 'ltr'}
                   value={langTab === 'ar' ? (form.ticketPriceAr || '') : (form.ticketPrice || '')}
                   onChange={(e) => setForm(p => ({ ...p, [langTab === 'ar' ? 'ticketPriceAr' : 'ticketPrice']: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 px-4 text-sm text-white outline-none focus:border-teal-500/30 transition-all"
+                  className="w-full bg-th-surface border border-th-border rounded-xl py-3.5 px-4 text-sm text-th-text outline-none focus:border-teal-500/30 transition-all"
                   placeholder={langTab === 'ar' ? 'مثال: 50 ج.م للمصريين' : 'e.g. 50 EGP for Egyptians'} />
               </div>
             </div>
 
             {/* Cover Image */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">{isAr ? 'صورة الغلاف' : 'Cover Image'}</label>
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">{isAr ? 'صورة الغلاف' : 'Cover Image'}</label>
               <div className="flex items-center gap-4">
-                {form.imageUrl && <img src={form.imageUrl} alt="" className="w-20 h-14 object-cover rounded-xl border border-white/10" />}
-                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all text-[12px] font-bold">
+                {form.imageUrl && <img src={form.imageUrl} alt="" className="w-20 h-14 object-cover rounded-xl border border-th-border" />}
+                <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 cursor-pointer transition-all text-[12px] font-bold">
                   <ImageIcon size={16} />
                   {uploading ? (isAr ? 'جاري الرفع...' : 'Uploading...') : (isAr ? 'رفع صورة' : 'Upload')}
                   <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
@@ -339,7 +339,7 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
 
             {/* Description */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-2 block">
                 {langTab === 'ar' ? 'الوصف (عربي)' : 'Description (English)'}
               </label>
               <RichTextEditor
@@ -351,13 +351,13 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
             </div>
 
             {/* Photo Gallery Manager */}
-            <div className="pt-4 border-t border-white/5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 block">
+            <div className="pt-4 border-t border-th-border">
+              <label className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-4 block">
                 {isAr ? 'معرض الصور للمحمية' : 'Reserve Photo Gallery'}
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 {getGallerySlides().map((slide, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3 relative group/slide">
+                  <div key={idx} className="p-4 rounded-2xl bg-th-surface border border-th-border space-y-3 relative group/slide">
                     <button
                       type="button"
                       onClick={() => handleRemoveGallerySlide(idx)}
@@ -365,27 +365,27 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
                     >
                       <X size={14} />
                     </button>
-                    <img src={slide.src} alt="" className="w-full h-32 object-cover rounded-xl border border-white/5" />
+                    <img src={slide.src} alt="" className="w-full h-32 object-cover rounded-xl border border-th-border" />
                     <div className="space-y-2">
                       <input
                         type="text"
                         value={slide.captionAr || ''}
                         onChange={(e) => handleGalleryCaptionChange(idx, 'captionAr', e.target.value)}
                         placeholder={isAr ? 'تسمية توضيحية بالعربية' : 'Arabic Caption'}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none focus:border-teal-500/30"
+                        className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none focus:border-teal-500/30"
                       />
                       <input
                         type="text"
                         value={slide.caption || ''}
                         onChange={(e) => handleGalleryCaptionChange(idx, 'caption', e.target.value)}
                         placeholder={isAr ? 'تسمية توضيحية بالإنجليزية' : 'English Caption'}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-xs text-white outline-none focus:border-teal-500/30"
+                        className="w-full bg-th-surface border border-th-border rounded-lg py-2 px-3 text-xs text-th-text outline-none focus:border-teal-500/30"
                       />
                     </div>
                   </div>
                 ))}
               </div>
-              <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all text-[12px] font-bold w-fit">
+              <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-th-surface border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface2 cursor-pointer transition-all text-[12px] font-bold w-fit">
                 <Plus size={16} />
                 {isAr ? 'إضافة صورة للمعرض' : 'Add Gallery Image'}
                 <input type="file" accept="image/*" onChange={handleGalleryImageUpload} className="hidden" />
@@ -393,14 +393,14 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between pt-6 border-t border-white/10">
+            <div className="flex items-center justify-between pt-6 border-t border-th-border">
               {editingId && (
                 <button onClick={() => handleDelete(editingId)} className="px-4 py-2.5 rounded-xl text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 transition-all text-[12px] font-bold flex items-center gap-2">
                   <Trash2 size={14} /> {isAr ? 'حذف' : 'Delete'}
                 </button>
               )}
               <div className={`flex gap-3 ${!editingId ? 'ml-auto' : ''}`}>
-                <Button intent="outline" onClick={() => setShowEditor(false)} className="border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">
+                <Button intent="outline" onClick={() => setShowEditor(false)} className="border-th-border bg-th-surface text-th-muted hover:bg-th-surface2">
                   {isAr ? 'إلغاء' : 'Cancel'}
                 </Button>
                 <Button intent="primary" onClick={handleSave} className="bg-teal-500 text-[#001529] hover:bg-teal-400 font-black flex items-center gap-2 shadow-[0_0_15px_rgba(45,212,191,0.2)]">
@@ -423,7 +423,7 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
                   {isAr ? 'بيانات المحميات' : 'Reserve Profiles'}
                 </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+              <h1 className="text-4xl font-black text-th-text tracking-tighter uppercase italic">
                 {isAr ? 'إدارة المحميات' : 'Reserves Manager'}
               </h1>
             </div>
@@ -436,7 +436,7 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
 
           {/* ── Reserves Grid ─────────────────────────────────────── */}
           {reserves.length === 0 && (
-            <div className="py-20 text-center text-slate-500 text-sm italic">
+            <div className="py-20 text-center text-th-muted text-sm italic">
               {isAr ? 'لا توجد محميات. أضف محمية للبدء.' : 'No reserves found. Add a reserve to get started.'}
             </div>
           )}
@@ -444,9 +444,9 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
             <AnimatePresence>
               {reserves.map((reserve, i) => (
                 <motion.div key={reserve.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ delay: i * 0.05 }}>
-                  <Card className="group overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-xl hover:border-emerald-500/20 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-500">
+                  <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-emerald-500/20 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-500">
                     {/* Cover Image */}
-                    <div className="relative h-48 bg-[#0a1628] overflow-hidden">
+                    <div className="relative h-48 bg-th-surface2 overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
                       {reserve.imageUrl ? (
                         <img src={reserve.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -461,8 +461,8 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
                         </span>
                       </div>
                       <div className={`absolute bottom-4 ${isAr ? 'right-4' : 'left-4'} z-20`}>
-                        <h3 className="text-white font-bold text-lg tracking-tight">{isAr ? reserve.nameAr : reserve.name}</h3>
-                        <p className="text-[11px] text-slate-300 flex items-center gap-1 mt-0.5">
+                        <h3 className="text-th-text font-bold text-lg tracking-tight">{isAr ? reserve.nameAr : reserve.name}</h3>
+                        <p className="text-[11px] text-th-muted flex items-center gap-1 mt-0.5">
                           <MapPin size={12} /> {isAr ? reserve.locationAr : reserve.location}
                         </p>
                       </div>
@@ -471,17 +471,17 @@ export default function ReservesCMSPage({ params }: { params: { lang: string } }
                     {/* Info */}
                     <div className="p-5 space-y-4">
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 rounded-xl bg-white/5 border border-white/5">
-                          <p className="text-[9px] font-bold text-slate-500 uppercase">{isAr ? 'المساحة' : 'Area'}</p>
-                          <p className="text-sm font-bold text-white">{reserve.area} km²</p>
+                        <div className="p-3 rounded-xl bg-th-surface border border-th-border">
+                          <p className="text-[9px] font-bold text-th-muted uppercase">{isAr ? 'المساحة' : 'Area'}</p>
+                          <p className="text-sm font-bold text-th-text">{reserve.area} km²</p>
                         </div>
-                        <div className="p-3 rounded-xl bg-white/5 border border-white/5">
-                          <p className="text-[9px] font-bold text-slate-500 uppercase">{isAr ? 'التأسيس' : 'Est.'}</p>
-                          <p className="text-sm font-bold text-white">{reserve.establishedYear}</p>
+                        <div className="p-3 rounded-xl bg-th-surface border border-th-border">
+                          <p className="text-[9px] font-bold text-th-muted uppercase">{isAr ? 'التأسيس' : 'Est.'}</p>
+                          <p className="text-sm font-bold text-th-text">{reserve.establishedYear}</p>
                         </div>
                       </div>
                       <Button intent="outline" onClick={() => openEdit(reserve)}
-                        className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10 font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
+                        className="w-full border-th-border bg-th-surface text-th-text hover:bg-th-surface2 font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
                         <Pencil size={14} /> {isAr ? 'تعديل' : 'Edit'}
                       </Button>
                     </div>

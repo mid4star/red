@@ -11,9 +11,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and Password are required" }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Find user by custom domain email
     const user = await prisma.user.findFirst({
-      where: { customDomainEmail: email }
+      where: { customDomainEmail: normalizedEmail }
     });
 
     if (!user) {

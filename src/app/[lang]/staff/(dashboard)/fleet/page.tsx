@@ -60,13 +60,13 @@ const FLEET_STATS = [
 function StatCard({ stat, isAr }: { stat: typeof FLEET_STATS[0], isAr: boolean }) {
   const Icon = stat.icon;
   return (
-    <Card className="p-5 border-none bg-slate-900/40 backdrop-blur-xl shadow-none hover:shadow-2xl hover:shadow-teal-500/10 transition-all group overflow-hidden relative">
+    <Card className="p-5 border border-th-border hover:shadow-2xl hover:shadow-teal-500/10 transition-all group overflow-hidden relative">
       <div className="flex justify-between items-start relative z-10">
         <div className="space-y-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-th-muted">
              {isAr ? stat.labelAr : stat.label}
           </p>
-          <h3 className="text-2xl font-black text-white tracking-tight">{stat.value}</h3>
+          <h3 className="text-2xl font-black text-th-text tracking-tight">{stat.value}</h3>
         </div>
         <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
           <Icon size={20} />
@@ -140,16 +140,16 @@ function VesselCard({
       animate={{ opacity: 1, y: 0 }}
       layout
     >
-      <Card className="group border border-white/5 overflow-hidden hover:shadow-[0_0_30px_rgba(45,212,191,0.1)] transition-all duration-500 bg-slate-900/40 backdrop-blur-xl relative">
+      <Card className="group border border-th-border overflow-hidden hover:shadow-[0_0_30px_rgba(45,212,191,0.1)] transition-all duration-500 bg-th-surface2 relative">
         {/* Card Header & Visual */}
-        <div className="relative h-48 bg-slate-950 overflow-hidden border-b border-white/5">
-           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent z-10" />
+        <div className="relative h-48 bg-th-surface overflow-hidden border-b border-th-border">
+           <div className="absolute inset-0 bg-gradient-to-t from-th-surface2 via-th-surface2/20 to-transparent z-10" />
            
            {/* Placeholder for Vessel Image */}
-           <div className="absolute inset-0 flex items-center justify-center bg-[#0a1628]">
+           <div className="absolute inset-0 flex items-center justify-center bg-th-input">
               <div className="relative">
                  <Waves size={80} className="text-teal-500/10 animate-pulse" />
-                 <Ship size={48} className="text-white/80 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-700" />
+                 <Ship size={48} className="text-th-text/80 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-700" />
               </div>
            </div>
 
@@ -161,20 +161,20 @@ function VesselCard({
                   setActiveMenuId(activeMenuId === vessel.id ? null : (vessel.id || null));
                 }}
                 aria-label={isAr ? 'خيارات الوحدة' : 'Vessel options'}
-                className="w-11 h-11 rounded-full bg-slate-900/50 backdrop-blur-md text-slate-300 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all"
+                className="w-11 h-11 rounded-full bg-th-surface/50 backdrop-blur-md text-th-text border border-th-border flex items-center justify-center hover:bg-th-surface2 transition-all"
               >
                  <MoreVertical size={18} />
               </button>
 
               {activeMenuId === vessel.id && (
-                <div className={`absolute top-10 ${isAr ? 'left-0' : 'right-0'} bg-[#0c1628]/95 border border-white/10 rounded-xl shadow-2xl p-1.5 z-30 min-w-[120px] backdrop-blur-xl`}>
+                <div className={`absolute top-10 ${isAr ? 'left-0' : 'right-0'} bg-th-surface border border-th-border rounded-xl shadow-2xl p-1.5 z-30 min-w-[120px] backdrop-blur-xl text-th-text`}>
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       onEdit(vessel);
                       setActiveMenuId(null);
                     }}
-                    className={`w-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 rounded-lg flex items-center gap-2 p-2 ${isAr ? 'text-right' : 'text-left'}`}
+                    className={`w-full text-xs font-bold text-th-muted hover:text-th-text hover:bg-th-surface2 rounded-lg flex items-center gap-2 p-2 ${isAr ? 'text-right' : 'text-left'}`}
                   >
                     <Edit3 size={14} className="text-teal-400" />
                     <span>{isAr ? 'تعديل' : 'Edit'}</span>
@@ -197,11 +197,11 @@ function VesselCard({
             <div className={`absolute bottom-4 ${isAr ? 'right-4' : 'left-4'} z-20`}>
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest">#{vessel.code || 'NO-CODE'}</span>
-                <span className="text-[10px] font-bold text-slate-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
+                <span className="text-[10px] font-bold text-th-muted bg-th-input px-1.5 py-0.5 rounded border border-th-border">
                   {vessel.regNumber}
                 </span>
               </div>
-              <h3 className="text-white text-lg font-bold tracking-tight">
+              <h3 className="text-th-text text-lg font-bold tracking-tight">
                 {isAr ? vessel.nameAr || vessel.name : vessel.name}
               </h3>
            </div>
@@ -210,7 +210,7 @@ function VesselCard({
         {/* Card Content */}
         <div className="p-5 space-y-5">
            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1.5">
+              <span className="text-[11px] font-medium text-th-muted flex items-center gap-1.5">
                  <Tag size={14} className="text-teal-400" />
                  {getTypeLabel(vessel.type)}
               </span>
@@ -224,36 +224,36 @@ function VesselCard({
 
            {/* Stats Grid */}
            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <div className="p-3 rounded-2xl bg-th-input/40 border border-th-border/40">
                  <div className="flex items-center gap-2 mb-1">
                     <Fuel size={14} className="text-blue-400" />
-                    <span className="text-xs font-bold text-slate-400 uppercase">{isAr ? 'الوقود' : 'Fuel'}</span>
+                    <span className="text-xs font-bold text-th-muted uppercase">{isAr ? 'الوقود' : 'Fuel'}</span>
                  </div>
                  <div className="flex items-end justify-between">
-                    <span className="text-sm font-bold text-white">{vessel.fuelLevel}%</span>
-                    <div className="w-12 h-1 bg-white/10 rounded-full overflow-hidden mb-1">
+                    <span className="text-sm font-bold text-th-text">{vessel.fuelLevel}%</span>
+                    <div className="w-12 h-1 bg-th-border rounded-full overflow-hidden mb-1">
                        <div className="h-full bg-blue-500 rounded-full" style={{ width: `${vessel.fuelLevel}%` }} />
                     </div>
                  </div>
               </div>
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <div className="p-3 rounded-2xl bg-th-input/40 border border-th-border/40">
                  <div className="flex items-center gap-2 mb-1">
                     <Clock size={14} className="text-indigo-400" />
-                    <span className="text-xs font-bold text-slate-400 uppercase">{isAr ? 'ساعات' : 'Hours'}</span>
+                    <span className="text-xs font-bold text-th-muted uppercase">{isAr ? 'ساعات' : 'Hours'}</span>
                  </div>
-                 <span className="text-sm font-bold text-white">{vessel.engineHours.toLocaleString()}</span>
+                 <span className="text-sm font-bold text-th-text">{vessel.engineHours.toLocaleString()}</span>
               </div>
            </div>
 
            {/* Capacity/Health Bar */}
            <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
-                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter italic">
+                 <span className="text-[10px] font-bold text-th-muted uppercase tracking-tighter italic">
                     {isAr ? 'الحالة التشغيلية' : 'Operational Health'}
                  </span>
-                 <span className="text-[10px] font-black text-white">{vessel.healthScore}%</span>
+                 <span className="text-[10px] font-black text-th-text">{vessel.healthScore}%</span>
               </div>
-              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 w-full bg-th-border/40 rounded-full overflow-hidden">
                  <div 
                    className={`h-full rounded-full transition-all duration-1000 ${vessel.healthScore > 80 ? 'bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.3)]' : vessel.healthScore > 50 ? 'bg-amber-500' : 'bg-rose-500'}`} 
                    style={{ width: `${vessel.healthScore}%` }} 
@@ -273,9 +273,9 @@ function VesselCard({
               <Button 
                 intent="outline" 
                 onClick={() => onEdit(vessel)}
-                className="px-3 border-white/10 bg-white/5 hover:bg-white/10"
+                className="px-3 border-th-border bg-th-input hover:bg-th-surface/80"
               >
-                 <Settings2 size={16} className="text-slate-400" />
+                 <Settings2 size={16} className="text-th-muted" />
               </Button>
            </div>
         </div>
@@ -520,11 +520,11 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
         /* ── INLINE FORM VIEW (BORDERLESS REDESIGN) ── */
         <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
           {/* Header with Back Button */}
-          <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+          <div className="flex items-center gap-4 pb-4 border-b border-th-border">
             <button 
               onClick={() => setShowModal(false)}
               type="button"
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0"
+              className="p-2.5 rounded-2xl bg-th-input border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface/80 transition-all flex items-center justify-center shrink-0"
             >
               <ArrowRight size={20} className={isArabic ? '' : 'rotate-180'} />
             </button>
@@ -532,7 +532,7 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
               <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
                 {isArabic ? 'إدارة الأصول' : 'Asset Management'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
                 <Ship className="text-teal-400" size={20} />
                 {editingVessel 
                   ? (isArabic ? 'تعديل بيانات الوحدة البحرية' : 'Edit Vessel Details')
@@ -548,7 +548,7 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-code" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-code" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'رمز الوحدة' : 'Vessel Code'}
                   </label>
                   <Input 
@@ -556,12 +556,12 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="e.g. V-102"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-reg" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-reg" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'رقم التسجيل الموحد *' : 'Registration Number *'}
                   </label>
                   <Input 
@@ -569,13 +569,13 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     value={regNumber}
                     onChange={(e) => setRegNumber(e.target.value)}
                     placeholder="e.g. REG-776"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                     required
                   />
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-name-en" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-name-en" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'الاسم بالإنجليزية *' : 'Name (EN) *'}
                   </label>
                   <Input 
@@ -583,13 +583,13 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Red Sea Guardian"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-name-ar" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-name-ar" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'الاسم بالعربية *' : 'Name (AR) *'}
                   </label>
                   <Input 
@@ -597,45 +597,45 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     value={nameAr}
                     onChange={(e) => setNameAr(e.target.value)}
                     placeholder="e.g. حارس البحر الأحمر"
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-type" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-type" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'نوع الوحدة' : 'Vessel Type'}
                   </label>
                   <select 
                     id="vessel-type"
                     value={type}
                     onChange={(e) => setType(e.target.value)}
-                    className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:bg-[#050b14]/80 focus:border-teal-500/50 transition-all text-xs font-bold cursor-pointer"
+                    className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:bg-th-surface/80 focus:border-teal-500/50 transition-all text-xs font-bold cursor-pointer"
                   >
-                    <option value="PATROL" className="bg-[#0a1628]">{isArabic ? 'دورية (PATROL)' : 'Patrol'}</option>
-                    <option value="RESEARCH" className="bg-[#0a1628]">{isArabic ? 'بحثي (RESEARCH)' : 'Research'}</option>
-                    <option value="RESCUE" className="bg-[#0a1628]">{isArabic ? 'إنقاذ (RESCUE)' : 'Rescue'}</option>
+                    <option value="PATROL" className="bg-th-surface text-th-text">{isArabic ? 'دورية (PATROL)' : 'Patrol'}</option>
+                    <option value="RESEARCH" className="bg-th-surface text-th-text">{isArabic ? 'بحثي (RESEARCH)' : 'Research'}</option>
+                    <option value="RESCUE" className="bg-th-surface text-th-text">{isArabic ? 'إنقاذ (RESCUE)' : 'Rescue'}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-status" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-status" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'الحالة التشغيلية' : 'Status'}
                   </label>
                   <select 
                     id="vessel-status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full h-11 bg-[#050b14]/40 border border-white/10 text-white rounded-xl px-3 focus:bg-[#050b14]/80 focus:border-teal-500/50 transition-all text-xs font-bold cursor-pointer"
+                    className="w-full h-11 bg-th-input border border-th-border text-th-text rounded-xl px-3 focus:bg-th-surface/80 focus:border-teal-500/50 transition-all text-xs font-bold cursor-pointer"
                   >
-                    <option value="ACTIVE" className="bg-[#0a1628]">{isArabic ? 'نشط (ACTIVE)' : 'Active'}</option>
-                    <option value="MAINTENANCE" className="bg-[#0a1628]">{isArabic ? 'صيانة (MAINTENANCE)' : 'Maintenance'}</option>
-                    <option value="MISSION" className="bg-[#0a1628]">{isArabic ? 'في مهمة (MISSION)' : 'Mission'}</option>
+                    <option value="ACTIVE" className="bg-th-surface text-th-text">{isArabic ? 'نشط (ACTIVE)' : 'Active'}</option>
+                    <option value="MAINTENANCE" className="bg-th-surface text-th-text">{isArabic ? 'صيانة (MAINTENANCE)' : 'Maintenance'}</option>
+                    <option value="MISSION" className="bg-th-surface text-th-text">{isArabic ? 'في مهمة (MISSION)' : 'Mission'}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-fuel" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-fuel" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'مستوى الوقود (%)' : 'Fuel Level (%)'}
                   </label>
                   <Input 
@@ -645,13 +645,13 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     max="100"
                     value={fuelLevel}
                     onChange={(e) => setFuelLevel(e.target.value)}
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-health" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-health" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'مؤشر الحالة الصحية للوحدة (%)' : 'Health Score (%)'}
                   </label>
                   <Input 
@@ -661,13 +661,13 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     max="100"
                     value={healthScore}
                     onChange={(e) => setHealthScore(e.target.value)}
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="vessel-hours" className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                  <label htmlFor="vessel-hours" className="text-xs font-black text-th-muted uppercase tracking-widest">
                     {isArabic ? 'ساعات تشغيل المحرك' : 'Engine Hours'}
                   </label>
                   <Input 
@@ -676,18 +676,18 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                     min="0"
                     value={engineHours}
                     onChange={(e) => setEngineHours(e.target.value)}
-                    className="bg-[#050b14]/40 border-white/10 text-white rounded-xl focus:bg-[#050b14]/80 transition-all py-3"
+                    className="h-11 rounded-xl transition-all"
                     required
                   />
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
+              <div className="flex justify-end gap-3 pt-6 border-t border-th-border">
                 <button 
                   type="button" 
                   onClick={() => setShowModal(false)}
-                  className="px-6 py-3 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors"
+                  className="px-6 py-3 rounded-xl text-xs font-bold text-th-muted hover:text-th-text transition-colors"
                   disabled={submitting}
                 >
                   {isArabic ? 'إلغاء' : 'Cancel'}
@@ -717,23 +717,23 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
               <div className="flex items-center gap-2">
                  <div className="w-8 h-1 bg-teal-500 rounded-full" />
                  <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
-                     {isArabic ? 'إإدارة الأصول' : 'Asset Management'}
+                     {isArabic ? 'إدارة الأصول' : 'Asset Management'}
                  </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
+              <h1 className="text-4xl font-black text-th-text tracking-tighter uppercase italic">
                 {isArabic ? 'أساطيل ومعدات الهيئة' : 'Red Sea Fleet & Gear'}
               </h1>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
                <div className="relative group min-w-[280px]">
-                  <Search className={`absolute ${isArabic ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors`} size={18} />
+                  <Search className={`absolute ${isArabic ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-th-muted group-focus-within:text-teal-400 transition-colors`} size={18} />
                   <input 
                     type="text" 
                     placeholder={isArabic ? 'ابحث عن مركب أو معدة...' : 'Search for vessel or gear...'}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 ${isArabic ? 'pr-11 pl-4' : 'pl-11 pr-4'} text-[13px] font-medium text-white placeholder:text-slate-500 outline-none ring-0 shadow-sm focus:border-teal-500/30 focus:ring-4 focus:ring-teal-500/10 transition-all`}
+                    className={`w-full bg-th-input border border-th-border rounded-2xl py-3.5 ${isArabic ? 'pr-11 pl-4' : 'pl-11 pr-4'} text-[13px] font-medium text-th-text placeholder:text-th-dim outline-none ring-0 shadow-sm focus:border-teal-500/30 focus:ring-4 focus:ring-teal-500/10 transition-all`}
                   />
                </div>
                <Button 
@@ -755,7 +755,7 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
           </div>
 
           {/* ── Filters & Tabs ───────────────────────────────────────────────────── */}
-          <div className="bg-slate-900/40 backdrop-blur-xl p-2 rounded-2xl border border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-th-surface p-2 rounded-2xl border border-th-border flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex gap-1">
                {['ALL', 'ACTIVE', 'MISSION', 'MAINTENANCE'].map((t) => (
                  <button
@@ -765,7 +765,7 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
                       px-5 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all
                       ${filter === t 
                         ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' 
-                        : 'text-slate-500 hover:text-white hover:bg-white/5 border border-transparent'
+                        : 'text-th-muted hover:text-th-text hover:bg-th-surface2 border border-transparent'
                       }
                     `}
                  >
@@ -775,10 +775,10 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
             </div>
             
             <div className="flex items-center gap-3 pr-2">
-               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest px-3 border-r border-white/10">
+               <span className="text-[11px] font-bold text-th-muted uppercase tracking-widest px-3 border-r border-th-border">
                  {isArabic ? `${filteredData.length} وحدات` : `${filteredData.length} units`}
                </span>
-               <button className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+               <button className="p-2.5 rounded-xl bg-th-input border border-th-border text-th-muted hover:text-th-text hover:bg-th-surface/80 transition-all">
                   <Filter size={18} />
                </button>
                <button className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
