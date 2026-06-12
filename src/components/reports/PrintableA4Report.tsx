@@ -83,7 +83,7 @@ export default function PrintableA4Report({ data, lang }: Props) {
           </div>
           <div>
             <h1 className="text-2xl font-black text-slate-800 tracking-tight">
-              {isArabic ? 'تقرير الأداء الاستخباراتي البيئي' : 'Environmental Intelligence Report'}
+              {isArabic ? 'تقرير الأداء البيئي الشامل' : 'Comprehensive Environmental Report'}
             </h1>
             <p className="text-sm font-bold text-slate-500 mt-1 uppercase tracking-widest">
               {isArabic ? 'قطاع المحميات الطبيعية - البحر الأحمر' : 'Red Sea Reserves Sector'}

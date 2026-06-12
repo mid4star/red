@@ -17,7 +17,24 @@ export default function ReportGeneratorModal({ isOpen, onClose, lang }: ReportGe
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reserve, setReserve] = useState('ALL');
+  const [reservesList, setReservesList] = useState<{id: string, name: string, nameAr: string}[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  React.useEffect(() => {
+    fetch('/api/staff/query?collection=reserves')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.data && data.data.length > 0) {
+          const loadedReserves = data.data.map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            nameAr: r.nameAr
+          }));
+          setReservesList(loadedReserves);
+        }
+      })
+      .catch(err => console.error("Failed to fetch reserves", err));
+  }, []);
 
   const handleGenerate = () => {
     if (!startDate || !endDate) {
@@ -66,7 +83,7 @@ export default function ReportGeneratorModal({ isOpen, onClose, lang }: ReportGe
                     {isArabic ? 'إنشاء تقرير شامل' : 'Generate Comprehensive Report'}
                   </h2>
                   <p className="text-xs text-th-muted mt-1">
-                    {isArabic ? 'استخراج البيانات الذكية من جميع قواعد بيانات المحميات' : 'Extract smart data from all reserves databases'}
+                    {isArabic ? 'استخراج البيانات من جميع قواعد بيانات المحميات' : 'Extract data from all reserves databases'}
                   </p>
                 </div>
               </div>
@@ -116,11 +133,10 @@ export default function ReportGeneratorModal({ isOpen, onClose, lang }: ReportGe
                     onChange={(e) => setReserve(e.target.value)}
                     className="w-full bg-th-surface2 border border-th-border rounded-xl px-4 py-3 text-sm text-th-text focus:outline-none focus:ring-2 focus:ring-teal-500/50 appearance-none"
                   >
-                    <option value="ALL">{isArabic ? 'جميع المحميات والقطاعات' : 'All Reserves & Sectors'}</option>
-                    <option value="Northern Islands">{isArabic ? 'جزر شمال الغردقة' : 'Northern Islands'}</option>
-                    <option value="Wadi El Gemal">{isArabic ? 'محمية وادي الجمال' : 'Wadi El Gemal'}</option>
-                    <option value="Elba">{isArabic ? 'محمية جبل علبة' : 'Elba National Park'}</option>
-                    <option value="Samadai">{isArabic ? 'محمية صمداي' : 'Samadai Reef'}</option>
+                    <option className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" value="ALL">{isArabic ? 'جميع المحميات والقطاعات' : 'All Reserves & Sectors'}</option>
+                    {reservesList.map(r => (
+                      <option className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" key={r.id} value={r.id}>{isArabic ? r.nameAr : r.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>

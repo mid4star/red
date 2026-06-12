@@ -71,6 +71,12 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
 
   useEffect(() => {
     setMounted(true);
+    // Force scroll to top on load to fix the issue where it opens at the AI assistant
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+      mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   const stats = [
@@ -186,7 +192,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
               </div>
               <div>
                 <h2 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white tracking-tighter">
-                  {isArabic ? 'الاستخبارات البيئية العميقة' : 'Deep Environmental Intelligence'}
+                  {isArabic ? 'التحليل البيئي المتقدم' : 'Advanced Environmental Analysis'}
                 </h2>
                 <p className="text-teal-600 dark:text-teal-400/80 text-xs font-bold tracking-widest uppercase mt-1">
                   {isArabic ? 'تحليل شامل وترابط لجميع قواعد البيانات (20+ جدول)' : 'Comprehensive Cross-Table Correlation Engine'}
