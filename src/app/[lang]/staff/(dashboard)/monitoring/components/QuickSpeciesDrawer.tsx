@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { X, Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { FileUpload } from '@/components/ui/FileUpload';
+import { CompactFileUpload } from '@/components/ui/CompactFileUpload';
 
 interface QuickSpeciesDrawerProps {
   isOpen: boolean;
@@ -62,24 +63,23 @@ export default function QuickSpeciesDrawer({ isOpen, onClose, lang, onSuccess }:
     }
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <>
+        <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 sm:p-6" dir={isAr ? 'rtl' : 'ltr'}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={onClose}
           />
           <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-            className="fixed bottom-0 left-0 right-0 md:left-1/2 md:-translate-x-1/2 md:top-20 md:bottom-auto w-full md:w-[600px] bg-th-surface border border-th-border rounded-t-3xl md:rounded-3xl shadow-2xl z-[10000] flex flex-col max-h-[90vh] overflow-hidden"
-            dir={isAr ? 'rtl' : 'ltr'}
+            className="relative w-full max-w-2xl bg-th-surface border border-th-border rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
           >
             <div className="flex items-center justify-between p-5 border-b border-th-border bg-th-surface2">
               <h2 className="text-lg font-black text-th-text tracking-wide">
@@ -137,8 +137,26 @@ export default function QuickSpeciesDrawer({ isOpen, onClose, lang, onSuccess }:
                   </div>
 
                   <div className="space-y-1 col-span-2">
+                    <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'وصف الكائن (إنجليزي)' : 'Description (En)'}</label>
+                    <textarea 
+                      value={formData.description} 
+                      onChange={e => setFormData({...formData, description: e.target.value})}
+                      className="w-full min-h-[60px] bg-th-input border border-th-border rounded-lg p-3 text-th-text text-sm focus:outline-none focus:border-teal-500 custom-scrollbar"
+                    />
+                  </div>
+
+                  <div className="space-y-1 col-span-2">
+                    <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'وصف الكائن (عربي)' : 'Description (Ar)'}</label>
+                    <textarea 
+                      value={formData.descriptionAr} 
+                      onChange={e => setFormData({...formData, descriptionAr: e.target.value})}
+                      className="w-full min-h-[60px] bg-th-input border border-th-border rounded-lg p-3 text-th-text text-sm focus:outline-none focus:border-teal-500 custom-scrollbar"
+                    />
+                  </div>
+
+                  <div className="space-y-1 col-span-2">
                     <label className="text-xs font-bold text-th-muted uppercase">{isAr ? 'صورة الكائن' : 'Image'}</label>
-                    <FileUpload 
+                    <CompactFileUpload 
                       endpoint="imageUploader"
                       onUploadComplete={(files) => setFormData({...formData, imageUrl: files[0]?.url})}
                       lang={lang}
@@ -162,8 +180,14 @@ export default function QuickSpeciesDrawer({ isOpen, onClose, lang, onSuccess }:
               </Button>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
+
+  if (typeof document !== 'undefined') {
+    return createPortal(modalContent, document.body);
+  }
+
+  return null;
 }
