@@ -280,9 +280,9 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
             {isAr ? 'لوحة القيادة البيئية' : 'Environmental Dashboard'}
           </h1>
         </div>
-        <Button onClick={handleAdd} className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg">
-          <Plus size={16} className={isAr ? 'ml-2' : 'mr-2'} />
-          {isAr ? 'إضافة سجل جديد' : 'Add New Record'}
+        <Button onClick={handleAdd} className="bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white shadow-lg shadow-teal-500/20 border-none px-6 rounded-xl h-11 transition-all hover:scale-105 active:scale-95">
+          <Plus size={18} className={isAr ? 'ml-2' : 'mr-2'} />
+          <span className="font-bold tracking-wide">{isAr ? 'إضافة سجل جديد' : 'Add New Record'}</span>
         </Button>
       </div>
 
@@ -294,7 +294,7 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
         lang={lang}
       />
 
-      <div className="flex items-center gap-2 border-b border-th-border pb-px">
+      <div className="flex items-center p-1.5 bg-th-surface2/80 backdrop-blur-md border border-th-border/50 rounded-2xl w-fit shadow-sm">
         {[
           { id: 'eco_programs', label: isAr ? 'برامج الرصد' : 'Eco Programs' },
           { id: 'stranding_cases', label: isAr ? 'حالات الجنوح' : 'Strandings' },
@@ -304,10 +304,10 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as TabType)}
-            className={`px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 ${
+            className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-300 rounded-xl ${
               activeTab === tab.id 
-                ? 'border-teal-500 text-teal-500' 
-                : 'border-transparent text-th-muted hover:text-th-text hover:border-th-border'
+                ? 'bg-white dark:bg-[#1a2b44] shadow-md shadow-black/5 text-teal-600 dark:text-teal-400' 
+                : 'text-th-muted hover:text-th-text hover:bg-th-surface/50'
             }`}
           >
             {tab.label}
