@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Plus, X, Pencil, Trash2, Save,
   ChevronUp, ChevronDown, Eye, Image as ImageIcon,
-  MapPin, Compass, Fish, Globe, ArrowRight
+  MapPin, Compass, Fish, Globe, ArrowRight, Search
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -65,8 +65,13 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
   // Previews Toggle
   const [expandedSectionId, setExpandedSectionId] = useState<string | null>(null);
-  const [expandedSpeciesId, setExpandedSpeciesId] = useState<string | null>(null);
-  const [expandedLocationId, setExpandedLocationId] = useState<string | null>(null);
+
+  // Pagination & Search States
+  const [speciesSearchQuery, setSpeciesSearchQuery] = useState('');
+  const [speciesCurrentPage, setSpeciesCurrentPage] = useState(1);
+  const [terrainSearchQuery, setTerrainSearchQuery] = useState('');
+  const [terrainCurrentPage, setTerrainCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Nested links inputs
   const [newLinkN, setNewLinkN] = useState('');
@@ -999,8 +1004,39 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             )}
 
             {/* Tab 2: Marine Species */}
-            {activeTab === 'species' && (
+            {activeTab === 'species' && (() => {
+              const filteredSpecies = species.filter(sp => {
+                const q = speciesSearchQuery.toLowerCase();
+                return (
+                  sp.name?.toLowerCase().includes(q) ||
+                  sp.nameAr?.toLowerCase().includes(q) ||
+                  sp.type?.toLowerCase().includes(q) ||
+                  sp.typeAr?.toLowerCase().includes(q) ||
+                  sp.status?.toLowerCase().includes(q) ||
+                  sp.statusAr?.toLowerCase().includes(q)
+                );
+              });
+              const totalSpeciesPages = Math.ceil(filteredSpecies.length / itemsPerPage);
+              const paginatedSpecies = filteredSpecies.slice((speciesCurrentPage - 1) * itemsPerPage, speciesCurrentPage * itemsPerPage);
+
+              return (
               <div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                  <div className="relative w-full max-w-sm">
+                    <Search className="absolute top-1/2 -translate-y-1/2 left-3 text-th-muted" size={16} />
+                    <Input 
+                      placeholder={isAr ? 'ابحث عن كائن بحري...' : 'Search species...'}
+                      value={speciesSearchQuery}
+                      onChange={(e) => {
+                        setSpeciesSearchQuery(e.target.value);
+                        setSpeciesCurrentPage(1);
+                      }}
+                      className="pl-10 bg-th-surface"
+                      dir={isAr ? 'rtl' : 'ltr'}
+                    />
+                  </div>
+                </div>
+
                 {species.length === 0 && (
                   <div className="py-20 text-center text-th-muted text-sm italic">
                     {isAr ? 'لا توجد كائنات بحرية مضافة بعد.' : 'No marine species yet. Add a species to get started.'}
@@ -1008,7 +1044,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <AnimatePresence>
-                    {species.map((sp, i) => (
+                    {paginatedSpecies.map((sp, i) => (
                       <motion.div
                         key={sp.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -1019,7 +1055,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
                           {/* Image Header */}
                           <div className="relative h-44 bg-th-surface2 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/60 z-10" />
                             {sp.imageUrl ? (
                               <img src={sp.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                             ) : (
@@ -1028,15 +1064,15 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               </div>
                             )}
                             <div className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} z-20`}>
-                              <span className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                              <span className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-teal-500 text-white shadow-lg backdrop-blur-md">
                                 {isAr ? (sp.statusAr || sp.status) : (sp.status || sp.statusAr)}
                               </span>
                             </div>
                             <div className={`absolute bottom-4 ${isAr ? 'right-4' : 'left-4'} z-20`}>
-                              <span className="text-[9px] font-black text-teal-400 tracking-wider uppercase bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/10 block w-fit mb-1">
+                              <span className="text-[9px] font-black text-teal-200 tracking-wider uppercase bg-teal-900/60 px-2 py-0.5 rounded backdrop-blur-md border border-teal-500/20 block w-fit mb-1">
                                 {isAr ? (sp.typeAr || sp.type) : (sp.type || sp.typeAr)}
                               </span>
-                              <h3 className="text-th-text font-bold text-lg tracking-tight">
+                              <h3 className="text-white font-bold text-lg tracking-tight drop-shadow-md">
                                 {isAr ? sp.nameAr : sp.name}
                               </h3>
                             </div>
@@ -1065,12 +1101,60 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                     ))}
                   </AnimatePresence>
                 </div>
+                {totalSpeciesPages > 1 && (
+                  <div className="flex justify-center mt-8 gap-2">
+                    {Array.from({ length: totalSpeciesPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSpeciesCurrentPage(i + 1)}
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold transition-all ${
+                          speciesCurrentPage === i + 1
+                            ? 'bg-teal-500 text-[#001529]'
+                            : 'bg-th-surface border border-th-border text-th-muted hover:bg-th-surface2 hover:text-th-text'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            )})()}
 
             {/* Tab 3: Explore Terrain */}
-            {activeTab === 'terrain' && (
+            {activeTab === 'terrain' && (() => {
+              const filteredLocations = locations.filter(loc => {
+                const q = terrainSearchQuery.toLowerCase();
+                return (
+                  loc.name?.toLowerCase().includes(q) ||
+                  loc.nameAr?.toLowerCase().includes(q) ||
+                  loc.type?.toLowerCase().includes(q) ||
+                  loc.typeAr?.toLowerCase().includes(q) ||
+                  loc.status?.toLowerCase().includes(q) ||
+                  loc.statusAr?.toLowerCase().includes(q)
+                );
+              });
+              const totalTerrainPages = Math.ceil(filteredLocations.length / itemsPerPage);
+              const paginatedLocations = filteredLocations.slice((terrainCurrentPage - 1) * itemsPerPage, terrainCurrentPage * itemsPerPage);
+
+              return (
               <div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                  <div className="relative w-full max-w-sm">
+                    <Search className="absolute top-1/2 -translate-y-1/2 left-3 text-th-muted" size={16} />
+                    <Input 
+                      placeholder={isAr ? 'ابحث عن تضاريس...' : 'Search terrain...'}
+                      value={terrainSearchQuery}
+                      onChange={(e) => {
+                        setTerrainSearchQuery(e.target.value);
+                        setTerrainCurrentPage(1);
+                      }}
+                      className="pl-10 bg-th-surface"
+                      dir={isAr ? 'rtl' : 'ltr'}
+                    />
+                  </div>
+                </div>
+
                 {locations.length === 0 && (
                   <div className="py-20 text-center text-th-muted text-sm italic">
                     {isAr ? 'لا توجد مواقع جغرافية مضافة بعد.' : 'No terrain locations yet. Add a location to get started.'}
@@ -1078,7 +1162,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <AnimatePresence>
-                    {locations.map((loc, i) => (
+                    {paginatedLocations.map((loc, i) => (
                       <motion.div
                         key={loc.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -1089,7 +1173,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
                           {/* Image Header */}
                           <div className="relative h-44 bg-th-surface2 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/60 z-10" />
                             {loc.imageUrl ? (
                               <img src={loc.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                             ) : (
@@ -1098,15 +1182,15 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               </div>
                             )}
                             <div className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} z-20`}>
-                              <span className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                              <span className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-teal-500 text-white shadow-lg backdrop-blur-md">
                                 {isAr ? (loc.statusAr || loc.status) : (loc.status || loc.statusAr)}
                               </span>
                             </div>
                             <div className={`absolute bottom-4 ${isAr ? 'right-4' : 'left-4'} z-20`}>
-                              <span className="text-[9px] font-black text-teal-400 tracking-wider uppercase bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/10 block w-fit mb-1">
+                              <span className="text-[9px] font-black text-teal-200 tracking-wider uppercase bg-teal-900/60 px-2 py-0.5 rounded backdrop-blur-md border border-teal-500/20 block w-fit mb-1">
                                 {isAr ? (loc.typeAr || loc.type) : (loc.type || loc.typeAr)}
                               </span>
-                              <h3 className="text-th-text font-bold text-lg tracking-tight">
+                              <h3 className="text-white font-bold text-lg tracking-tight drop-shadow-md">
                                 {isAr ? loc.nameAr : loc.name}
                               </h3>
                             </div>
@@ -1141,8 +1225,25 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                     ))}
                   </AnimatePresence>
                 </div>
+                {totalTerrainPages > 1 && (
+                  <div className="flex justify-center mt-8 gap-2">
+                    {Array.from({ length: totalTerrainPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setTerrainCurrentPage(i + 1)}
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold transition-all ${
+                          terrainCurrentPage === i + 1
+                            ? 'bg-teal-500 text-[#001529]'
+                            : 'bg-th-surface border border-th-border text-th-muted hover:bg-th-surface2 hover:text-th-text'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            )})()}
           </div>
         </>
       )}
