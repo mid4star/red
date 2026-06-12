@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Globe, Eye, Map, Compass } from 'lucide-react';
+import { Globe, Eye, Map, Compass, MapPin, Calendar, User, Hash, Info, FileText, CheckCircle2, AlertTriangle, Image as ImageIcon } from 'lucide-react';
 
 const mapStyles = [
   {
@@ -298,106 +298,144 @@ export default function EcoMap({ items, activeItem, onItemSelect, onMapClick, la
                   }}
                 >
                   <Popup className="custom-leaflet-popup">
-                    <div className="p-1.5 min-w-[220px] text-slate-800" dir={isArabic ? 'rtl' : 'ltr'}>
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <span className={`w-2.5 h-2.5 rounded-full ${
-                          item.dataType === 'stranding_cases' ? (item.status === 'ALIVE' ? 'bg-emerald-500' : 'bg-rose-500') :
-                          item.dataType === 'sightings' ? 'bg-indigo-500' :
-                          item.dataType === 'eco_programs' ? 'bg-teal-500' : 'bg-amber-500'
-                        }`} />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                          {item.dataType === 'eco_programs' ? (isArabic ? 'برنامج الرصد' : 'Eco Program') :
-                           item.dataType === 'stranding_cases' ? (isArabic ? 'حالة جنوح' : 'Stranding Case') :
-                           item.dataType === 'sightings' ? (isArabic ? 'مشاهدة كائنات' : 'Sighting') :
-                           (isArabic ? 'مسح شاطئي' : 'Beach Survey')}
-                        </span>
-                      </div>
+                    <div className="p-0 min-w-[260px] text-slate-800 font-sans" dir={isArabic ? 'rtl' : 'ltr'}>
+                      {item.attachedFileUrl && item.attachedFileUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) && (
+                        <div className="w-full h-32 relative overflow-hidden rounded-t-xl bg-slate-100">
+                          <img src={item.attachedFileUrl} alt="Record Image" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                          <div className={`absolute bottom-2 ${isArabic ? 'right-3' : 'left-3'} flex items-center gap-1.5`}>
+                            <span className={`w-2 h-2 rounded-full ${
+                              item.dataType === 'stranding_cases' ? (item.status === 'ALIVE' ? 'bg-emerald-500' : 'bg-rose-500') :
+                              item.dataType === 'sightings' ? 'bg-indigo-500' :
+                              item.dataType === 'eco_programs' ? 'bg-teal-500' : 'bg-amber-500'
+                            } shadow-[0_0_8px_rgba(255,255,255,0.8)]`} />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white drop-shadow-md">
+                              {item.dataType === 'eco_programs' ? (isArabic ? 'برنامج الرصد' : 'Eco Program') :
+                               item.dataType === 'stranding_cases' ? (isArabic ? 'حالة جنوح' : 'Stranding Case') :
+                               item.dataType === 'sightings' ? (isArabic ? 'مشاهدة كائنات' : 'Sighting') :
+                               (isArabic ? 'مسح شاطئي' : 'Beach Survey')}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className={`p-4 ${isArabic ? 'text-right' : 'text-left'}`}>
+                        {!item.attachedFileUrl?.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) && (
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`w-2.5 h-2.5 rounded-full ${
+                              item.dataType === 'stranding_cases' ? (item.status === 'ALIVE' ? 'bg-emerald-500' : 'bg-rose-500') :
+                              item.dataType === 'sightings' ? 'bg-indigo-500' :
+                              item.dataType === 'eco_programs' ? 'bg-teal-500' : 'bg-amber-500'
+                            }`} />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                              {item.dataType === 'eco_programs' ? (isArabic ? 'برنامج الرصد' : 'Eco Program') :
+                               item.dataType === 'stranding_cases' ? (isArabic ? 'حالة جنوح' : 'Stranding Case') :
+                               item.dataType === 'sightings' ? (isArabic ? 'مشاهدة كائنات' : 'Sighting') :
+                               (isArabic ? 'مسح شاطئي' : 'Beach Survey')}
+                            </span>
+                          </div>
+                        )}
 
-                      <h4 className="font-bold text-sm text-slate-900 mb-1 leading-snug">
-                        {item.dataType === 'eco_programs' && (isArabic ? `رصد ${item.program}` : `Survey: ${item.program}`)}
-                        {item.dataType === 'stranding_cases' && (isArabic ? `${item.speciesAr || item.species} (${item.status === 'ALIVE' ? 'حي' : 'نافق'})` : `${item.species} (${item.status})`)}
-                        {item.dataType === 'sightings' && (isArabic ? `${item.speciesAr || item.species}` : `${item.species}`)}
-                        {item.dataType === 'beach_surveys' && (isArabic ? 'مسح نفايات وأنقاض الشاطئ' : 'Beach Cleanliness Survey')}
-                      </h4>
+                        <h4 className="font-bold text-base text-slate-900 mb-2 leading-tight">
+                          {item.dataType === 'eco_programs' && (isArabic ? `رصد ${item.program}` : `Survey: ${item.program}`)}
+                          {item.dataType === 'stranding_cases' && (isArabic ? `${item.speciesAr || item.species} (${item.status === 'ALIVE' ? 'حي' : 'نافق'})` : `${item.species} (${item.status})`)}
+                          {item.dataType === 'sightings' && (isArabic ? `${item.speciesAr || item.species}` : `${item.species}`)}
+                          {item.dataType === 'beach_surveys' && (isArabic ? 'مسح نفايات وأنقاض الشاطئ' : 'Beach Cleanliness Survey')}
+                        </h4>
 
-                      <p className="text-[11px] text-slate-600 mb-2 font-medium">📍 {isArabic ? (item.locationNameAr || item.locationName) : item.locationName}</p>
-
-                      <div className="border-t border-slate-100 pt-2 space-y-1.5 text-[11px] text-slate-600">
-                        <div>
-                          <strong>{isArabic ? 'التاريخ:' : 'Date:'}</strong> {new Date(item.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}
+                        <div className="flex items-start gap-1.5 text-slate-600 mb-3">
+                          <MapPin size={14} className="shrink-0 mt-0.5 text-teal-600" />
+                          <span className="text-xs font-medium leading-snug">{isArabic ? (item.locationNameAr || item.locationName) : item.locationName}</span>
                         </div>
 
-                        {item.dataType === 'eco_programs' && (
-                          <>
-                            {item.subType && (
-                              <div>
-                                <strong>{isArabic ? 'النوع الفرعي:' : 'Sub-type:'}</strong> {item.subType}
-                              </div>
-                            )}
-                            <div>
-                              <strong>{isArabic ? 'المراقب الميداني:' : 'Observer:'}</strong> {item.observerName}
-                            </div>
-                            {item.details && (
-                              <div className="italic text-slate-500 mt-1 max-h-[60px] overflow-y-auto">
-                                "{item.details}"
-                              </div>
-                            )}
-                            {item.attachedFileUrl && (
-                              <a href={item.attachedFileUrl} target="_blank" rel="noreferrer" className="text-teal-600 hover:text-teal-700 underline font-bold flex items-center gap-1 mt-1.5">
-                                📄 {isArabic ? 'الملف المرفق للرصد' : 'Attached Report'}
-                              </a>
-                            )}
-                          </>
-                        )}
+                        <div className="border-t border-slate-200/60 pt-3 space-y-2.5 text-xs text-slate-600">
+                          <div className="flex items-center gap-2">
+                            <Calendar size={14} className="text-slate-400" />
+                            <span className="font-bold">{isArabic ? 'التاريخ:' : 'Date:'}</span>
+                            <span>{new Date(item.date).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')}</span>
+                          </div>
 
-                        {item.dataType === 'stranding_cases' && (
-                          <>
-                            {item.description && (
-                              <div className="italic text-slate-500 mt-1 max-h-[60px] overflow-y-auto">
-                                "{item.description}"
+                          {item.dataType === 'eco_programs' && (
+                            <>
+                              {item.subType && (
+                                <div className="flex items-center gap-2">
+                                  <Info size={14} className="text-slate-400" />
+                                  <span className="font-bold">{isArabic ? 'النوع الفرعي:' : 'Sub-type:'}</span>
+                                  <span>{item.subType}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-2">
+                                <User size={14} className="text-slate-400" />
+                                <span className="font-bold">{isArabic ? 'المراقب:' : 'Observer:'}</span>
+                                <span>{item.observerName}</span>
                               </div>
-                            )}
-                            {item.attachedFileUrl && (
-                              <a href={item.attachedFileUrl} target="_blank" rel="noreferrer" className="text-rose-600 hover:text-rose-700 underline font-bold flex items-center gap-1 mt-1.5">
-                                📄 {isArabic ? 'صورة/ملف الحالة' : 'Case Media/File'}
-                              </a>
-                            )}
-                          </>
-                        )}
+                              {item.details && (
+                                <div className="mt-2 bg-slate-50 p-2 rounded-lg italic text-slate-500 leading-relaxed max-h-[80px] overflow-y-auto custom-scrollbar">
+                                  "{item.details}"
+                                </div>
+                              )}
+                              {item.attachedFileUrl && !item.attachedFileUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) && (
+                                <a href={item.attachedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded-md transition-colors font-bold text-[11px]">
+                                  <FileText size={14} /> {isArabic ? 'عرض التقرير المرفق' : 'View Attached Report'}
+                                </a>
+                              )}
+                            </>
+                          )}
 
-                        {item.dataType === 'sightings' && (
-                          <>
-                            <div>
-                              <strong>{isArabic ? 'العدد المرصود:' : 'Count:'}</strong> {item.count}
-                            </div>
-                            <div>
-                              <strong>{isArabic ? 'المراقب الميداني:' : 'Observer:'}</strong> {item.observerName}
-                            </div>
-                            {item.notes && (
-                              <div className="italic text-slate-500 mt-1 max-h-[60px] overflow-y-auto">
-                                "{item.notes}"
-                              </div>
-                            )}
-                          </>
-                        )}
+                          {item.dataType === 'stranding_cases' && (
+                            <>
+                              {item.description && (
+                                <div className="mt-2 bg-slate-50 p-2 rounded-lg italic text-slate-500 leading-relaxed max-h-[80px] overflow-y-auto custom-scrollbar">
+                                  "{item.description}"
+                                </div>
+                              )}
+                              {item.attachedFileUrl && !item.attachedFileUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) && (
+                                <a href={item.attachedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-md transition-colors font-bold text-[11px]">
+                                  <FileText size={14} /> {isArabic ? 'عرض ملف الحالة' : 'View Case File'}
+                                </a>
+                              )}
+                            </>
+                          )}
 
-                        {item.dataType === 'beach_surveys' && (
-                          <>
-                            {item.description && (
-                              <div className="italic text-slate-500 mt-1 max-h-[60px] overflow-y-auto">
-                                "{item.description}"
+                          {item.dataType === 'sightings' && (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <Hash size={14} className="text-indigo-400" />
+                                <span className="font-bold">{isArabic ? 'العدد المرصود:' : 'Count:'}</span>
+                                <span>{item.count}</span>
                               </div>
-                            )}
-                            {item.attachedFileUrl && (
-                              <a href={item.attachedFileUrl} target="_blank" rel="noreferrer" className="text-amber-600 hover:text-amber-700 underline font-bold flex items-center gap-1 mt-1.5">
-                                📄 {isArabic ? 'تقرير مسح الشاطئ' : 'Survey Details Report'}
-                              </a>
-                            )}
-                          </>
-                        )}
-                        
-                        <div className="text-[9px] text-slate-400 font-mono mt-1 pt-1 border-t border-slate-50">
-                          Lat: {lat.toFixed(4)}, Lng: {lng.toFixed(4)}
+                              <div className="flex items-center gap-2">
+                                <User size={14} className="text-slate-400" />
+                                <span className="font-bold">{isArabic ? 'المراقب الميداني:' : 'Observer:'}</span>
+                                <span>{item.observerName}</span>
+                              </div>
+                              {item.notes && (
+                                <div className="mt-2 bg-slate-50 p-2 rounded-lg italic text-slate-500 leading-relaxed max-h-[80px] overflow-y-auto custom-scrollbar border border-slate-100">
+                                  "{item.notes}"
+                                </div>
+                              )}
+                            </>
+                          )}
+
+                          {item.dataType === 'beach_surveys' && (
+                            <>
+                              {item.description && (
+                                <div className="mt-2 bg-slate-50 p-2 rounded-lg italic text-slate-500 leading-relaxed max-h-[80px] overflow-y-auto custom-scrollbar">
+                                  "{item.description}"
+                                </div>
+                              )}
+                              {item.attachedFileUrl && !item.attachedFileUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) && (
+                                <a href={item.attachedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-md transition-colors font-bold text-[11px]">
+                                  <FileText size={14} /> {isArabic ? 'عرض تقرير المسح' : 'View Survey Report'}
+                                </a>
+                              )}
+                            </>
+                          )}
+                          
+                          <div className={`flex items-center ${isArabic ? 'justify-end' : 'justify-start'} gap-1 mt-3 pt-2 text-[9px] text-slate-400 font-mono border-t border-slate-100`}>
+                            <Globe size={10} className="text-slate-300" />
+                            <span>Lat: {lat.toFixed(4)}, Lng: {lng.toFixed(4)}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
