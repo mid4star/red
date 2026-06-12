@@ -249,15 +249,51 @@ export async function GET(req: Request) {
     // --- RESERVE PROFILES ---
     const reservesData = [
       {
-        id: "reserve_ras_mohammed",
-        name: "Ras Mohammed National Park",
-        nameAr: "محمية رأس محمد الوطنية",
-        description: "Egypt's first national park, famous for its diverse marine life and healthy coral reefs.",
-        descriptionAr: "أول محمية وطنية في مصر، تشتهر بالحياة البحرية المتنوعة والشعاب المرجانية السليمة.",
-        location: "Sinai Peninsula",
-        locationAr: "شبه جزيرة سيناء",
-        area: 480,
-        establishedYear: 1983,
+        id: "northern-islands",
+        name: "Northern Islands",
+        nameAr: "محمية الجزر الشمالية",
+        description: "Northern Islands marine reserve.",
+        descriptionAr: "محمية الجزر الشمالية البحرية.",
+        location: "Red Sea",
+        locationAr: "البحر الأحمر",
+        area: 100,
+        establishedYear: 2000,
+        status: "OPEN"
+      },
+      {
+        id: "wadi-el-gemal",
+        name: "Wadi El Gemal",
+        nameAr: "محمية وادي الجمال",
+        description: "Wadi El Gemal National Park.",
+        descriptionAr: "محمية وادي الجمال الوطنية.",
+        location: "Red Sea",
+        locationAr: "البحر الأحمر",
+        area: 7450,
+        establishedYear: 2003,
+        status: "OPEN"
+      },
+      {
+        id: "gebel-elba",
+        name: "Gebel Elba",
+        nameAr: "محمية جبل علبة",
+        description: "Gebel Elba National Park.",
+        descriptionAr: "محمية جبل علبة الوطنية.",
+        location: "Red Sea",
+        locationAr: "البحر الأحمر",
+        area: 35600,
+        establishedYear: 1986,
+        status: "OPEN"
+      },
+      {
+        id: "coral-reef",
+        name: "Coral Reef Protectorate",
+        nameAr: "محمية الحيد المرجاني",
+        description: "Coral Reef Protectorate.",
+        descriptionAr: "محمية الحيد المرجاني.",
+        location: "Red Sea",
+        locationAr: "البحر الأحمر",
+        area: 500,
+        establishedYear: 2000,
         status: "OPEN"
       }
     ];

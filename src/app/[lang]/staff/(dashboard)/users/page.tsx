@@ -13,11 +13,9 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
-const RESERVES_LIST = [
-  { id: 'northern-islands', name: 'Northern Islands', nameAr: 'محمية الجزر الشمالية' },
-  { id: 'wadi-el-gemal', name: 'Wadi El Gemal', nameAr: 'محمية وادي الجمال' },
-  { id: 'gebel-elba', name: 'Gebel Elba', nameAr: 'محمية جبل علبة' },
-  { id: 'coral-reef', name: 'Coral Reef Protectorate', nameAr: 'محمية الحيد المرجاني' },
+// Fallback while loading
+const FALLBACK_RESERVES = [
+  { id: 'northern-islands', name: 'Northern Islands', nameAr: 'محمية الجزر الشمالية' }
 ];
 
 const SECTIONS_METADATA = [
@@ -75,7 +73,8 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const [badgesText, setBadgesText] = useState('');
   
   const [userRole, setUserRole] = useState<UserRole>('RANGER');
-  const [reserveId, setReserveId] = useState(RESERVES_LIST[0].id);
+  const [reservesList, setReservesList] = useState<{id: string, name: string, nameAr: string}[]>(FALLBACK_RESERVES);
+  const [reserveId, setReserveId] = useState(FALLBACK_RESERVES[0].id);
   const [userStatus, setUserStatus] = useState<'ACTIVE' | 'ON_LEAVE' | 'INACTIVE'>('ACTIVE');
   const [certificationsText, setCertificationsText] = useState('');
   const [allowedSections, setAllowedSections] = useState<string[]>(['patrols', 'monitoring']);
@@ -102,6 +101,21 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
   useEffect(() => {
     fetchUsers();
+    fetch('/api/staff/query?collection=reserves')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.data && data.data.length > 0) {
+          const loadedReserves = data.data.map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            nameAr: r.nameAr
+          }));
+          setReservesList(loadedReserves);
+          // Only update reserveId if we are not editing
+          setReserveId(prev => loadedReserves.some((r: any) => r.id === prev) ? prev : loadedReserves[0].id);
+        }
+      })
+      .catch(err => console.error("Failed to fetch reserves", err));
   }, []);
 
   // Auto-generate custom domain email when Employee ID changes (for new users)
@@ -121,7 +135,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setProfilePictureUrl('');
     setBadgesText('');
     setUserRole('RANGER');
-    setReserveId(RESERVES_LIST[0].id);
+    setReserveId(reservesList[0]?.id || FALLBACK_RESERVES[0].id);
     setUserStatus('ACTIVE');
     setCertificationsText('');
     setAllowedSections(['patrols', 'monitoring']);
@@ -200,7 +214,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
     setSubmitting(true);
     try {
-      const selectedReserve = RESERVES_LIST.find(r => r.id === reserveId);
+      const selectedReserve = reservesList.find(r => r.id === reserveId) || reservesList[0];
       const certificationsArray = certificationsText 
         ? certificationsText.split(',').map(s => s.trim()).filter(Boolean)
         : [];
@@ -483,7 +497,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                       <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{isArabic ? 'المحمية المعين بها' : 'Assigned Reserve'}</label>
                         <select value={reserveId} onChange={e => setReserveId(e.target.value)} className="w-full h-10 bg-slate-50 dark:bg-[#050b14]/40 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-3 text-xs font-bold focus:outline-none focus:border-teal-500">
-                          {RESERVES_LIST.map(r => <option key={r.id} value={r.id}>{isArabic ? r.nameAr : r.name}</option>)}
+                          {reservesList.map(r => <option key={r.id} value={r.id}>{isArabic ? r.nameAr : r.name}</option>)}
                         </select>
                       </div>
                     </div>

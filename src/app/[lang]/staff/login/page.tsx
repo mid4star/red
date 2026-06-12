@@ -7,11 +7,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTheme } from '@/components/layout/ThemeProvider';
 
-const RESERVES = [
-  { id: 'northern-islands', en: 'Northern Islands', ar: 'محمية الجزر الشمالية' },
-  { id: 'wadi-el-gemal', en: 'Wadi El Gemal', ar: 'محمية وادي الجمال' },
-  { id: 'gebel-elba', en: 'Gebel Elba', ar: 'محمية جبل علبة' },
-  { id: 'coral-reef', en: 'Coral Reef Protectorate', ar: 'محمية الحيد المرجاني' },
+// Fallback while loading
+const FALLBACK_RESERVES = [
+  { id: 'northern-islands', en: 'Northern Islands', ar: 'محمية الجزر الشمالية' }
 ];
 
 export default function LoginPage({ params }: { params: { lang: string } }) {
@@ -20,7 +18,25 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
   const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedReserve, setSelectedReserve] = useState(RESERVES[0].id);
+  const [reserves, setReserves] = useState<{id: string, en: string, ar: string}[]>(FALLBACK_RESERVES);
+  const [selectedReserve, setSelectedReserve] = useState(FALLBACK_RESERVES[0].id);
+
+  React.useEffect(() => {
+    fetch('/api/staff/query?collection=reserves')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.data && data.data.length > 0) {
+          const loadedReserves = data.data.map((r: any) => ({
+            id: r.id,
+            en: r.name,
+            ar: r.nameAr
+          }));
+          setReserves(loadedReserves);
+          setSelectedReserve(loadedReserves[0].id);
+        }
+      })
+      .catch(err => console.error("Failed to fetch reserves", err));
+  }, []);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -50,7 +66,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
       }
 
       // Successful login
-      const reserveInfo = RESERVES.find(r => r.id === selectedReserve);
+      const reserveInfo = reserves.find(r => r.id === selectedReserve) || reserves[0];
       const sessionData = {
         ...data.user,
         reserveId: selectedReserve,
@@ -91,7 +107,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
         throw new Error(data.error || 'Quick login failed');
       }
 
-      const reserveInfo = RESERVES.find(r => r.id === selectedReserve);
+      const reserveInfo = reserves.find(r => r.id === selectedReserve) || reserves[0];
       const sessionData = {
         ...data.user,
         reserveId: selectedReserve,
@@ -282,7 +298,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
                     onChange={(e) => setSelectedReserve(e.target.value)}
                     className={`w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-bold text-slate-900 dark:text-white appearance-none focus:outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer disabled:opacity-50`}
                   >
-                    {RESERVES.map(res => (
+                    {reserves.map(res => (
                       <option key={res.id} value={res.id} className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">
                         {isAr ? res.ar : res.en}
                       </option>
