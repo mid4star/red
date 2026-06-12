@@ -539,11 +539,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
   // ───────────── DESKTOP: Full Sidebar (Original) ─────────────
   return (
     <aside
-      className={`no-print w-72 bg-th-sidebar text-th-text dark:bg-[#0a1628] dark:text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${isArabic ? 'right-0' : 'left-0'} transition-colors duration-300`}
+      className={`no-print w-64 bg-th-sidebar text-th-text dark:bg-[#0a1628] dark:text-[#e2e8f0] min-h-screen fixed top-0 bottom-0 shadow-[4px_0_24px_rgba(0,0,0,0.3)] flex flex-col z-[100] transition-all duration-500 ease-in-out border-none ${isArabic ? 'right-0' : 'left-0'} transition-colors duration-300`}
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* ── Header / Branding ────────────────────────────────────────────────── */}
-      <div className="p-8 pb-6 border-b border-white/5 flex flex-col gap-4 shrink-0">
+      <div className="p-6 pb-4 border-b border-white/5 flex flex-col gap-4 shrink-0">
         <div className="flex items-center gap-3.5">
           {config.siteLogoUrl ? (
              <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_15px_rgba(45,212,191,0.3)] bg-white/5 shrink-0">
@@ -566,7 +566,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
       </div>
 
       {/* ── Navigation List ──────────────────────────────────────────────────── */}
-      <nav className="flex-1 py-8 px-5 space-y-1.5 overflow-y-auto custom-scrollbar min-h-0 pb-10">
+      <nav className="flex-1 py-4 px-4 space-y-0.5 overflow-y-auto custom-scrollbar min-h-0 pb-6">
         {filteredNavItems.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
@@ -579,7 +579,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
             >
               <div
                 className={`
-                  flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-300
+                  flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-300
                   ${active
                     ? 'bg-teal-500/10 text-white shadow-[inset_0_0_10px_rgba(45,212,191,0.05)]'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
@@ -590,16 +590,16 @@ export function StaffSidebar({ lang }: { lang: string }) {
                 {active && (
                   <motion.div
                     layoutId="activeSide"
-                    className={`absolute w-1.5 h-6 bg-teal-400 rounded-full ${isArabic ? '-right-1' : '-left-1'}`}
+                    className={`absolute w-1 h-5 bg-teal-400 rounded-full ${isArabic ? '-right-0.5' : '-left-0.5'}`}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
 
                 <div className={`p-1 rounded-lg transition-transform duration-300 ${active ? 'scale-110 text-teal-400' : 'group-hover:scale-110 group-hover:text-white'}`}>
-                  <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+                  <Icon size={18} strokeWidth={active ? 2.5 : 2} />
                 </div>
 
-                <span className={`text-[13px] font-medium transition-all ${active ? 'font-bold tracking-wide' : 'opacity-80'}`}>
+                <span className={`text-[12px] font-medium transition-all ${active ? 'font-bold tracking-wide' : 'opacity-80'}`}>
                   {isArabic ? item.nameAr : item.name}
                 </span>
 
@@ -615,7 +615,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
       </nav>
 
       {/* ── User Session / Bottom Footer ────────────────────────────────────── */}
-      <div className="mt-auto p-5 border-t border-white/5 bg-white/[0.02] shrink-0 z-20">
+      <div className="mt-auto p-4 border-t border-white/5 bg-white/[0.02] shrink-0 z-20">
         <Link href={`/${lang}/staff/profile`} className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/5 border border-white/5 group transition-all hover:bg-white/[0.08] cursor-pointer no-underline">
           <div className="w-10 h-10 rounded-full bg-[#1e293b] border-2 border-white/10 overflow-hidden shrink-0">
             <img

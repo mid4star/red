@@ -136,8 +136,8 @@ export default function StaffLayout({ children, params }: { children: React.Reac
       // Tablet has 72px icon rail
       return `${isArabic ? 'mr-[72px]' : 'ml-[72px]'} p-5`;
     }
-    // Desktop has full 288px (w-72) sidebar
-    return `${isArabic ? 'mr-72' : 'ml-72'} p-8`;
+    // Desktop has full 256px (w-64) sidebar
+    return `${isArabic ? 'mr-64' : 'ml-64'} p-6`;
   };
 
   return (
