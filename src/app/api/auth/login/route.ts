@@ -13,9 +13,15 @@ export async function POST(request: Request) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Find user by custom domain email
+    // Find user by custom domain email, personal email, or employee ID
     const user = await prisma.user.findFirst({
-      where: { customDomainEmail: normalizedEmail }
+      where: {
+        OR: [
+          { customDomainEmail: normalizedEmail },
+          { email: normalizedEmail },
+          { employeeId: email.trim() } // employeeId might be case sensitive or uppercase
+        ]
+      }
     });
 
     if (!user) {
