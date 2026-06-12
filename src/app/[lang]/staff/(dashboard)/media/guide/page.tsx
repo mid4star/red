@@ -1072,7 +1072,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <span className="text-[9px] font-black text-teal-200 tracking-wider uppercase bg-teal-900/60 px-2 py-0.5 rounded backdrop-blur-md border border-teal-500/20 block w-fit mb-1">
                                 {isAr ? (sp.typeAr || sp.type) : (sp.type || sp.typeAr)}
                               </span>
-                              <h3 className="text-white font-black text-xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                              <h3 className="text-[#ffffff] font-black text-xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 {isAr ? sp.nameAr : sp.name}
                               </h3>
                             </div>
@@ -1190,7 +1190,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <span className="text-[9px] font-black text-teal-200 tracking-wider uppercase bg-teal-900/60 px-2 py-0.5 rounded backdrop-blur-md border border-teal-500/20 block w-fit mb-1">
                                 {isAr ? (loc.typeAr || loc.type) : (loc.type || loc.typeAr)}
                               </span>
-                              <h3 className="text-white font-black text-xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                              <h3 className="text-[#ffffff] font-black text-xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 {isAr ? loc.nameAr : loc.name}
                               </h3>
                             </div>
