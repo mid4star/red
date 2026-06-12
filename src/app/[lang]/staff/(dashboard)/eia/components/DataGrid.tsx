@@ -121,7 +121,7 @@ export default function DataGrid({ columns, data, onRowClick, onEdit, onDelete, 
                   ))}
                   {(onEdit || onDelete) && (
                     <td className="px-6 py-4 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-2 transition-opacity">
                         {onEdit && (
                           <button
                             onClick={(e) => { e.stopPropagation(); onEdit(row); }}
