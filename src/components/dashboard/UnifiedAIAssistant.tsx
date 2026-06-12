@@ -40,7 +40,7 @@ export default function UnifiedAIAssistant({ lang }: { lang: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
   // Load user session
@@ -66,7 +66,12 @@ export default function UnifiedAIAssistant({ lang }: { lang: string }) {
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   }, [messages]);
 
   // Setup Speech Recognition
@@ -252,7 +257,7 @@ export default function UnifiedAIAssistant({ lang }: { lang: string }) {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative z-10">
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative z-10">
         <AnimatePresence>
           {messages.map((msg) => (
             <motion.div 
@@ -329,7 +334,6 @@ export default function UnifiedAIAssistant({ lang }: { lang: string }) {
             </motion.div>
           )}
         </AnimatePresence>
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}
