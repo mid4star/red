@@ -192,8 +192,9 @@ export async function POST(request: Request) {
     if (action === 'ADD') {
       const sqlInput = mapClientToSql(collectionName, data, action);
       
-      // Inject reserve data for multi-tenancy (except for collections that don't use it, like reserves)
-      if (collectionName !== 'reserves' && collectionName !== 'homepage' && collectionName !== 'system_config') {
+      // Inject reserve data for multi-tenancy (except for collections that don't use it)
+      const globalCollections = ['reserves', 'homepage', 'system_config', 'marine_species', 'map_locations', 'users', 'visitor_guide', 'news', 'opendata'];
+      if (!globalCollections.includes(collectionName)) {
         if (auth.role !== 'ADMIN' && auth.reserveId) {
           sqlInput.reserveId = auth.reserveId;
           sqlInput.reserve = auth.reserve || '';
