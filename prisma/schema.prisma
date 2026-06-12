@@ -515,6 +515,8 @@ model EcoProgramReport {
   id              String   @id @default(cuid())
   program         String   // MANGROVE, MARINE_CREATURES, CORAL_REEFS, BIRDS
   subType         String?  // DOLPHIN, TURTLE, DUGONG, SHARK, FISH, MARINE_BIRD, MIGRATORY_BIRD
+  reserveId       String   @default("")
+  reserve         String   @default("")
   date            DateTime @default(now())
   location        String
   locationAr      String?
@@ -529,6 +531,8 @@ model EcoProgramReport {
 
 model StrandingCase {
   id              String   @id @default(cuid())
+  reserveId       String   @default("")
+  reserve         String   @default("")
   date            DateTime @default(now())
   location        String
   locationAr      String?
@@ -545,6 +549,8 @@ model StrandingCase {
 
 model Sighting {
   id              String   @id @default(cuid())
+  reserveId       String   @default("")
+  reserve         String   @default("")
   date            DateTime @default(now())
   location        String
   locationAr      String?
@@ -561,6 +567,8 @@ model Sighting {
 
 model BeachSurvey {
   id              String   @id @default(cuid())
+  reserveId       String   @default("")
+  reserve         String   @default("")
   date            DateTime @default(now())
   location        String
   locationAr      String?

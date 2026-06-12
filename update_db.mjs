@@ -16,7 +16,11 @@ async function main() {
     "EiaCost",
     "EiaInspection",
     "EiaViolation",
-    "EiaAccident"
+    "EiaAccident",
+    "EcoProgramReport",
+    "StrandingCase",
+    "Sighting",
+    "BeachSurvey"
   ];
 
   for (const table of tables) {
