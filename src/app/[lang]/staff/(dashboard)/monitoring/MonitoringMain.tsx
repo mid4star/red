@@ -188,6 +188,38 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
       delete dataPayload.id;
       delete dataPayload.createdAt;
       delete dataPayload.updatedAt;
+
+      // Clean up fields based on the active tab so Prisma doesn't crash
+      if (activeTab === 'eco_programs') {
+        delete dataPayload.status;
+        delete dataPayload.species;
+        delete dataPayload.count;
+        delete dataPayload.notes;
+        delete dataPayload.description;
+      } else if (activeTab === 'stranding_cases') {
+        delete dataPayload.program;
+        delete dataPayload.subType;
+        delete dataPayload.count;
+        delete dataPayload.notes;
+        delete dataPayload.observerName;
+        delete dataPayload.details;
+      } else if (activeTab === 'sightings') {
+        delete dataPayload.program;
+        delete dataPayload.subType;
+        delete dataPayload.status;
+        delete dataPayload.attachedFileUrl;
+        delete dataPayload.description;
+        delete dataPayload.details;
+      } else if (activeTab === 'beach_surveys') {
+        delete dataPayload.program;
+        delete dataPayload.subType;
+        delete dataPayload.status;
+        delete dataPayload.species;
+        delete dataPayload.count;
+        delete dataPayload.notes;
+        delete dataPayload.observerName;
+        delete dataPayload.details;
+      }
       
       // Data type casts
       dataPayload.latitude = parseFloat(dataPayload.latitude);
