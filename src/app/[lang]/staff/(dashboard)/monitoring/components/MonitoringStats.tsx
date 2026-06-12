@@ -21,7 +21,7 @@ export default function MonitoringStats({
 }: StatsProps) {
   const isAr = lang === 'ar';
 
-  const baseCardClass = "relative overflow-hidden p-4 md:p-5 border border-th-border/40 bg-white/50 dark:bg-th-surface2/50 backdrop-blur-xl rounded-2xl group hover:border-th-border transition-all duration-300 shadow-sm hover:shadow-md dark:shadow-none cursor-default";
+  const baseCardClass = "relative overflow-hidden p-4 md:p-5 border border-th-border bg-th-surface2 rounded-2xl group hover:border-teal-500/30 transition-all duration-300 shadow-sm cursor-default";
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5" dir={isAr ? 'rtl' : 'ltr'}>

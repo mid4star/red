@@ -48,50 +48,50 @@ export default function DataGrid({ columns, data, onRowClick, onEdit, onDelete, 
   };
 
   return (
-    <div className="w-full bg-white/50 dark:bg-th-surface/50 backdrop-blur-xl rounded-2xl border border-th-border/40 flex flex-col h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-      <div className="p-4 md:p-5 border-b border-th-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/30 dark:bg-th-surface2/30">
-        <div className="relative w-full sm:w-72">
+    <div className="w-full bg-th-surface rounded-2xl border border-th-border flex flex-col h-full overflow-hidden shadow-sm transition-all duration-300">
+      <div className="p-4 md:p-5 border-b border-th-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-th-surface2">
+        <div className="relative w-full sm:w-80">
           <input
             type="text"
-            placeholder={isAr ? 'بحث سريع...' : 'Quick search...'}
+            placeholder={isAr ? 'بحث سريع في جميع الحقول...' : 'Quick search...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 text-sm bg-white dark:bg-th-input border border-th-border/50 rounded-xl text-th-text focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all shadow-sm"
+            className="w-full h-10 pl-10 pr-4 text-sm bg-th-input border border-th-border rounded-xl text-th-text focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all shadow-sm"
             dir={isAr ? 'rtl' : 'ltr'}
           />
           <Search size={16} className={`absolute top-3 text-th-muted ${isAr ? 'right-3' : 'left-3'}`} />
         </div>
         <div className="flex items-center gap-2">
-          <div className="px-3 py-1.5 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xs font-bold tracking-wide">
+          <div className="px-4 py-2 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xs font-bold tracking-wide">
             {sortedData.length} {isAr ? 'سجل' : 'records'}
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto custom-scrollbar bg-transparent">
+      <div className="flex-1 overflow-auto custom-scrollbar">
         <table className="w-full text-left border-collapse" dir={isAr ? 'rtl' : 'ltr'}>
-          <thead className="bg-th-surface2/80 backdrop-blur-md sticky top-0 z-10 shadow-sm">
+          <thead className="bg-th-surface2 sticky top-0 z-10 shadow-sm border-b border-th-border">
             <tr>
               {columns.map((col, idx) => (
                 <th
                   key={idx}
                   onClick={() => requestSort(col.key)}
-                  className="px-5 py-4 text-[11px] font-black uppercase tracking-widest text-th-muted cursor-pointer hover:text-teal-500 transition-colors whitespace-nowrap border-b border-th-border/40"
+                  className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-th-muted cursor-pointer hover:text-teal-500 transition-colors whitespace-nowrap"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 ${isAr ? 'justify-start' : ''}`}>
                     {col.header}
                     <ArrowUpDown size={12} className="opacity-40" />
                   </div>
                 </th>
               ))}
               {(onEdit || onDelete) && (
-                <th className="px-5 py-4 text-[11px] font-black uppercase tracking-widest text-th-muted text-right border-b border-th-border/40">
+                <th className={`px-6 py-4 text-[11px] font-black uppercase tracking-widest text-th-muted whitespace-nowrap ${isAr ? 'text-left' : 'text-right'}`}>
                   {isAr ? 'إجراءات' : 'Actions'}
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-th-border/30 text-sm text-th-text">
+          <tbody className="divide-y divide-th-border text-sm text-th-text">
             {sortedData.length === 0 ? (
               <tr>
                 <td colSpan={columns.length + 1} className="p-12 text-center">
@@ -106,10 +106,10 @@ export default function DataGrid({ columns, data, onRowClick, onEdit, onDelete, 
                 <tr 
                   key={row.id || rIdx}
                   onClick={() => onRowClick && onRowClick(row)}
-                  className="hover:bg-teal-500/5 dark:hover:bg-white/5 transition-colors cursor-pointer group relative"
+                  className="hover:bg-th-surface2/50 transition-colors cursor-pointer group relative"
                 >
                   {columns.map((col, cIdx) => (
-                    <td key={cIdx} className="px-5 py-4 whitespace-nowrap">
+                    <td key={cIdx} className="px-6 py-4 whitespace-nowrap">
                       {col.render ? col.render(row[col.key], row) : row[col.key]}
                     </td>
                   ))}

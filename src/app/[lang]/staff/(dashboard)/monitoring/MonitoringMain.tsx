@@ -215,15 +215,16 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
   const getColumns = (): any[] => {
     if (activeTab === 'eco_programs') {
       return [
-        { key: 'program', header: isAr ? 'البرنامج' : 'Program' },
+        { key: 'program', header: isAr ? 'البرنامج' : 'Program', render: (val: any) => <span className="font-bold">{val}</span> },
         { key: 'location', header: isAr ? 'الموقع' : 'Location' },
         { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
-        { key: 'observerName', header: isAr ? 'المراقب' : 'Observer' }
+        { key: 'observerName', header: isAr ? 'المراقب' : 'Observer' },
+        { key: 'details', header: isAr ? 'ملاحظات' : 'Details', render: (val: any) => <span className="text-th-muted max-w-[150px] truncate block">{val || '-'}</span> }
       ];
     }
     if (activeTab === 'stranding_cases') {
       return [
-        { key: 'species', header: isAr ? 'النوع' : 'Species' },
+        { key: 'species', header: isAr ? 'النوع' : 'Species', render: (val: any) => <span className="font-bold">{val || '-'}</span> },
         { key: 'status', header: isAr ? 'الحالة' : 'Status', render: (val: any) => (
             <span className={`px-2 py-1 rounded-md text-[10px] font-bold ${val === 'ALIVE' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-rose-500/20 text-rose-500'}`}>
               {val === 'ALIVE' ? (isAr ? 'حي' : 'ALIVE') : (isAr ? 'نافق' : 'DEAD')}
@@ -231,20 +232,23 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
           ) 
         },
         { key: 'location', header: isAr ? 'الموقع' : 'Location' },
-        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') }
+        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
+        { key: 'description', header: isAr ? 'الوصف' : 'Description', render: (val: any) => <span className="text-th-muted max-w-[150px] truncate block">{val || '-'}</span> }
       ];
     }
     if (activeTab === 'sightings') {
       return [
-        { key: 'species', header: isAr ? 'النوع' : 'Species' },
-        { key: 'count', header: isAr ? 'العدد' : 'Count' },
+        { key: 'species', header: isAr ? 'النوع' : 'Species', render: (val: any) => <span className="font-bold">{val || '-'}</span> },
+        { key: 'count', header: isAr ? 'العدد' : 'Count', render: (val: any) => <span className="inline-flex items-center justify-center bg-teal-500/10 text-teal-500 rounded-full w-6 h-6 font-bold text-xs">{val}</span> },
         { key: 'location', header: isAr ? 'الموقع' : 'Location' },
-        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') }
+        { key: 'observerName', header: isAr ? 'المراقب' : 'Observer' },
+        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
       ];
     }
     return [
-      { key: 'location', header: isAr ? 'الموقع' : 'Location' },
-      { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') }
+      { key: 'location', header: isAr ? 'الموقع' : 'Location', render: (val: any) => <span className="font-bold">{val}</span> },
+      { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
+      { key: 'description', header: isAr ? 'الوصف' : 'Description', render: (val: any) => <span className="text-th-muted max-w-[200px] truncate block">{val || '-'}</span> }
     ];
   };
 
@@ -266,21 +270,21 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-             <div className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-500">
-                <Compass size={16} />
-             </div>
-             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-500">
+      <div className="flex items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
+              <Compass size={24} />
+           </div>
+           <div>
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-500 block mb-1">
                {isAr ? 'الرصد البيئي المتكامل' : 'Integrated Monitoring'}
              </span>
-          </div>
-          <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase">
-            {isAr ? 'لوحة القيادة البيئية' : 'Environmental Dashboard'}
-          </h1>
+             <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+               {isAr ? 'لوحة القيادة البيئية' : 'Environmental Dashboard'}
+             </h1>
+           </div>
         </div>
-        <Button onClick={handleAdd} className="bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white shadow-lg shadow-teal-500/20 border-none px-6 rounded-xl h-11 transition-all hover:scale-105 active:scale-95">
+        <Button onClick={handleAdd} className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-6 rounded-xl h-11 transition-all">
           <Plus size={18} className={isAr ? 'ml-2' : 'mr-2'} />
           <span className="font-bold tracking-wide">{isAr ? 'إضافة سجل جديد' : 'Add New Record'}</span>
         </Button>
