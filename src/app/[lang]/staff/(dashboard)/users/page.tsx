@@ -11,6 +11,7 @@ import {
   Waves, Microscope, ClipboardList, AlertTriangle, Anchor, Megaphone, Settings, ShieldCheck, ArrowRight,
   Camera, Mail, Tag, UserCheck, User as UserIcon, Map
 } from 'lucide-react';
+import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
 
 // Fallback while loading
@@ -186,16 +187,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
     setSubmitting(true);
     try {
       const file = filesList[0];
-      const formData = new FormData();
-      formData.append('file', file);
+      const uploadRes = await uploadFiles("imageUploader", { files: [file] });
 
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (data.success) {
-        setProfilePictureUrl(data.url);
+      if (uploadRes && uploadRes.length > 0) {
+        setProfilePictureUrl(uploadRes[0].url);
       } else {
         alert(isArabic ? 'فشل رفع الصورة' : 'Image upload failed');
       }

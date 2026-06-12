@@ -7,6 +7,7 @@ import {
   AlertTriangle, Waves, Microscope, Activity, LayoutDashboard, Anchor, 
   Megaphone, Clock, Award, Key, Target, Camera, Loader2, Map
 } from 'lucide-react';
+import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
 
 const SECTIONS_METADATA: Record<string, { icon: any, label: string, labelAr: string }> = {
@@ -53,28 +54,28 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
-      const uploadData = await uploadRes.json();
-
-      if (!uploadRes.ok) throw new Error(uploadData.error || 'Upload failed');
+      const uploadRes = await uploadFiles("imageUploader", { files: [file] });
+      
+      if (!uploadRes || uploadRes.length === 0) {
+        throw new Error('Upload failed');
+      }
+      const uploadedUrl = uploadRes[0].url;
 
       const updateRes = await fetch('/api/staff/profile/picture', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profilePictureUrl: uploadData.url })
+        body: JSON.stringify({ profilePictureUrl: uploadedUrl })
       });
       const updateData = await updateRes.json();
 
       if (!updateRes.ok) throw new Error(updateData.error || 'Update failed');
 
-      setProfile({ ...profile, profilePictureUrl: uploadData.url });
+      setProfile({ ...profile, profilePictureUrl: uploadedUrl });
 
       const sessionRaw = localStorage.getItem('active_user_session');
       if (sessionRaw) {
         const session = JSON.parse(sessionRaw);
-        session.profilePictureUrl = uploadData.url;
+        session.profilePictureUrl = uploadedUrl;
         localStorage.setItem('active_user_session', JSON.stringify(session));
         window.dispatchEvent(new Event('user-session-changed'));
       }
