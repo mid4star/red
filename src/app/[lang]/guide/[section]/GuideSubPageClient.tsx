@@ -83,11 +83,11 @@ const SECTIONS = [
    }
 ];
 
-const RESERVES = [
-   { id: 'northern', name: 'Northern Islands Protected Area', nameAr: 'محمية الجزر الشمالية' },
-   { id: 'wadi_gemal', name: 'Wadi El Gemal National Park', nameAr: 'محمية وادي الجمال' },
-   { id: 'gebel_elba', name: 'Gebel Elba National Park', nameAr: 'محمية جبل علبة' },
-   { id: 'coral_reefs', name: 'Red Sea Barrier Coral Reefs', nameAr: 'محميات الشعاب المرجانية' }
+const FALLBACK_RESERVES = [
+   { id: 'northern-islands', name: 'Northern Islands Protected Area', nameAr: 'محمية الجزر الشمالية' },
+   { id: 'wadi-el-gemal', name: 'Wadi El Gemal National Park', nameAr: 'محمية وادي الجمال' },
+   { id: 'gebel-elba', name: 'Gebel Elba National Park', nameAr: 'محمية جبل علبة' },
+   { id: 'coral-reef', name: 'Red Sea Barrier Coral Reefs', nameAr: 'محميات الشعاب المرجانية' }
 ];
 
 const MONTHS_DATA = [
@@ -165,6 +165,24 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
             }
          })
          .catch(err => console.error(err));
+
+      // Fetch dynamic reserves
+      fetch('/api/staff/query?collection=reserves')
+         .then(r => r.json())
+         .then(data => {
+            if (data && data.data && data.data.length > 0) {
+               const mapped = data.data.map((r: any) => ({
+                  id: r.id,
+                  name: r.name,
+                  nameAr: r.nameAr
+               }));
+               setReservesList(mapped);
+               if (mapped.length > 0) {
+                  setReserve(mapped[0].id);
+               }
+            }
+         })
+         .catch(err => console.error("Failed to load reserves", err));
    }, []);
 
    // Sync dynamic section change from props
@@ -175,7 +193,8 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
    }, [section]);
 
    // State for Section 1: Permit Form
-   const [reserve, setReserve] = useState('northern');
+   const [reservesList, setReservesList] = useState<{id: string, name: string, nameAr: string}[]>(FALLBACK_RESERVES);
+   const [reserve, setReserve] = useState(FALLBACK_RESERVES[0].id);
    const [activity, setActivity] = useState('diving');
    const [groupSize, setGroupSize] = useState(1);
    const [visitDate, setVisitDate] = useState('');
@@ -225,7 +244,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                const randomHex = Math.floor(Math.random() * 16777215).toString(16).toUpperCase();
                setGeneratedPermit({
                   id: `RED-PERMIT-${randomHex}`,
-                  reserve: RESERVES.find(r => r.id === reserve),
+                  reserve: reservesList.find(r => r.id === reserve) || reservesList[0],
                   activity,
                   groupSize,
                   date: visitDate,
@@ -373,7 +392,7 @@ export default function GuideSubPageClient({ lang, section }: { lang: string; se
                                              onChange={(e) => setReserve(e.target.value)}
                                              className="w-full bg-[#070f1e] border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-teal-500/50 transition-all font-semibold"
                                           >
-                                             {RESERVES.map(r => (
+                                             {reservesList.map(r => (
                                                 <option key={r.id} value={r.id}>{isAr ? r.nameAr : r.name}</option>
                                              ))}
                                           </select>
