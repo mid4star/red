@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { VisitorGuideSection, MarineSpecies, MapLocation } from '@/lib/firebase/schema';
 import RichTextEditor from '@/components/ui/RichTextEditor';
+import { useUploadThing } from '@/utils/uploadthing';
 
 const emptyGuide = (): Partial<VisitorGuideSection> => ({
   title: '', titleAr: '', content: '', contentAr: '', order: 0, links: []
@@ -127,21 +128,21 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
     loadAll();
   }, []);
 
+  const { startUpload } = useUploadThing("imageUploader");
+
   // Generic image uploader
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, target: 'species' | 'terrain') => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.url) {
+      const res = await startUpload([file]);
+      if (res && res[0]) {
+        const url = res[0].url;
         if (target === 'species') {
-          setSpeciesForm(prev => ({ ...prev, imageUrl: data.url }));
+          setSpeciesForm(prev => ({ ...prev, imageUrl: url }));
         } else if (target === 'terrain') {
-          setTerrainForm(prev => ({ ...prev, imageUrl: data.url }));
+          setTerrainForm(prev => ({ ...prev, imageUrl: url }));
         }
       }
     } catch (e) {
