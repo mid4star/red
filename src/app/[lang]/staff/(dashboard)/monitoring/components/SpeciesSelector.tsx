@@ -55,8 +55,8 @@ export default function SpeciesSelector({ value, onChange, lang, onAddNew, speci
       </div>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-th-surface border border-th-border rounded-xl shadow-xl z-[10000] overflow-hidden max-h-64 flex flex-col">
-          <div className="p-2 border-b border-th-border flex items-center gap-2 bg-th-surface2">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#152338] border border-th-border rounded-xl shadow-2xl z-[10000] overflow-hidden max-h-64 flex flex-col">
+          <div className="p-2 border-b border-th-border flex items-center gap-2 bg-slate-50 dark:bg-[#0f182b]">
             <Search size={14} className="text-th-muted" />
             <input 
               type="text" 
@@ -87,16 +87,16 @@ export default function SpeciesSelector({ value, onChange, lang, onAddNew, speci
               filtered.map(s => (
                 <div 
                   key={s.id} 
-                  className={`p-2 flex items-center gap-3 cursor-pointer hover:bg-th-surface2 rounded-lg transition-colors ${value === s.name ? 'bg-teal-500/10' : ''}`}
+                  className={`p-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-[#1e2e46] rounded-lg transition-colors ${value === s.name ? 'bg-teal-500/10' : ''}`}
                   onClick={() => {
                     onChange(s.name);
                     setIsOpen(false);
                   }}
                 >
                   {s.imageUrl ? (
-                    <img src={s.imageUrl} alt={s.name} className="w-8 h-8 rounded-md object-cover bg-th-surface2" />
+                    <img src={s.imageUrl} alt={s.name} className="w-8 h-8 rounded-md object-cover bg-slate-100 dark:bg-[#0f182b]" />
                   ) : (
-                    <div className="w-8 h-8 rounded-md bg-th-surface2 flex items-center justify-center text-[10px] text-th-muted uppercase font-bold">
+                    <div className="w-8 h-8 rounded-md bg-slate-100 dark:bg-[#0f182b] flex items-center justify-center text-[10px] text-th-muted uppercase font-bold">
                       {s.name.substring(0, 2)}
                     </div>
                   )}
