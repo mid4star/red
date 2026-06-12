@@ -123,27 +123,25 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
   return (
     <div className="p-4 md:p-8 space-y-6" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-th-surface border border-th-border rounded-2xl p-6 shadow-sm relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="flex items-center gap-4 relative z-10">
-          <div className="p-3 bg-amber-50 dark:bg-amber-500/10 rounded-xl shadow-sm relative">
-            <Radio className="text-amber-600 dark:text-amber-400" size={28} strokeWidth={2.5} />
-            {autoRefresh && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping" />}
-            {autoRefresh && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full" />}
-          </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-black text-th-text tracking-tight uppercase">
-              {isAr ? 'الرادار الإخباري' : 'News Radar'}
-            </h1>
-            <p className="text-th-muted text-sm font-medium tracking-wide flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
-              {isAr ? 'مدعوم بخوارزمية الفلترة الذكية للأخبار البيئية' : 'Powered by Smart Environmental Filtering Algorithm'}
-            </p>
-          </div>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 relative">
+              <Radio size={24} />
+              {autoRefresh && <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />}
+              {autoRefresh && <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />}
+           </div>
+           <div>
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500 block mb-1">
+               {isAr ? 'نظام التتبع الذكي' : 'Smart Tracking System'}
+             </span>
+             <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+               {isAr ? 'الرادار الإخباري' : 'News Radar'}
+             </h1>
+           </div>
         </div>
         
-        <div className="flex items-center gap-3 relative z-10 w-full xl:w-auto justify-between xl:justify-start">
-          <label className="flex items-center gap-2 text-xs font-bold text-th-muted cursor-pointer">
+        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+          <label className="flex items-center gap-2 text-xs font-bold text-th-muted cursor-pointer shrink-0">
             <input 
               type="checkbox" 
               checked={autoRefresh} 
@@ -153,23 +151,23 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
             {isAr ? 'تحديث تلقائي' : 'Auto-refresh'}
           </label>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {isAdmin && (
               <Button 
                 onClick={() => setShowConfig(true)}
-                className="bg-th-surface2 border border-th-border text-th-text hover:bg-th-surface hover:text-amber-500 shadow-sm h-10 px-4 rounded-xl flex items-center gap-2"
+                className="bg-th-surface border border-th-border text-th-text hover:bg-th-surface hover:text-amber-500 shadow-sm px-4 rounded-xl h-11 flex items-center gap-2 transition-all"
               >
-                <Settings size={16} />
-                <span className="font-bold text-sm hidden md:inline">{isAr ? 'تعديل الخوارزمية' : 'Edit Algorithm'}</span>
+                <Settings size={18} />
+                <span className="font-bold hidden sm:inline">{isAr ? 'الخوارزمية' : 'Algorithm'}</span>
               </Button>
             )}
             <Button 
               onClick={fetchNews} 
               disabled={loading}
-              className="bg-amber-500 hover:bg-amber-600 text-white border-none shadow-md h-10 px-4 rounded-xl flex items-center gap-2"
+              className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20 px-4 rounded-xl h-11 flex items-center gap-2 transition-all border-none"
             >
-              <RefreshCw size={16} className={loading ? 'animate-spin text-white/50' : ''} />
-              <span className="font-bold text-sm">{isAr ? 'تحديث الآن' : 'Refresh'}</span>
+              <RefreshCw size={18} className={loading ? 'animate-spin text-white/50' : ''} />
+              <span className="font-bold tracking-wide">{isAr ? 'تحديث الآن' : 'Refresh'}</span>
             </Button>
           </div>
         </div>
