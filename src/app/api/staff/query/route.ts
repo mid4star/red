@@ -26,18 +26,21 @@ export async function GET(request: Request) {
       'homepage'
     ];
 
+    const auth = await verifyAuth(request);
+    
     if (!publicCollections.includes(collectionName)) {
-      const auth = await verifyAuth(request);
       if (!auth) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
     }
 
+    const reserveFilter = auth && auth.role !== 'ADMIN' ? { reserveId: auth.reserveId } : {};
+
     let data: any[] = [];
 
     switch (collectionName) {
       case 'users':
-        data = await prisma.user.findMany({ orderBy: { name: 'asc' } });
+        data = await prisma.user.findMany({ orderBy: { name: 'asc' }, where: reserveFilter });
         // Convert string fields back to arrays for frontend compatibility
         data = data.map((u: any) => ({
           ...u,
@@ -50,6 +53,7 @@ export async function GET(request: Request) {
         break;
       case 'patrols':
         data = await prisma.patrol.findMany({ 
+          where: reserveFilter,
           orderBy: { date: 'desc' },
           include: {
             vessel: true,
@@ -67,6 +71,7 @@ export async function GET(request: Request) {
         break;
       case 'violations':
         data = await prisma.violation.findMany({ 
+          where: reserveFilter,
           orderBy: { date: 'desc' },
           include: {
             officer: true,
@@ -80,7 +85,7 @@ export async function GET(request: Request) {
         }));
         break;
       case 'observations':
-        data = await (prisma as any).observation.findMany({ orderBy: { date: 'desc' } });
+        data = await (prisma as any).observation.findMany({ where: reserveFilter, orderBy: { date: 'desc' } });
         data = data.map((o: any) => ({
           ...o,
           indicators: o.indicators ? safeJsonParse(o.indicators, []) : [],
@@ -119,16 +124,16 @@ export async function GET(request: Request) {
         data = await (prisma as any).mapLocation.findMany({ orderBy: { name: 'asc' } });
         break;
       case 'eco_programs':
-        data = await (prisma as any).ecoProgramReport.findMany({ orderBy: { date: 'desc' } });
+        data = await (prisma as any).ecoProgramReport.findMany({ where: reserveFilter, orderBy: { date: 'desc' } });
         break;
       case 'stranding_cases':
-        data = await (prisma as any).strandingCase.findMany({ orderBy: { date: 'desc' } });
+        data = await (prisma as any).strandingCase.findMany({ where: reserveFilter, orderBy: { date: 'desc' } });
         break;
       case 'sightings':
-        data = await (prisma as any).sighting.findMany({ orderBy: { date: 'desc' } });
+        data = await (prisma as any).sighting.findMany({ where: reserveFilter, orderBy: { date: 'desc' } });
         break;
       case 'beach_surveys':
-        data = await (prisma as any).beachSurvey.findMany({ orderBy: { date: 'desc' } });
+        data = await (prisma as any).beachSurvey.findMany({ where: reserveFilter, orderBy: { date: 'desc' } });
         break;
       case 'system_config':
         data = await (prisma as any).systemConfig.findMany();

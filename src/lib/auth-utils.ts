@@ -84,7 +84,7 @@ export function verifyJwt(token: string): any | null {
 }
 
 // Request Authentication Helper
-export async function verifyAuth(req: Request): Promise<{ id: string; employeeId: string; role: string } | null> {
+export async function verifyAuth(req: Request): Promise<{ id: string; employeeId: string; role: string; reserveId?: string; reserve?: string; reserveAr?: string } | null> {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get('token')?.value;

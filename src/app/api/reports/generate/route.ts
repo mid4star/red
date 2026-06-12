@@ -1,10 +1,28 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+import { verifyAuth } from '@/lib/auth-utils';
+
 export async function POST(req: Request) {
   try {
+    const auth = await verifyAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
-    const { startDate, endDate, reserve } = body;
+    let { startDate, endDate, reserve } = body;
+
+    // Strict multi-tenancy enforcement
+    let finalReserveId: string | undefined = undefined;
+    if (auth.role !== 'ADMIN') {
+      finalReserveId = auth.reserveId || '';
+      reserve = auth.reserve || reserve; // Force reserve name to user's reserve
+    } else if (reserve && reserve !== 'ALL') {
+      // If admin selected a specific reserve, we might filter by it.
+      // But since the frontend sends `reserve` as name, we should ideally filter by reserve name or ID.
+      // We will filter by `reserve` name if `reserveId` isn't provided directly.
+    }
 
     if (!startDate || !endDate) {
       return NextResponse.json({ error: 'Start date and end date are required' }, { status: 400 });
@@ -21,6 +39,10 @@ export async function POST(req: Request) {
         lte: end
       }
     };
+    
+    if (finalReserveId) {
+      patrolWhere.reserveId = finalReserveId;
+    }
     
     // For simplicity, if a reserve is provided and not 'ALL', we can try to filter by zone
     // In our schema, Patrol has `zone` which might match the reserve name.
@@ -49,6 +71,9 @@ export async function POST(req: Request) {
         lte: end
       }
     };
+    if (finalReserveId) {
+      violationWhere.reserveId = finalReserveId;
+    }
     if (reserve && reserve !== 'ALL') {
       violationWhere.OR = [
         { location: { contains: reserve } },
@@ -69,6 +94,9 @@ export async function POST(req: Request) {
         lte: end
       }
     };
+    if (finalReserveId) {
+      surveyWhere.reserveId = finalReserveId;
+    }
     const surveys = await prisma.survey.findMany({
       where: surveyWhere,
       include: {

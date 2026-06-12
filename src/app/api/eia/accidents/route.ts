@@ -10,7 +10,9 @@ export async function GET(req: NextRequest) {
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const reserveFilter = auth.role !== 'ADMIN' ? { reserveId: auth.reserveId } : {};
     const accidents = await prisma.eiaAccident.findMany({
+      where: reserveFilter,
       orderBy: { date: 'desc' },
     });
     return NextResponse.json(accidents);
@@ -33,6 +35,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const reserveId = auth.role !== 'ADMIN' ? auth.reserveId : (body.reserveId || '');
+    const reserve = auth.role !== 'ADMIN' ? auth.reserve : (body.reserve || '');
+
     const accident = await prisma.eiaAccident.create({
       data: {
         type,
@@ -43,6 +48,8 @@ export async function POST(req: NextRequest) {
         description,
         reportFileUrl: reportFileUrl || null,
         createdBy: createdBy || 'مصطفى لايق',
+        reserveId,
+        reserve
       },
     });
 

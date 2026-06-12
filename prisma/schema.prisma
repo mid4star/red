@@ -62,6 +62,8 @@ model Patrol {
   code              String?
   zone              String?
   zoneAr            String?
+  reserveId         String   @default("")
+  reserve           String   @default("")
   date              DateTime @default(now())
   type              String?  @default("Marine Patrol") // Marine Patrol, Coastal Patrol, Monitoring Patrol, Inspection Patrol
   startTime         DateTime @default(now())
@@ -184,6 +186,8 @@ model Vessel {
 model Violation {
   id            String   @id @default(cuid())
   code          String?
+  reserveId     String   @default("")
+  reserve       String   @default("")
   date          DateTime @default(now())
   officerId     String
   locationLat   Float
@@ -209,6 +213,8 @@ model Violation {
 model Survey {
   id          String   @id @default(cuid())
   date        DateTime @default(now())
+  reserveId   String   @default("")
+  reserve     String   @default("")
   observerId  String
   type        SurveyType
   depthRange  String?
@@ -225,6 +231,8 @@ model EiaCost {
   id              String        @id @default(cuid())
   subject         String
   details         String
+  reserveId       String   @default("")
+  reserve         String   @default("")
   date            DateTime
   status          String        @default("UNANSWERED") // UNANSWERED, ANSWERED
   createdBy       String        @default("مصطفى لايق")
@@ -263,6 +271,8 @@ model EiaInspection {
   id              String   @id @default(cuid())
   locationName    String
   latitude        Float
+  reserveId       String   @default("")
+  reserve         String   @default("")
   longitude       Float
   date            DateTime
   inspectorName   String
@@ -281,6 +291,8 @@ model EiaViolation {
   type            String             // Beach encroachment, Scaffolding, Construction
   date            DateTime
   locationName    String
+  reserveId       String   @default("")
+  reserve         String   @default("")
   latitude        Float
   longitude       Float
   entityType      String             // PROJECT or PERSON
@@ -307,6 +319,8 @@ model EiaAccident {
   type            String   // Grounding, Oil Pollution, Fires
   locationName    String
   latitude        Float
+  reserveId       String   @default("")
+  reserve         String   @default("")
   longitude       Float
   date            DateTime
   description     String

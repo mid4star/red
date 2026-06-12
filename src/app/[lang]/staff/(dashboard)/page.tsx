@@ -2,10 +2,18 @@ import React from 'react';
 import { prisma } from '@/lib/prisma';
 import DashboardClient, { DashboardData, SmartInsight } from './DashboardClient';
 import { formatDistanceToNow } from 'date-fns';
+import { cookies } from 'next/headers';
+import { verifyJwt } from '@/lib/auth-utils';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage({ params }: { params: { lang: string } }) {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
+  const auth = token ? verifyJwt(token) : null;
+  
+  const reserveFilter = auth && auth.role !== 'ADMIN' ? { reserveId: auth.reserveId } : {};
+
   // 1. Fetch Aggregated Stats
   const [
     totalPatrols,
@@ -15,18 +23,18 @@ export default async function DashboardPage({ params }: { params: { lang: string
     vesselsReady,
     activeUsers
   ] = await Promise.all([
-    prisma.patrol.count(),
-    prisma.violation.count({ where: { status: { notIn: ['CLOSED', 'RESOLVED'] } } }),
-    prisma.survey.count(),
+    prisma.patrol.count({ where: reserveFilter }),
+    prisma.violation.count({ where: { status: { notIn: ['CLOSED', 'RESOLVED'] }, ...reserveFilter } }),
+    prisma.survey.count({ where: reserveFilter }),
     prisma.vessel.count(),
     prisma.vessel.count({ where: { status: 'ACTIVE' } }),
     prisma.user.count({ where: { status: 'ACTIVE' } })
   ]);
 
   // 2. Fetch Recent Activities for Feed
-  const recentPatrols = await prisma.patrol.findMany({ take: 5, orderBy: { date: 'desc' }, include: { leader: true } });
-  const recentViolations = await prisma.violation.findMany({ take: 5, orderBy: { date: 'desc' }, include: { officer: true } });
-  const recentNews = await prisma.newsArticle.findMany({ take: 3, orderBy: { date: 'desc' } });
+  const recentPatrols = await prisma.patrol.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { leader: true } });
+  const recentViolations = await prisma.violation.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { officer: true } });
+  const recentNews = await (prisma as any).newsArticle.findMany({ take: 3, orderBy: { date: 'desc' } });
 
   // 3. COMPREHENSIVE SMART INSIGHTS ENGINE
   const insights: SmartInsight[] = [];
@@ -34,14 +42,14 @@ export default async function DashboardPage({ params }: { params: { lang: string
   try {
     // --- Correlation 1: Pollution-to-Mortality Link ---
     // Check for recent strandings and environmental accidents
-    const recentStrandings = await prisma.strandingCase.findMany({
-      where: { status: { in: ['DEAD', 'نافق'] } },
+    const recentStrandings = await (prisma as any).strandingCase.findMany({
+      where: { status: { in: ['DEAD', 'نافق'] }, ...reserveFilter },
       orderBy: { date: 'desc' },
       take: 2
     });
     
-    const recentPollution = await prisma.eiaAccident.findMany({
-      where: { type: { in: ['Oil Pollution', 'Chemical Spill', 'Grounding'] } },
+    const recentPollution = await (prisma as any).eiaAccident.findMany({
+      where: { type: { in: ['Oil Pollution', 'Chemical Spill', 'Grounding'] }, ...reserveFilter },
       orderBy: { date: 'desc' },
       take: 1
     });
@@ -72,7 +80,7 @@ export default async function DashboardPage({ params }: { params: { lang: string
     // Locations with high number of unresolved violations
     const activeViolationsData = await prisma.violation.groupBy({
       by: ['location'],
-      where: { status: 'NEW', location: { not: null, notIn: [''] } },
+      where: { status: 'NEW', location: { not: null, notIn: [''] }, ...reserveFilter },
       _count: { location: true },
       orderBy: { _count: { location: 'desc' } },
       take: 1
@@ -92,7 +100,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
 
     // --- Correlation 3: Rare Species Heatmaps ---
     // Recent sightings of specific animals
-    const rareSightings = await prisma.sighting.findMany({
+    const rareSightings = await (prisma as any).sighting.findMany({
+      where: reserveFilter,
       orderBy: { date: 'desc' },
       take: 1
     });
@@ -128,6 +137,11 @@ export default async function DashboardPage({ params }: { params: { lang: string
     }
 
     // Include the legacy insights from the previous build if there is room
+    // For patrol observations, we can filter by joining patrol's reserveId if we can,
+    // but Prisma groupBy doesn't allow joining in where. We will fetch recent patrols instead if needed,
+    // or we skip reserve filter for observations if not easily possible via groupBy.
+    // We will just filter if possible, but actually we can't filter patrolObservation by reserveId directly
+    // since we didn't add reserveId to patrolObservation, only to Patrol.
     const topSpeciesRaw = await prisma.patrolObservation.groupBy({
       by: ['speciesName'],
       _count: { speciesName: true },

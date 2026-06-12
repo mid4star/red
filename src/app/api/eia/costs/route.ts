@@ -10,7 +10,9 @@ export async function GET(req: NextRequest) {
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const reserveFilter = auth.role !== 'ADMIN' ? { reserveId: auth.reserveId } : {};
     const costs = await prisma.eiaCost.findMany({
+      where: reserveFilter,
       include: { files: true },
       orderBy: { date: 'desc' },
     });
@@ -34,6 +36,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const reserveId = auth.role !== 'ADMIN' ? auth.reserveId : (body.reserveId || '');
+    const reserve = auth.role !== 'ADMIN' ? auth.reserve : (body.reserve || '');
+
     const cost = await prisma.eiaCost.create({
       data: {
         subject,
@@ -41,6 +46,8 @@ export async function POST(req: NextRequest) {
         date: new Date(date),
         status: status || 'UNANSWERED',
         createdBy: createdBy || 'مصطفى لايق',
+        reserveId,
+        reserve,
         files: files && files.length > 0 ? {
           create: files.map((file: any) => ({
             name: file.name,

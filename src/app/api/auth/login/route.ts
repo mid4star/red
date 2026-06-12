@@ -41,7 +41,10 @@ export async function POST(request: Request) {
     const token = signJwt({
       id: user.id,
       employeeId: user.employeeId,
-      role: user.role
+      role: user.role,
+      reserveId: user.reserveId,
+      reserve: user.reserve,
+      reserveAr: user.reserveAr
     });
 
     // Create JSON response

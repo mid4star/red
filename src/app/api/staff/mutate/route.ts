@@ -191,6 +191,17 @@ export async function POST(request: Request) {
 
     if (action === 'ADD') {
       const sqlInput = mapClientToSql(collectionName, data, action);
+      
+      // Inject reserve data for multi-tenancy (unless ADMIN explicitly provides it)
+      if (auth.role !== 'ADMIN' && auth.reserveId) {
+        sqlInput.reserveId = auth.reserveId;
+        sqlInput.reserve = auth.reserve || '';
+      } else if (auth.role === 'ADMIN' && !sqlInput.reserveId) {
+        // If admin didn't specify, default to their own or empty
+        sqlInput.reserveId = auth.reserveId || '';
+        sqlInput.reserve = auth.reserve || '';
+      }
+
       if (id) {
         sqlInput.id = id;
       }

@@ -16,6 +16,9 @@ export async function GET(req: NextRequest) {
     const dateStr = searchParams.get('date');
 
     const whereClause: any = {};
+    if (auth.role !== 'ADMIN' && auth.reserveId) {
+      whereClause.reserveId = auth.reserveId;
+    }
 
     if (type) {
       whereClause.type = { contains: type };
@@ -61,6 +64,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const reserveId = auth.role !== 'ADMIN' ? auth.reserveId : (body.reserveId || '');
+    const reserve = auth.role !== 'ADMIN' ? auth.reserve : (body.reserve || '');
+
     const violation = await prisma.eiaViolation.create({
       data: {
         type,
@@ -71,6 +77,8 @@ export async function POST(req: NextRequest) {
         entityType,
         entityName,
         createdBy: createdBy || 'مصطفى لايق',
+        reserveId,
+        reserve,
         files: files && files.length > 0 ? {
           create: files.map((file: any) => ({
             name: file.name,
