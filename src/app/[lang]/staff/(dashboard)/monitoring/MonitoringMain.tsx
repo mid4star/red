@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { Compass, Loader2, Plus, MapPin } from 'lucide-react';
+import { Compass, Loader2, Plus, MapPin, Calendar, User, FileText, Tag, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { FileUpload } from '@/components/ui/FileUpload';
@@ -215,40 +215,40 @@ export default function MonitoringMain({ lang }: MonitoringMainProps) {
   const getColumns = (): any[] => {
     if (activeTab === 'eco_programs') {
       return [
-        { key: 'program', header: isAr ? 'البرنامج' : 'Program', render: (val: any) => <span className="font-bold">{val}</span> },
-        { key: 'location', header: isAr ? 'الموقع' : 'Location' },
-        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
-        { key: 'observerName', header: isAr ? 'المراقب' : 'Observer' },
-        { key: 'details', header: isAr ? 'ملاحظات' : 'Details', render: (val: any) => <span className="text-th-muted max-w-[150px] truncate block">{val || '-'}</span> }
+        { key: 'program', header: <div className="flex items-center gap-1.5"><Tag size={14}/> {isAr ? 'البرنامج' : 'Program'}</div>, render: (val: any) => <span className="font-bold">{val}</span> },
+        { key: 'location', header: <div className="flex items-center gap-1.5"><MapPin size={14}/> {isAr ? 'الموقع' : 'Location'}</div> },
+        { key: 'date', header: <div className="flex items-center gap-1.5"><Calendar size={14}/> {isAr ? 'التاريخ' : 'Date'}</div>, render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
+        { key: 'observerName', header: <div className="flex items-center gap-1.5"><User size={14}/> {isAr ? 'المراقب' : 'Observer'}</div> },
+        { key: 'details', header: <div className="flex items-center gap-1.5"><FileText size={14}/> {isAr ? 'ملاحظات' : 'Details'}</div>, render: (val: any) => <span className="text-th-muted line-clamp-2 break-words text-xs">{val || '-'}</span> }
       ];
     }
     if (activeTab === 'stranding_cases') {
       return [
-        { key: 'species', header: isAr ? 'النوع' : 'Species', render: (val: any) => <span className="font-bold">{val || '-'}</span> },
-        { key: 'status', header: isAr ? 'الحالة' : 'Status', render: (val: any) => (
+        { key: 'species', header: <div className="flex items-center gap-1.5"><Tag size={14}/> {isAr ? 'النوع' : 'Species'}</div>, render: (val: any) => <span className="font-bold">{val || '-'}</span> },
+        { key: 'status', header: <div className="flex items-center gap-1.5"><Activity size={14}/> {isAr ? 'الحالة' : 'Status'}</div>, render: (val: any) => (
             <span className={`px-2 py-1 rounded-md text-[10px] font-bold ${val === 'ALIVE' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-rose-500/20 text-rose-500'}`}>
               {val === 'ALIVE' ? (isAr ? 'حي' : 'ALIVE') : (isAr ? 'نافق' : 'DEAD')}
             </span>
           ) 
         },
-        { key: 'location', header: isAr ? 'الموقع' : 'Location' },
-        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
-        { key: 'description', header: isAr ? 'الوصف' : 'Description', render: (val: any) => <span className="text-th-muted max-w-[150px] truncate block">{val || '-'}</span> }
+        { key: 'location', header: <div className="flex items-center gap-1.5"><MapPin size={14}/> {isAr ? 'الموقع' : 'Location'}</div> },
+        { key: 'date', header: <div className="flex items-center gap-1.5"><Calendar size={14}/> {isAr ? 'التاريخ' : 'Date'}</div>, render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
+        { key: 'description', header: <div className="flex items-center gap-1.5"><FileText size={14}/> {isAr ? 'الوصف' : 'Description'}</div>, render: (val: any) => <span className="text-th-muted line-clamp-2 break-words text-xs">{val || '-'}</span> }
       ];
     }
     if (activeTab === 'sightings') {
       return [
-        { key: 'species', header: isAr ? 'النوع' : 'Species', render: (val: any) => <span className="font-bold">{val || '-'}</span> },
-        { key: 'count', header: isAr ? 'العدد' : 'Count', render: (val: any) => <span className="inline-flex items-center justify-center bg-teal-500/10 text-teal-500 rounded-full w-6 h-6 font-bold text-xs">{val}</span> },
-        { key: 'location', header: isAr ? 'الموقع' : 'Location' },
-        { key: 'observerName', header: isAr ? 'المراقب' : 'Observer' },
-        { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
+        { key: 'species', header: <div className="flex items-center gap-1.5"><Tag size={14}/> {isAr ? 'النوع' : 'Species'}</div>, render: (val: any) => <span className="font-bold">{val || '-'}</span> },
+        { key: 'count', header: <div className="flex items-center gap-1.5"><Activity size={14}/> {isAr ? 'العدد' : 'Count'}</div>, render: (val: any) => <span className="inline-flex items-center justify-center bg-teal-500/10 text-teal-500 rounded-full w-6 h-6 font-bold text-xs">{val}</span> },
+        { key: 'location', header: <div className="flex items-center gap-1.5"><MapPin size={14}/> {isAr ? 'الموقع' : 'Location'}</div> },
+        { key: 'observerName', header: <div className="flex items-center gap-1.5"><User size={14}/> {isAr ? 'المراقب' : 'Observer'}</div> },
+        { key: 'date', header: <div className="flex items-center gap-1.5"><Calendar size={14}/> {isAr ? 'التاريخ' : 'Date'}</div>, render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
       ];
     }
     return [
-      { key: 'location', header: isAr ? 'الموقع' : 'Location', render: (val: any) => <span className="font-bold">{val}</span> },
-      { key: 'date', header: isAr ? 'التاريخ' : 'Date', render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
-      { key: 'description', header: isAr ? 'الوصف' : 'Description', render: (val: any) => <span className="text-th-muted max-w-[200px] truncate block">{val || '-'}</span> }
+      { key: 'location', header: <div className="flex items-center gap-1.5"><MapPin size={14}/> {isAr ? 'الموقع' : 'Location'}</div>, render: (val: any) => <span className="font-bold">{val}</span> },
+      { key: 'date', header: <div className="flex items-center gap-1.5"><Calendar size={14}/> {isAr ? 'التاريخ' : 'Date'}</div>, render: (val: any) => new Date(val).toLocaleDateString(isAr ? 'ar-EG' : 'en-US') },
+      { key: 'description', header: <div className="flex items-center gap-1.5"><FileText size={14}/> {isAr ? 'الوصف' : 'Description'}</div>, render: (val: any) => <span className="text-th-muted line-clamp-2 break-words text-xs">{val || '-'}</span> }
     ];
   };
 

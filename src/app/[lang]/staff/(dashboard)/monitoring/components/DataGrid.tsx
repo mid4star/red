@@ -49,21 +49,21 @@ export default function DataGrid({ columns, data, onRowClick, onEdit, onDelete, 
 
   return (
     <div className="w-full bg-th-surface rounded-2xl border border-th-border flex flex-col h-full overflow-hidden shadow-sm transition-all duration-300">
-      <div className="p-4 md:p-5 border-b border-th-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-th-surface2">
-        <div className="relative w-full sm:w-80">
+      <div className="p-4 md:p-5 border-b border-th-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-th-surface2">
+        <div className="relative w-full max-w-sm">
           <input
             type="text"
             placeholder={isAr ? 'بحث سريع في جميع الحقول...' : 'Quick search...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 text-sm bg-th-input border border-th-border rounded-xl text-th-text focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all shadow-sm"
+            className={`w-full h-10 ${isAr ? 'pr-11 pl-4' : 'pl-11 pr-4'} text-sm bg-th-surface border border-th-border hover:border-teal-500/50 rounded-xl text-th-text focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all shadow-sm`}
             dir={isAr ? 'rtl' : 'ltr'}
           />
-          <Search size={16} className={`absolute top-3 text-th-muted ${isAr ? 'right-3' : 'left-3'}`} />
+          <Search size={16} className={`absolute top-3 text-th-muted ${isAr ? 'right-4' : 'left-4'}`} />
         </div>
-        <div className="flex items-center gap-2">
-          <div className="px-4 py-2 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xs font-bold tracking-wide">
-            {sortedData.length} {isAr ? 'سجل' : 'records'}
+        <div className="flex items-center self-start md:self-auto gap-2">
+          <div className="px-4 py-2 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 text-xs font-bold tracking-wide flex items-center gap-2">
+            <span className="text-teal-500 bg-teal-500/10 px-2 py-0.5 rounded-md">{sortedData.length}</span> {isAr ? 'سجل' : 'records'}
           </div>
         </div>
       </div>
@@ -109,12 +109,12 @@ export default function DataGrid({ columns, data, onRowClick, onEdit, onDelete, 
                   className="hover:bg-th-surface2/50 transition-colors cursor-pointer group relative"
                 >
                   {columns.map((col, cIdx) => (
-                    <td key={cIdx} className="px-6 py-4 whitespace-nowrap">
-                      {col.render ? col.render(row[col.key], row) : row[col.key]}
+                    <td key={cIdx} className="px-6 py-4" dir="auto">
+                      {col.render ? col.render(row[col.key], row) : <span className="block max-w-[250px] whitespace-normal break-words">{row[col.key]}</span>}
                     </td>
                   ))}
                   {(onEdit || onDelete) && (
-                    <td className="px-5 py-4 text-right whitespace-nowrap">
+                    <td className="px-6 py-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         {onEdit && (
                           <button
