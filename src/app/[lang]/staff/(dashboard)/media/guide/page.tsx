@@ -449,7 +449,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
             <div>
-              <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+              <span className="text-[10px] font-black tracking-[0.2em] text-teal-600 dark:text-teal-400 uppercase italic">
                 {isAr ? 'دليل الإرشادات' : 'Field Briefing'}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
@@ -461,8 +461,8 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
             <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             <div>
@@ -573,7 +573,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         setNewLinkNAr('');
                       }
                     }}
-                    className="h-10 px-4 rounded-xl bg-teal-500/20 text-teal-400 hover:bg-teal-500/30 text-xs font-bold shrink-0 self-end transition-all flex items-center gap-1.5 border border-teal-500/20"
+                    className="h-10 px-4 rounded-xl bg-teal-500/20 text-teal-600 dark:text-teal-400 hover:bg-teal-500/30 text-xs font-bold shrink-0 self-end transition-all flex items-center gap-1.5 border border-teal-500/20"
                   >
                     <Plus size={14} />
                     {isAr ? 'إضافة' : 'Add'}
@@ -611,7 +611,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
             <div>
-              <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+              <span className="text-[10px] font-black tracking-[0.2em] text-teal-600 dark:text-teal-400 uppercase italic">
                 {isAr ? 'الكائنات البحرية' : 'Marine Species'}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
@@ -623,8 +623,8 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
             <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             <div>
@@ -712,7 +712,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
               <ArrowRight size={20} className={isAr ? '' : 'rotate-180'} />
             </button>
             <div>
-              <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+              <span className="text-[10px] font-black tracking-[0.2em] text-teal-600 dark:text-teal-400 uppercase italic">
                 {isAr ? 'استكشاف التضاريس' : 'Explore Terrain'}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-th-text tracking-tight flex items-center gap-2">
@@ -724,8 +724,8 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
 
           <div className="w-full max-w-4xl mx-auto pt-4 space-y-6">
             <div className="flex gap-2 bg-th-surface p-1 rounded-xl w-fit">
-              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
-              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
+              <button onClick={() => setLangTab('ar')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'ar' ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}>العربية</button>
+              <button onClick={() => setLangTab('en')} className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${langTab === 'en' ? 'bg-teal-500/20 text-teal-600 dark:text-teal-400' : 'text-th-muted hover:text-th-text'}`}>English</button>
             </div>
 
             <div>
@@ -830,7 +830,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             <button
               onClick={() => setActiveTab('guide')}
               className={`pb-4 text-sm font-black tracking-wider uppercase transition-all relative flex items-center gap-2 ${
-                activeTab === 'guide' ? 'text-teal-400 font-bold' : 'text-th-muted hover:text-slate-200'
+                activeTab === 'guide' ? 'text-teal-600 dark:text-teal-400 font-bold' : 'text-th-muted hover:text-teal-600 dark:hover:text-slate-200'
               }`}
             >
               <BookOpen size={16} />
@@ -842,7 +842,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             <button
               onClick={() => setActiveTab('species')}
               className={`pb-4 text-sm font-black tracking-wider uppercase transition-all relative flex items-center gap-2 ${
-                activeTab === 'species' ? 'text-teal-400 font-bold' : 'text-th-muted hover:text-slate-200'
+                activeTab === 'species' ? 'text-teal-600 dark:text-teal-400 font-bold' : 'text-th-muted hover:text-teal-600 dark:hover:text-slate-200'
               }`}
             >
               <Fish size={16} />
@@ -854,7 +854,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             <button
               onClick={() => setActiveTab('terrain')}
               className={`pb-4 text-sm font-black tracking-wider uppercase transition-all relative flex items-center gap-2 ${
-                activeTab === 'terrain' ? 'text-teal-400 font-bold' : 'text-th-muted hover:text-slate-200'
+                activeTab === 'terrain' ? 'text-teal-600 dark:text-teal-400 font-bold' : 'text-th-muted hover:text-teal-600 dark:hover:text-slate-200'
               }`}
             >
               <Compass size={16} />
@@ -870,7 +870,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-1 bg-teal-500 rounded-full" />
-                <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+                <span className="text-[10px] font-black tracking-[0.2em] text-teal-600 dark:text-teal-400 uppercase italic">
                   {isAr ? 'إدارة المحتوى' : 'Content Manager'}
                 </span>
               </div>
@@ -931,14 +931,14 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                           {/* Order Controls */}
                           <div className="flex flex-col items-center gap-1 shrink-0">
                             <button onClick={() => moveSection(section, 'up')} disabled={i === 0}
-                              className="p-1 rounded-md text-th-muted hover:text-teal-400 hover:bg-th-surface transition-all disabled:opacity-20 disabled:cursor-not-allowed">
+                              className="p-1 rounded-md text-th-muted hover:text-teal-600 dark:text-teal-400 hover:bg-th-surface transition-all disabled:opacity-20 disabled:cursor-not-allowed">
                               <ChevronUp size={14} />
                             </button>
-                            <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 font-black text-lg">
+                            <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400 font-black text-lg">
                               {section.order}
                             </div>
                             <button onClick={() => moveSection(section, 'down')} disabled={i === sections.length - 1}
-                              className="p-1 rounded-md text-th-muted hover:text-teal-400 hover:bg-th-surface transition-all disabled:opacity-20 disabled:cursor-not-allowed">
+                              className="p-1 rounded-md text-th-muted hover:text-teal-600 dark:text-teal-400 hover:bg-th-surface transition-all disabled:opacity-20 disabled:cursor-not-allowed">
                               <ChevronDown size={14} />
                             </button>
                           </div>
@@ -971,7 +971,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <Eye size={15} />
                             </button>
                             <button onClick={() => openEditGuide(section)}
-                              className="p-2 rounded-lg bg-th-surface text-th-muted hover:text-teal-400 hover:bg-th-surface2 transition-all">
+                              className="p-2 rounded-lg bg-th-surface text-th-muted hover:text-teal-600 dark:text-teal-400 hover:bg-th-surface2 transition-all">
                               <Pencil size={15} />
                             </button>
                             <button onClick={() => handleDeleteGuide(section.id!)}
@@ -1055,7 +1055,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
                           {/* Image Header */}
                           <div className="relative h-44 bg-th-surface2 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/60 z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#000000e6] via-[#00000066] to-[#000000b3] z-10" />
                             {sp.imageUrl ? (
                               <img src={sp.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                             ) : (
@@ -1072,7 +1072,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <span className="text-[9px] font-black text-teal-200 tracking-wider uppercase bg-teal-900/60 px-2 py-0.5 rounded backdrop-blur-md border border-teal-500/20 block w-fit mb-1">
                                 {isAr ? (sp.typeAr || sp.type) : (sp.type || sp.typeAr)}
                               </span>
-                              <h3 className="text-white font-bold text-lg tracking-tight drop-shadow-md">
+                              <h3 className="text-white font-black text-xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 {isAr ? sp.nameAr : sp.name}
                               </h3>
                             </div>
@@ -1173,7 +1173,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                         <Card className="group overflow-hidden border border-th-border bg-th-surface2 backdrop-blur-xl hover:border-teal-500/20 hover:shadow-[0_0_30px_rgba(20,184,166,0.08)] transition-all duration-500 flex flex-col h-full justify-between">
                           {/* Image Header */}
                           <div className="relative h-44 bg-th-surface2 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/60 z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#000000e6] via-[#00000066] to-[#000000b3] z-10" />
                             {loc.imageUrl ? (
                               <img src={loc.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                             ) : (
@@ -1190,7 +1190,7 @@ export default function GuideCMSPage({ params }: { params: { lang: string } }) {
                               <span className="text-[9px] font-black text-teal-200 tracking-wider uppercase bg-teal-900/60 px-2 py-0.5 rounded backdrop-blur-md border border-teal-500/20 block w-fit mb-1">
                                 {isAr ? (loc.typeAr || loc.type) : (loc.type || loc.typeAr)}
                               </span>
-                              <h3 className="text-white font-bold text-lg tracking-tight drop-shadow-md">
+                              <h3 className="text-white font-black text-xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 {isAr ? loc.nameAr : loc.name}
                               </h3>
                             </div>
