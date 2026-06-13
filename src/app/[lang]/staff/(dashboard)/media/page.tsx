@@ -76,24 +76,31 @@ export default function MediaCenterPage({ params }: { params: { lang: string } }
   }, []);
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-10" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
 
-      {/* ── Page Header ────────────────────────────────────────────── */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-1 bg-amber-500 rounded-full" />
-          <span className="text-[10px] font-black tracking-[0.2em] text-amber-400 uppercase italic">
-            {isAr ? 'مركز إدارة المحتوى' : 'Content Management Hub'}
-          </span>
+      {/* ── Page Header ── */}
+      <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+              <Megaphone size={24} />
+           </div>
+           <div>
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500 block mb-1">
+                 {isAr ? 'مركز إدارة المحتوى' : 'Content Management Hub'}
+             </span>
+             <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+                 {isAr ? 'المركز الإعلامي' : 'Media Center'}
+             </h1>
+           </div>
         </div>
-        <h1 className="text-4xl font-black text-th-text dark:text-white tracking-tighter uppercase italic">
-          {isAr ? 'المركز الإعلامي' : 'Media Center'}
-        </h1>
-        <p className="text-sm text-th-muted dark:text-slate-400 max-w-xl">
-          {isAr 
-            ? 'تحكم كامل في محتوى الموقع العام: الصفحة الرئيسية، المحميات، الأخبار، البيانات المفتوحة ودليل الزوار.'
-            : 'Full control over public website content: homepage, reserves, news, open data and visitor guide.'}
-        </p>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
+           <p className="text-xs text-th-muted max-w-sm m-0 leading-tight">
+             {isAr 
+               ? 'تحكم كامل في محتوى الموقع العام: الصفحة الرئيسية، المحميات، الأخبار، البيانات المفتوحة ودليل الزوار.'
+               : 'Full control over public website content: homepage, reserves, news, open data and visitor guide.'}
+           </p>
+        </div>
       </div>
 
       {/* ── Quick Stats Banner ─────────────────────────────────────── */}

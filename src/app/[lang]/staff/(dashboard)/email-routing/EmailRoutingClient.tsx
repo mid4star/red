@@ -102,24 +102,29 @@ export default function EmailRoutingClient({ lang }: { lang: string }) {
   };
 
   return (
-    <div className="space-y-8" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-        <div>
-          <h1 className="text-3xl font-black uppercase italic tracking-tighter text-th-text flex items-center gap-3">
-            <Server className="text-orange-500" size={32} />
-            {isAr ? 'توجيه البريد الإلكتروني' : 'Email Routing'}
-          </h1>
-          <p className="text-slate-500 font-medium mt-2 max-w-2xl">
-            {isAr 
-              ? 'قم بإنشاء عناوين بريد إلكتروني مخصصة (Aliases) وتوجيه الرسائل الواردة إلى بريدك الشخصي عبر Cloudflare.'
-              : 'Create custom email aliases and automatically forward incoming messages to your personal inbox via Cloudflare.'}
-          </p>
+      <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0">
+              <Mail size={24} />
+           </div>
+           <div>
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 block mb-1">
+               {isAr ? 'توجيه البريد الإلكتروني' : 'Email Routing'}
+             </span>
+             <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+               {isAr ? 'البريد الإلكتروني' : 'Email Routing'}
+             </h1>
+           </div>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-bold flex items-center gap-2 px-6 py-3">
-          <Plus size={18} />
-          {isAr ? 'إنشاء بريد جديد' : 'Create New Alias'}
-        </Button>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
+          <Button onClick={() => setIsModalOpen(true)} className="bg-orange-600 hover:bg-orange-500 text-white shadow-lg shadow-orange-500/20 px-4 sm:px-6 rounded-xl h-11 transition-all w-full sm:w-auto flex items-center justify-center gap-2">
+            <Plus size={18} />
+            <span className="font-bold tracking-wide">{isAr ? 'إنشاء بريد جديد' : 'Create New Alias'}</span>
+          </Button>
+        </div>
       </div>
 
       {/* Stats/Info Cards */}

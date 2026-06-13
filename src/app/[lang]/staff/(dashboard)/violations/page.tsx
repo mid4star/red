@@ -807,11 +807,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
           </form>
         </div>
 
-        <style jsx global>{`
-          .custom-detail-scrollbar::-webkit-scrollbar { width: 4px; }
-          .custom-detail-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-detail-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 10px; }
-        `}</style>
+
       </div>
     );
   }
@@ -831,7 +827,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
     <div className="max-w-[1600px] mx-auto space-y-6" dir={isAr ? 'rtl' : 'ltr'}>
 
       {/* ── Page Header ── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-4 border-b border-th-border">
+      <div className="flex flex-wrap items-end justify-between gap-5 pb-4 border-b border-th-border">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <div className="w-8 h-1 bg-rose-500 rounded-full" />
@@ -892,7 +888,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
       </div>
 
       {/* ── Toolbar: Search + Filters ── */}
-      <div className="bg-th-surface border border-th-border rounded-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3">
+      <div className="bg-th-surface border border-th-border rounded-2xl p-3 flex flex-wrap items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-0 group">
           <Search className={`absolute ${isAr ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-th-muted group-focus-within:text-rose-400 transition-colors`} size={16} />
@@ -1124,11 +1120,7 @@ export default function ViolationsPage({ params }: { params: { lang: string } })
         </AnimatePresence>
       </div>
 
-      <style jsx global>{`
-        .custom-detail-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-detail-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-detail-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 10px; }
-      `}</style>
+
     </div>
   );
 }

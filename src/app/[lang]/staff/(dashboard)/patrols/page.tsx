@@ -59,98 +59,56 @@ export default function PatrolsDashboard({ params }: { params: { lang: string } 
   };
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-6 md:space-y-8 px-4 sm:px-6 md:px-8 overflow-hidden" dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className="max-w-[1600px] mx-auto space-y-6" dir={isArabic ? 'rtl' : 'ltr'}>
       
-      {/* Majestic Hero Header Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-3xl bg-th-surface2/60 border border-th-border backdrop-blur-2xl p-5 md:p-10 mb-8 shadow-2xl"
-      >
-        {/* Abstract animated backgrounds */}
-        <div className="absolute top-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-teal-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-64 md:w-96 h-64 md:h-96 bg-sky-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-8 relative z-10">
-          <div className="max-w-2xl">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-3 mb-3 md:mb-4"
-            >
-              <div className="p-2 md:p-2.5 bg-teal-500/20 text-teal-400 rounded-xl border border-teal-500/30 shadow-[0_0_20px_rgba(45,212,191,0.2)]">
-                <Shield size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
-              </div>
-              <span className="text-[10px] md:text-xs font-black tracking-[0.2em] md:tracking-[0.3em] text-teal-400 uppercase drop-shadow-md">
-                {isArabic ? 'إدارة العمليات البحرية' : 'Marine Operations'}
-              </span>
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-th-text dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:via-slate-200 dark:to-slate-400 tracking-tighter mb-3 md:mb-4 leading-tight"
-            >
-              {isArabic ? 'المركز الرئيسي للدوريات' : 'Patrol Command Center'}
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-xs md:text-base text-th-muted leading-relaxed font-medium"
-            >
-              {isArabic 
-                ? 'إدارة الأسطول، توجيه الدوريات البحرية والساحلية، تسجيل المخالفات، ومتابعة الرصد البيئي الحي عبر كافة محميات البحر الأحمر.' 
-                : 'Manage the fleet, direct marine and coastal patrols, record violations, and monitor live ecological observations across the Red Sea reserves.'}
-            </motion.p>
-          </div>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, type: "spring" }}
-            className="shrink-0 flex flex-col gap-3 mt-4 md:mt-0 w-full md:w-auto"
-          >
-            <Link href={`/${params.lang}/staff/patrols/new`} className="w-full">
-              <Button className="w-full md:w-auto h-12 md:h-14 bg-gradient-to-r from-teal-500 to-emerald-400 hover:from-teal-400 hover:to-emerald-300 text-[#001529] font-black rounded-xl md:rounded-2xl px-6 md:px-8 flex items-center justify-center gap-2 md:gap-3 shadow-[0_0_30px_rgba(45,212,191,0.3)] hover:shadow-[0_0_40px_rgba(45,212,191,0.5)] hover:-translate-y-1 transition-all duration-300 group">
-                <div className="bg-white/20 p-1 md:p-1.5 rounded-lg group-hover:rotate-90 transition-transform duration-300">
-                  <Plus size={18} strokeWidth={3} className="text-[#001529]" />
-                </div>
-                <span className="text-xs md:text-sm uppercase tracking-widest">{isArabic ? 'تسجيل دورية جديدة' : 'Log New Patrol'}</span>
-              </Button>
-            </Link>
-          </motion.div>
+      {/* ── Page Header ── */}
+      <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
+              <Shield size={24} />
+           </div>
+           <div>
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-500 block mb-1">
+               {isArabic ? 'إدارة العمليات البحرية' : 'Marine Operations'}
+             </span>
+             <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+               {isArabic ? 'الدوريات البحرية' : 'Marine Patrols'}
+             </h1>
+           </div>
         </div>
 
-        {/* Analytics Mini-Dashboard within Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-6 md:mt-10 pt-6 md:pt-8 border-t border-th-border relative z-10"
-        >
-          {[
-            { label: isArabic ? 'إجمالي الدوريات' : 'Total Patrols', val: totalPatrols, icon: Ship, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
-            { label: isArabic ? 'ساعات الإبحار' : 'Patrol Hours', val: `${totalHours}h`, icon: Clock, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-            { label: isArabic ? 'المشاهدات' : 'Observations', val: totalObservations, icon: Eye, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-            { label: isArabic ? 'المخالفات' : 'Violations', val: totalViolations, icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
-          ].map((stat, idx) => (
-            <div key={idx} className={`flex items-center gap-2.5 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl bg-th-surface/30 border ${stat.border} hover:bg-th-surface/60 transition-colors min-w-0`}>
-              <div className={`p-2 md:p-3 rounded-lg md:rounded-xl ${stat.bg} ${stat.color} shadow-inner shrink-0`}>
-                <stat.icon size={18} strokeWidth={2} className="md:w-[22px] md:h-[22px]" />
-              </div>
-              <div className="flex flex-col overflow-hidden flex-1 min-w-0">
-                <span className="text-[9px] md:text-[10px] text-th-muted font-bold uppercase tracking-wider truncate block">{stat.label}</span>
-                <span className="text-base sm:text-lg md:text-2xl font-black text-th-text tracking-tight truncate block">{stat.val}</span>
-              </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
+          <Link href={`/${params.lang}/staff/patrols/new`} className="w-full sm:w-auto">
+            <Button className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-4 sm:px-6 rounded-xl h-11 transition-all w-full sm:w-auto flex items-center justify-center gap-2">
+              <Plus size={18} />
+              <span className="font-bold tracking-wide">{isArabic ? 'تسجيل دورية جديدة' : 'Log New Patrol'}</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Analytics Mini-Dashboard */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {[
+          { label: isArabic ? 'إجمالي الدوريات' : 'Total Patrols', val: totalPatrols, icon: Ship, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
+          { label: isArabic ? 'ساعات الإبحار' : 'Patrol Hours', val: `${totalHours}h`, icon: Clock, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+          { label: isArabic ? 'المشاهدات' : 'Observations', val: totalObservations, icon: Eye, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+          { label: isArabic ? 'المخالفات' : 'Violations', val: totalViolations, icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+        ].map((stat, idx) => (
+          <Card key={idx} className="p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 hover:shadow-lg hover:border-th-border/80 transition-all duration-300 group relative overflow-hidden">
+            <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} shrink-0 w-fit group-hover:scale-110 transition-transform duration-300`}>
+              <stat.icon size={20} />
             </div>
-          ))}
-        </motion.div>
-      </motion.div>
+            <div>
+              <p className="text-[10px] font-bold text-th-muted uppercase tracking-widest mb-1">{stat.label}</p>
+              <h3 className="text-2xl font-black text-th-text tracking-tight">{stat.val}</h3>
+            </div>
+            <div className={`absolute -bottom-3 -right-3 opacity-[0.04] ${stat.color}`}>
+              <stat.icon size={80} />
+            </div>
+          </Card>
+        ))}
+      </div>
 
       {/* Environmental Conditions Panel */}
       <EnvironmentalConditions isArabic={isArabic} />

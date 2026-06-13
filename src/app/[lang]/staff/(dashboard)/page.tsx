@@ -35,6 +35,12 @@ export default async function DashboardPage({ params }: { params: { lang: string
   const recentPatrols = await prisma.patrol.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { leader: true } });
   const recentViolations = await prisma.violation.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { officer: true } });
   const recentNews = await (prisma as any).newsArticle.findMany({ take: 3, orderBy: { date: 'desc' } });
+  
+  // Fetch EIA & Monitoring Data
+  const recentEiaAccidents = await (prisma as any).eiaAccident.findMany({ take: 3, orderBy: { date: 'desc' }, ...reserveFilter }).catch(() => []);
+  const recentStrandingsFeed = await (prisma as any).strandingCase.findMany({ take: 3, orderBy: { date: 'desc' }, ...reserveFilter }).catch(() => []);
+  const recentSurveys = await (prisma as any).survey.findMany({ take: 3, orderBy: { date: 'desc' }, ...reserveFilter }).catch(() => []);
+
 
   // 3. COMPREHENSIVE SMART INSIGHTS ENGINE
   const insights: SmartInsight[] = [];
@@ -230,8 +236,11 @@ export default async function DashboardPage({ params }: { params: { lang: string
   const rawFeed = [
     ...recentPatrols.map(p => ({ ...p, feedType: 'PATROL' as const, rawDate: p.date.getTime() })),
     ...recentViolations.map(v => ({ ...v, feedType: 'VIOLATION' as const, rawDate: v.date.getTime() })),
-    ...recentNews.map(n => ({ ...n, feedType: 'NEWS' as const, rawDate: n.date.getTime() }))
-  ].sort((a, b) => b.rawDate - a.rawDate).slice(0, 15);
+    ...recentNews.map(n => ({ ...n, feedType: 'NEWS' as const, rawDate: n.date.getTime() })),
+    ...recentEiaAccidents.map(e => ({ ...e, feedType: 'EIA' as const, rawDate: e.date.getTime() })),
+    ...recentStrandingsFeed.map(s => ({ ...s, feedType: 'MONITORING' as const, rawDate: s.date.getTime() })),
+    ...recentSurveys.map(s => ({ ...s, feedType: 'MONITORING' as const, rawDate: s.date.getTime() }))
+  ].sort((a, b) => b.rawDate - a.rawDate).slice(0, 25);
 
   const sortedFeed: DashboardData['feed'] = rawFeed.map(item => {
     if (item.feedType === 'PATROL') {
@@ -254,6 +263,26 @@ export default async function DashboardPage({ params }: { params: { lang: string
         time: formatDistanceToNow(new Date(v.date), { addSuffix: true }),
         severity: v.severity,
         user: v.officer?.nameAr || v.officer?.name || 'System'
+      };
+    } else if (item.feedType === 'EIA') {
+      const e = item as any;
+      return {
+        id: `e-${e.id}`,
+        type: 'EIA',
+        title: params.lang === 'ar' ? 'تحديث تقييم الأثر' : 'EIA Update',
+        message: params.lang === 'ar' ? (`حادث بيئي: ${e.typeAr || e.type} - ${e.locationAr || e.location}`) : (`EIA Accident: ${e.type} - ${e.location}`),
+        time: formatDistanceToNow(new Date(e.date), { addSuffix: true }),
+        user: 'System'
+      };
+    } else if (item.feedType === 'MONITORING') {
+      const m = item as any;
+      return {
+        id: `m-${m.id}`,
+        type: 'MONITORING',
+        title: params.lang === 'ar' ? 'نشاط رصد' : 'Monitoring Activity',
+        message: m.species ? (params.lang === 'ar' ? `حالة نفوق: ${m.speciesAr || m.species}` : `Stranding: ${m.species}`) : (params.lang === 'ar' ? `مسح بيئي: ${m.typeAr || m.type}` : `Survey: ${m.type}`),
+        time: formatDistanceToNow(new Date(m.date), { addSuffix: true }),
+        user: 'System'
       };
     } else {
       const n = item as any;

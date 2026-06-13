@@ -121,9 +121,9 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-6" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+      <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
         <div className="flex items-center gap-4">
            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 relative">
               <Radio size={24} />
@@ -192,7 +192,7 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           <AnimatePresence>
             {articles.map((article, i) => (
               <motion.div
@@ -220,7 +220,7 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
                       </span>
                     </div>
                     
-                    <h2 className="text-base font-black text-th-text leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-3" dir="auto">
+                    <h2 className="text-[13px] md:text-sm font-black text-th-text leading-loose group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-4" dir="auto">
                       {highlightKeywords(article.title)}
                     </h2>
                   </div>

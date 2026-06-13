@@ -351,7 +351,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   });
 
   return (
-    <div className="space-y-6 max-w-[1600px] mx-auto relative" dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className="max-w-[1600px] mx-auto space-y-6 relative" dir={isArabic ? 'rtl' : 'ltr'}>
       
       {activeRole !== 'ADMIN' ? (
         /* ── ACCESS DENIED SCREEN ── */
@@ -376,27 +376,32 @@ export default function UserManagementPage({ params }: { params: { lang: string 
         <div className="animate-in fade-in duration-300">
           
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-white/10 mb-6">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                 <span className="w-8 h-1 bg-teal-500 rounded-full" />
-                 <span className="text-[10px] font-black tracking-[0.2em] text-teal-600 dark:text-teal-400 uppercase italic">
+          <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+            <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
+                  <Users size={24} />
+               </div>
+               <div>
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-500 block mb-1">
                      {isArabic ? 'إدارة الهوية والوصول' : 'Identity & Access Management'}
                  </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
-                {isArabic ? 'سجل المستخدمين والصلاحيات' : 'User Directory & Permissions'}
-              </h1>
+                 <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+                   {isArabic ? 'سجل المستخدمين' : 'User Directory'}
+                 </h1>
+               </div>
             </div>
-            
-            <Button 
-              onClick={() => { resetFormFields(); setShowAddForm(!showAddForm); }}
-              intent="primary" 
-              className="w-full md:w-auto rounded-2xl py-3 px-6 flex items-center justify-center gap-2 shadow-xl shadow-teal-500/10 bg-teal-600 hover:bg-teal-500 text-white font-bold"
-            >
-              {showAddForm ? <X size={16} /> : <UserPlus size={16} />}
-              {showAddForm ? (isArabic ? 'إغلاق النموذج' : 'Close Form') : (isArabic ? 'إضافة مستخدم جديد' : 'Add New User')}
-            </Button>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
+              <Button 
+                onClick={() => { resetFormFields(); setShowAddForm(!showAddForm); }}
+                className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-4 sm:px-6 rounded-xl h-11 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
+              >
+                {showAddForm ? <X size={18} /> : <UserPlus size={18} />}
+                <span className="font-bold tracking-wide">
+                  {showAddForm ? (isArabic ? 'إغلاق النموذج' : 'Close Form') : (isArabic ? 'مستخدم جديد' : 'New User')}
+                </span>
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -539,11 +544,7 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                       {submitting ? <Loader2 className="animate-spin mx-auto" size={18} /> : (editingUser ? (isArabic ? 'تحديث البيانات' : 'Update User') : (isArabic ? 'حفظ المستخدم' : 'Save User'))}
                     </Button>
                   </form>
-                  <style jsx>{`
-                    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-                    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(20, 184, 166, 0.3); border-radius: 4px; }
-                  `}</style>
+
                 </Card>
               </div>
             )}

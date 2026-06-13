@@ -512,7 +512,7 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
 
   return (
     <div 
-      className={showModal ? "space-y-6 max-w-[1200px] mx-auto relative pb-12" : "max-w-[1400px] mx-auto space-y-10 relative"} 
+      className={showModal ? "space-y-6 max-w-[1600px] mx-auto relative pb-12 animate-in fade-in duration-700" : "max-w-[1600px] mx-auto space-y-6 relative animate-in fade-in duration-700"} 
       dir={isArabic ? 'rtl' : 'ltr'}
       onClick={() => setActiveMenuId(null)}
     >
@@ -712,37 +712,38 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
         /* ── MAIN DIRECTORY VIEW ── */
         <>
           {/* ── Page Header ──────────────────────────────────────────────────────── */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                 <div className="w-8 h-1 bg-teal-500 rounded-full" />
-                 <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
+          <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+            <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
+                  <Ship size={24} />
+               </div>
+               <div>
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-500 block mb-1">
                      {isArabic ? 'إدارة الأصول' : 'Asset Management'}
                  </span>
-              </div>
-              <h1 className="text-4xl font-black text-th-text tracking-tighter uppercase italic">
-                {isArabic ? 'أساطيل ومعدات الهيئة' : 'Red Sea Fleet & Gear'}
-              </h1>
+                 <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+                   {isArabic ? 'أساطيل ومعدات الهيئة' : 'Red Sea Fleet'}
+                 </h1>
+               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-               <div className="relative group min-w-[280px]">
-                  <Search className={`absolute ${isArabic ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-th-muted group-focus-within:text-teal-400 transition-colors`} size={18} />
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
+               <div className="relative group w-full sm:w-auto min-w-[200px]">
+                  <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-th-muted group-focus-within:text-teal-400 transition-colors`} size={16} />
                   <input 
                     type="text" 
-                    placeholder={isArabic ? 'ابحث عن مركب أو معدة...' : 'Search for vessel or gear...'}
+                    placeholder={isArabic ? 'ابحث...' : 'Search...'}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full bg-th-input border border-th-border rounded-2xl py-3.5 ${isArabic ? 'pr-11 pl-4' : 'pl-11 pr-4'} text-[13px] font-medium text-th-text placeholder:text-th-dim outline-none ring-0 shadow-sm focus:border-teal-500/30 focus:ring-4 focus:ring-teal-500/10 transition-all`}
+                    className={`w-full bg-th-input border border-th-border rounded-xl h-11 ${isArabic ? 'pr-9 pl-4' : 'pl-9 pr-4'} text-sm font-medium text-th-text placeholder:text-th-dim outline-none ring-0 shadow-sm focus:border-teal-500/30 transition-all`}
                   />
                </div>
                <Button 
                  onClick={() => { resetFormFields(); setShowModal(true); }}
-                 intent="primary" 
-                 className="rounded-2xl py-3.5 px-6 flex items-center gap-2.5 shadow-[0_0_20px_rgba(45,212,191,0.2)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic"
+                 className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-4 sm:px-6 rounded-xl h-11 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                >
-                  <Plus size={18} strokeWidth={3} />
-                  <span className="font-black tracking-tight text-[13px]">{isArabic ? 'إضافة أصل' : 'Add New Asset'}</span>
+                  <Plus size={18} />
+                  <span className="font-bold tracking-wide">{isArabic ? 'إضافة أصل' : 'Add Asset'}</span>
                </Button>
             </div>
           </div>
@@ -755,7 +756,7 @@ export default function FleetPage({ params }: { params: { lang: string } }) {
           </div>
 
           {/* ── Filters & Tabs ───────────────────────────────────────────────────── */}
-          <div className="bg-th-surface p-2 rounded-2xl border border-th-border flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-th-surface p-2 rounded-2xl border border-th-border flex flex-wrap items-center justify-between gap-4">
             <div className="flex gap-1">
                {['ALL', 'ACTIVE', 'MISSION', 'MAINTENANCE'].map((t) => (
                  <button

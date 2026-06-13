@@ -514,26 +514,7 @@ export default function EcoMap({ items, activeItem, onItemSelect, onMapClick, la
         </>
       )}
 
-      {/* Map Leaflet Styling overrides */}
-      <style jsx global>{`
-        .custom-leaflet-popup .leaflet-popup-content-wrapper {
-          background: rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.25);
-          border-radius: 12px;
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-        }
-        .custom-leaflet-popup .leaflet-popup-tip {
-          background: rgba(255, 255, 255, 0.96);
-        }
-        .leaflet-container {
-          font-family: inherit;
-        }
-        
-        .selected-marker-pulse {
-          z-index: 1000 !important;
-        }
-      `}</style>
+
     </div>
   );
 }

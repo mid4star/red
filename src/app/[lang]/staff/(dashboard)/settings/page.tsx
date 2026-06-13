@@ -144,30 +144,32 @@ export default function SettingsPage({ params }: { params: { lang: string } }) {
    }
 
    return (
-      <form onSubmit={handleSave} className="max-w-[1400px] mx-auto space-y-10" dir={isArabic ? 'rtl' : 'ltr'}>
+      <form onSubmit={handleSave} className="max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-700" dir={isArabic ? 'rtl' : 'ltr'}>
          
-         {/* ── Page Header ──────────────────────────────────────────────────────── */}
-         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-               <div className="flex items-center gap-2">
-                  <div className="w-8 h-1 bg-teal-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] font-black tracking-[0.2em] text-teal-400 uppercase italic">
-                     {isArabic ? 'التحكم في بيانات المنصة' : 'Authority Constants Dashboard'}
-                  </span>
+         {/* ── Page Header ── */}
+         <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
+            <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
+                  <Globe size={24} />
                </div>
-               <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
-                  {isArabic ? 'بيانات التواصل والنظام' : 'System & Contact Settings'}
-               </h1>
+               <div>
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-500 block mb-1">
+                     {isArabic ? 'التحكم في بيانات المنصة' : 'Authority Constants Dashboard'}
+                 </span>
+                 <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-th-text uppercase m-0 leading-none">
+                     {isArabic ? 'إعدادات النظام' : 'System Settings'}
+                 </h1>
+               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
                <AnimatePresence>
                   {showSaved && (
                      <motion.div
                         initial={{ opacity: 0, x: isArabic ? -20 : 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: isArabic ? -20 : 20 }}
-                        className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-4 py-2.5 rounded-xl border border-emerald-500/20"
+                        className="flex items-center justify-center w-full sm:w-auto gap-2 text-emerald-500 bg-emerald-500/10 px-4 py-2.5 rounded-xl border border-emerald-500/20"
                      >
                         <CheckCircle2 size={18} />
                         <span className="text-[11px] font-bold tracking-widest uppercase">{isArabic ? 'تم الحفظ بنجاح' : 'Changes Saved'}</span>
@@ -177,14 +179,14 @@ export default function SettingsPage({ params }: { params: { lang: string } }) {
                <Button
                   type="submit"
                   disabled={isSaving}
-                  className="rounded-2xl py-3.5 px-8 flex items-center gap-2.5 shadow-[0_0_25px_rgba(45,212,191,0.15)] bg-teal-500 text-[#001529] hover:bg-teal-400 uppercase italic"
+                  className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-4 sm:px-6 rounded-xl h-11 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                >
                   {isSaving ? (
                      <Loader2 size={18} className="animate-spin" />
                   ) : (
-                     <Save size={18} strokeWidth={3} />
+                     <Save size={18} />
                   )}
-                  <span className="font-black tracking-tight text-[13px]">{isArabic ? 'حفظ التعديلات' : 'Save Changes'}</span>
+                  <span className="font-bold tracking-wide">{isArabic ? 'حفظ التعديلات' : 'Save Changes'}</span>
                </Button>
             </div>
          </div>

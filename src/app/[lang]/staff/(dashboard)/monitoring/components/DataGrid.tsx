@@ -49,7 +49,7 @@ export default function DataGrid({ columns, data, onRowClick, onEdit, onDelete, 
 
   return (
     <div className="w-full bg-th-surface rounded-2xl border border-th-border flex flex-col h-full overflow-hidden shadow-sm transition-all duration-300">
-      <div className="p-4 md:p-5 border-b border-th-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-th-surface2">
+      <div className="p-4 md:p-5 border-b border-th-border flex flex-wrap items-center justify-between gap-4 bg-th-surface2">
         <div className="relative w-full max-w-sm">
           <input
             type="text"

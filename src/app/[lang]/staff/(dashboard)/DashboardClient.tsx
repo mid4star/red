@@ -17,6 +17,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import UnifiedAIAssistant from '@/components/dashboard/UnifiedAIAssistant';
 import ReportGeneratorModal from '@/components/reports/ReportGeneratorModal';
+import NewsRadarWidget from '@/components/dashboard/NewsRadarWidget';
+import DashboardWeatherWidget from '@/components/dashboard/DashboardWeatherWidget';
 
 // Animation variants
 const containerVariants = {
@@ -97,7 +99,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="max-w-[1600px] mx-auto space-y-8" dir={isArabic ? 'rtl' : 'ltr'}>
       
       {/* ── Page Header & Welcome ────────────────────────────────────────────── */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-th-border relative">
+      <motion.div variants={itemVariants} className="flex flex-wrap items-end justify-between gap-6 pb-4 border-b border-th-border relative">
         <div className="space-y-2 relative z-10">
           <div className="flex items-center gap-2">
              <span className="w-8 h-1 bg-teal-500 rounded-full shadow-[0_0_10px_rgba(20,184,166,0.8)]" />
@@ -126,12 +128,24 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
 
       {/* ── Hero Map Section ─────────────────────────────────────────────────── */}
       <motion.div variants={itemVariants} className="relative w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden border border-th-border shadow-lg group">
-         <div className="absolute inset-0 bg-slate-900 transition-colors duration-500">
-           <img src="/dashboard_hero_banner.png" alt="Command Center Map" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-1000 group-hover:scale-105" onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'; }} />
-           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/50 to-transparent transition-colors duration-500" />
+         <div className="absolute inset-0 bg-slate-900 transition-colors duration-500 overflow-hidden">
+           <video 
+             autoPlay 
+             loop 
+             muted 
+             playsInline 
+             poster="/dashboard_hero_banner.png"
+             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-transform duration-1000 group-hover:scale-105 pointer-events-none"
+             preload="metadata"
+           >
+             <source src="/uploads/fb5aeb9a-9b3c-4415-bdfd-be9004c79c2e.mp4" type="video/mp4" />
+           </video>
+           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent transition-colors duration-500" />
          </div>
          
-         <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end z-10">
+         <DashboardWeatherWidget isArabic={isArabic} />
+
+         <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end z-10 pointer-events-none">
             <div className="bg-white/10 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-white/10 p-4 rounded-2xl shadow-xl max-w-sm transition-colors duration-500">
                <div className="flex items-center gap-3 mb-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
@@ -421,6 +435,11 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
            </Card>
         </motion.div>
       </div>
+
+      {/* ── News Radar Widget ────────────────────────────────────────────── */}
+      <motion.div variants={itemVariants}>
+        <NewsRadarWidget lang={lang} />
+      </motion.div>
 
       {/* ── Unified AI Assistant ────────────────────────────────────────────── */}
       <motion.div variants={itemVariants} className="pt-4">

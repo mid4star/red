@@ -126,7 +126,7 @@ export default async function RootLayout({
   `;
 
   return (
-    <html lang={params.lang} dir={isArabic ? 'rtl' : 'ltr'}>
+    <html lang={params.lang} dir={isArabic ? 'rtl' : 'ltr'} translate="no">
       <head>
         <script dangerouslySetInnerHTML={{ __html: inlineThemeScript }} />
       </head>

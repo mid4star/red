@@ -337,8 +337,8 @@ export default function EIAMain({ lang }: EIAMainProps) {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
-      <div className="flex items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm">
+    <div className="max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
         <div className="flex items-center gap-4">
            <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
               <ShieldAlert size={24} />
@@ -352,10 +352,13 @@ export default function EIAMain({ lang }: EIAMainProps) {
              </h1>
            </div>
         </div>
-        <Button onClick={handleAdd} className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-6 rounded-xl h-11 transition-all">
-          <Plus size={18} className={isAr ? 'ml-2' : 'mr-2'} />
-          <span className="font-bold tracking-wide">{isAr ? 'إضافة سجل جديد' : 'Add New Record'}</span>
-        </Button>
+        
+        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start shrink-0">
+          <Button onClick={handleAdd} className="bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-500/20 px-6 rounded-xl h-11 transition-all">
+            <Plus size={18} className={isAr ? 'ml-2' : 'mr-2'} />
+            <span className="font-bold tracking-wide">{isAr ? 'إضافة سجل جديد' : 'Add New Record'}</span>
+          </Button>
+        </div>
       </div>
 
       <EIAStats 

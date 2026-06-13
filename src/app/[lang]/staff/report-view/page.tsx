@@ -99,13 +99,7 @@ function ReportViewContent({ lang }: { lang: string }) {
         {data && <PrintableA4Report data={data} lang={lang} />}
       </div>
 
-      {/* Print-specific CSS */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @media print {
-          body { background: white; margin: 0; padding: 0; }
-          @page { size: A4 portrait; margin: 0; }
-        }
-      `}} />
+
     </div>
   );
 }

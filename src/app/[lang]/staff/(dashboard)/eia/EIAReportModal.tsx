@@ -141,11 +141,7 @@ export default function EIAReportModal({ isOpen, onClose, item, type, lang }: EI
           className="overflow-y-auto p-6 md:p-10 print-content text-slate-900 dark:text-slate-100 flex-1 min-h-0 w-full bg-transparent dark:bg-transparent"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-           <style>{`
-             .print-content::-webkit-scrollbar {
-               display: none;
-             }
-           `}</style>
+
            
            {/* Report Header for Print */}
            <div className="border-b-2 border-slate-800 dark:border-white/20 pb-6 mb-8 print-header">

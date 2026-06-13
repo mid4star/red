@@ -348,28 +348,6 @@ export default function MapComponent({ items, activeItem, onItemSelect, lang }: 
           </div>
         </>
       )}
-
-      {/* Map Leaflet Styling Custom overrides */}
-      <style jsx global>{`
-        .custom-leaflet-popup .leaflet-popup-content-wrapper {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 12px;
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .custom-leaflet-popup .leaflet-popup-tip {
-          background: rgba(255, 255, 255, 0.95);
-        }
-        .leaflet-container {
-          font-family: inherit;
-        }
-        
-        /* Custom styling override to make selected marker animations even smoother */
-        .selected-marker-pulse {
-          z-index: 1000 !important;
-        }
-      `}</style>
     </div>
   );
 }
