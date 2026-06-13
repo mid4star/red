@@ -28,7 +28,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
 };
 
 export interface SmartInsight {
@@ -50,7 +50,7 @@ export interface DashboardData {
   };
   feed: Array<{
     id: string;
-    type: 'PATROL' | 'VIOLATION' | 'NEWS' | 'EIA';
+    type: 'PATROL' | 'VIOLATION' | 'NEWS' | 'EIA' | 'MONITORING' | 'GIS';
     title: string;
     message: string;
     time: string;
@@ -68,7 +68,7 @@ export interface DashboardData {
 export default function DashboardClient({ lang, data }: { lang: string, data: DashboardData }) {
   const isArabic = lang === 'ar';
   const [mounted, setMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState<'ALL' | 'PATROLS' | 'VIOLATIONS'>('ALL');
+  const [activeTab, setActiveTab] = useState<'ALL' | 'PATROLS' | 'VIOLATIONS' | 'EIA' | 'MONITORING' | 'NEWS' | 'GIS'>('ALL');
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
@@ -92,6 +92,10 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
     if (activeTab === 'ALL') return true;
     if (activeTab === 'PATROLS') return item.type === 'PATROL';
     if (activeTab === 'VIOLATIONS') return item.type === 'VIOLATION';
+    if (activeTab === 'EIA') return item.type === 'EIA';
+    if (activeTab === 'MONITORING') return item.type === 'MONITORING';
+    if (activeTab === 'NEWS') return item.type === 'NEWS';
+    if (activeTab === 'GIS') return item.type === 'GIS';
     return true;
   });
 
@@ -138,7 +142,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-transform duration-1000 group-hover:scale-105 pointer-events-none"
              preload="metadata"
            >
-             <source src="/uploads/fb5aeb9a-9b3c-4415-bdfd-be9004c79c2e.mp4" type="video/mp4" />
+             <source src="/uploads/red-sea-earth.mp4" type="video/mp4" />
            </video>
            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent transition-colors duration-500" />
          </div>
@@ -357,7 +361,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
         {/* Intelligence Feed */}
         <motion.div variants={itemVariants} className="h-[450px] flex flex-col gap-4">
            <Card className="flex-1 border border-th-border shadow-lg flex flex-col overflow-hidden bg-th-surface/80 backdrop-blur-xl">
-              <div className="p-4 border-b border-th-border flex flex-col gap-4">
+                <div className="p-4 border-b border-th-border flex flex-col gap-4">
                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                        <BellRing size={18} className="text-th-text dark:text-white" />
@@ -369,32 +373,81 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
                     </span>
                  </div>
                  
-                 <div className="flex gap-2">
-                   {['ALL', 'PATROLS', 'VIOLATIONS'].map(tab => (
-                     <button 
-                       key={tab}
-                       onClick={() => setActiveTab(tab as any)}
-                       className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
-                         activeTab === tab 
-                          ? 'bg-th-text text-th-surface dark:bg-white dark:text-slate-900' 
-                          : 'bg-th-surface2 text-th-muted hover:bg-th-border'
-                       }`}
-                     >
-                       {isArabic ? (tab === 'ALL' ? 'الكل' : tab === 'PATROLS' ? 'الدوريات' : 'المخالفات') : tab}
-                     </button>
-                   ))}
-                 </div>
+                 <div className="flex flex-wrap gap-1.5">
+                    {(['ALL', 'PATROLS', 'VIOLATIONS', 'EIA', 'MONITORING', 'NEWS', 'GIS'] as const).map(tab => {
+                      const label = isArabic ? {
+                        ALL: 'الكل',
+                        PATROLS: 'الدوريات',
+                        VIOLATIONS: 'المخالفات',
+                        EIA: 'تقييم الأثر',
+                        MONITORING: 'الرصد البيئي',
+                        NEWS: 'الأخبار',
+                        GIS: 'الخريطة'
+                      }[tab] : {
+                        ALL: 'All',
+                        PATROLS: 'Patrols',
+                        VIOLATIONS: 'Violations',
+                        EIA: 'EIA',
+                        MONITORING: 'Monitoring',
+                        NEWS: 'News',
+                        GIS: 'GIS'
+                      }[tab];
+                      return (
+                        <button 
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
+                            activeTab === tab 
+                             ? 'bg-th-text text-th-surface dark:bg-white dark:text-slate-900' 
+                             : 'bg-th-surface2 text-th-muted hover:bg-th-border'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
               </div>
 
               <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                  <AnimatePresence mode="popLayout">
                    {filteredFeed.length > 0 ? filteredFeed.map((item) => {
-                     const isViolation = item.type === 'VIOLATION';
-                     const isPatrol = item.type === 'PATROL';
-                     const Icon = isViolation ? AlertTriangle : isPatrol ? Ship : FileText;
-                     const colorClass = isViolation ? 'text-rose-500 bg-rose-500/10 border-rose-500/20' : 
-                                        isPatrol ? 'text-teal-500 bg-teal-500/10 border-teal-500/20' : 
-                                        'text-sky-500 bg-sky-500/10 border-sky-500/20';
+                      let Icon = FileText;
+                      let colorClass = 'text-sky-500 bg-sky-500/10 border-sky-500/20';
+                      let typeColor = 'text-sky-500';
+
+                      switch (item.type) {
+                        case 'VIOLATION':
+                          Icon = AlertTriangle;
+                          colorClass = 'text-rose-500 bg-rose-500/10 border-rose-500/20';
+                          typeColor = 'text-rose-500';
+                          break;
+                        case 'PATROL':
+                          Icon = Ship;
+                          colorClass = 'text-teal-500 bg-teal-500/10 border-teal-500/20';
+                          typeColor = 'text-teal-500';
+                          break;
+                        case 'EIA':
+                          Icon = Droplets;
+                          colorClass = 'text-amber-500 bg-amber-500/10 border-amber-500/20';
+                          typeColor = 'text-amber-500';
+                          break;
+                        case 'MONITORING':
+                          Icon = Radar;
+                          colorClass = 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
+                          typeColor = 'text-emerald-500';
+                          break;
+                        case 'NEWS':
+                          Icon = BellRing;
+                          colorClass = 'text-sky-500 bg-sky-500/10 border-sky-500/20';
+                          typeColor = 'text-sky-500';
+                          break;
+                        case 'GIS':
+                          Icon = MapIcon;
+                          colorClass = 'text-indigo-500 bg-indigo-500/10 border-indigo-500/20';
+                          typeColor = 'text-indigo-500';
+                          break;
+                      }
 
                      return (
                        <motion.div 
@@ -410,7 +463,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
                          </div>
                          <div className="flex-1 min-w-0 flex flex-col justify-center">
                            <div className="flex items-center justify-between mb-1">
-                             <span className={`text-[10px] font-bold uppercase tracking-wider ${isViolation ? 'text-rose-500' : isPatrol ? 'text-teal-500' : 'text-sky-500'}`}>
+                             <span className={`text-[10px] font-bold uppercase tracking-wider ${typeColor}`}>
                                 {item.title}
                              </span>
                              <span className="text-[9px] text-th-muted font-medium">{item.time}</span>
@@ -419,7 +472,9 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
                               {item.message}
                            </p>
                            {item.user && (
-                             <p className="text-[10px] text-th-muted mt-1 font-semibold opacity-70">By: {item.user}</p>
+                             <p className="text-[10px] text-th-muted mt-1 font-semibold opacity-70">
+                                {isArabic ? 'بواسطة: ' : 'By: '}{item.user}
+                             </p>
                            )}
                          </div>
                        </motion.div>

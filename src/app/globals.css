@@ -495,3 +495,33 @@ html:not(.dark) main .dark * {
   color: var(--text-primary);
   border-radius: 6px;
 }
+
+/* =========================================================================
+   GIS MAP FLOATING PANEL SOLID CONTRAST STYLES
+   ========================================================================= */
+.gis-floating-panel {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark .gis-floating-panel {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #1e293b !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.gis-floating-panel input,
+.gis-floating-panel select,
+.gis-floating-panel textarea {
+  color: inherit !important;
+}
+

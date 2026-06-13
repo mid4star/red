@@ -23,7 +23,8 @@ import {
   Moon,
   Map,
   Mail,
-  Radio
+  Radio,
+  Ship
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
@@ -45,7 +46,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [session, setSession] = useState<{ role: string; allowedSections: string[]; name?: string; nameAr?: string } | null>(null);
+  const [session, setSession] = useState<{ role: string; allowedSections: string[]; name?: string; nameAr?: string; profilePictureUrl?: string } | null>(null);
   const [config, setConfig] = useState<any>({
     siteName: 'Red Sea Reserves',
     siteNameAr: 'محميات البحر الأحمر',
@@ -147,6 +148,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
     { name: 'Environmental Assessment', nameAr: 'تقييم الأثر البيئي', href: `/${lang}/staff/eia`, icon: ClipboardList, sectionKey: 'eia' },
     { name: 'Violations', nameAr: 'سجل المخالفات', href: `/${lang}/staff/violations`, icon: AlertTriangle, sectionKey: 'violations' },
     { name: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات', href: `/${lang}/staff/fleet`, icon: Anchor, sectionKey: 'fleet' },
+    { name: 'Vessel Monitoring', nameAr: 'مراقبة السفن', href: `/${lang}/staff/vessels`, icon: Ship, sectionKey: 'vessels' },
     { name: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية', href: `/${lang}/staff/gis`, icon: Map, sectionKey: 'gis' },
     { name: 'User Management', nameAr: 'إدارة المستخدمين', href: `/${lang}/staff/users`, icon: Users, sectionKey: 'users' },
     { name: 'Email Routing', nameAr: 'توجيه البريد', href: `/${lang}/staff/email-routing`, icon: Mail, sectionKey: 'email-routing' },

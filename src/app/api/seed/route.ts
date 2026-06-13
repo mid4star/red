@@ -89,7 +89,7 @@ export async function GET(req: Request) {
         reserveAr: "رأس محمد",
         status: "ACTIVE",
         certifications: "Advanced Dive, Rescue Diver",
-        allowedSections: JSON.stringify(["dashboard", "eia", "fleet", "monitoring", "patrols", "users", "violations"])
+        allowedSections: JSON.stringify(["dashboard", "eia", "fleet", "vessels", "monitoring", "patrols", "users", "violations"])
       },
       {
         id: "user_mon_102",
@@ -103,7 +103,7 @@ export async function GET(req: Request) {
         reserveAr: "وادي الجمال",
         status: "ACTIVE",
         certifications: "Open Water",
-        allowedSections: JSON.stringify(["dashboard", "fleet", "monitoring", "patrols"])
+        allowedSections: JSON.stringify(["dashboard", "fleet", "vessels", "monitoring", "patrols"])
       }
     ];
 

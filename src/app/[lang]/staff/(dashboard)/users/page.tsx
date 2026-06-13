@@ -9,7 +9,7 @@ import { User, UserRole } from '@/lib/firebase/schema';
 import { 
   Users, ShieldAlert, Plus, Search, CheckCircle2, Loader2, Lock, Check, X, Shield, UserPlus, Trash2, Edit3,
   Waves, Microscope, ClipboardList, AlertTriangle, Anchor, Megaphone, Settings, ShieldCheck, ArrowRight,
-  Camera, Mail, Tag, UserCheck, User as UserIcon, Map
+  Camera, Mail, Tag, UserCheck, User as UserIcon, Map, Ship
 } from 'lucide-react';
 import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
@@ -26,6 +26,7 @@ const SECTIONS_METADATA = [
   { id: 'gis', name: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية', icon: Map, color: 'text-fuchsia-500 dark:text-fuchsia-400', bg: 'bg-fuchsia-100 dark:bg-fuchsia-500/10' },
   { id: 'violations', name: 'Violations Log', nameAr: 'سجل المخالفات', icon: AlertTriangle, color: 'text-rose-500 dark:text-rose-400', bg: 'bg-rose-100 dark:bg-rose-500/10' },
   { id: 'fleet', name: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات', icon: Anchor, color: 'text-cyan-500 dark:text-cyan-400', bg: 'bg-cyan-100 dark:bg-cyan-500/10' },
+  { id: 'vessels', name: 'Vessel Monitoring', nameAr: 'مراقبة السفن', icon: Ship, color: 'text-sky-500 dark:text-sky-400', bg: 'bg-sky-100 dark:bg-sky-500/10' },
   { id: 'media', name: 'Media Center', nameAr: 'المركز الإعلامي', icon: Megaphone, color: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-500/10' },
   { id: 'settings', name: 'System Settings', nameAr: 'إعدادات النظام', icon: Settings, color: 'text-slate-500 dark:text-slate-400', bg: 'bg-slate-200 dark:bg-slate-500/10' },
   { id: 'email-routing', name: 'Email Routing', nameAr: 'توجيه البريد', icon: Mail, color: 'text-orange-500 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-500/10' },
@@ -147,6 +148,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
   // Open Edit Mode
   const startEditing = (user: User) => {
+    if (user.role === 'ADMIN' && activeRole !== 'ADMIN') {
+      alert(isArabic ? 'هذا العضو ذو صلاحيات المتحكم الأول' : 'This member has the permissions of the First Controller');
+      return;
+    }
     setEditingUser(user);
     setEmployeeId(user.employeeId);
     setName(user.name);
@@ -315,6 +320,10 @@ export default function UserManagementPage({ params }: { params: { lang: string 
 
   // Delete User
   const handleDeleteUser = async (user: User) => {
+    if (user.role === 'ADMIN' && activeRole !== 'ADMIN') {
+      alert(isArabic ? 'هذا العضو ذو صلاحيات المتحكم الأول' : 'This member has the permissions of the First Controller');
+      return;
+    }
     if (!user.id) return;
     const confirmMsg = isArabic 
       ? `هل أنت متأكد من حذف حساب الموظف ${user.nameAr} نهائياً؟`
@@ -582,7 +591,15 @@ export default function UserManagementPage({ params }: { params: { lang: string 
               ) : (
                 <div className={`grid grid-cols-1 ${showAddForm ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4 sm:gap-5`}>
                   {filteredUsers.map((user) => (
-                    <Card key={user.id} className="p-5 bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-teal-400 hover:shadow-lg transition-all group relative overflow-hidden flex flex-col justify-between">
+                    <Card 
+                      key={user.id} 
+                      onClick={() => {
+                        if (user.role === 'ADMIN' && activeRole !== 'ADMIN') {
+                          alert(isArabic ? 'هذا العضو ذو صلاحيات المتحكم الأول' : 'This member has the permissions of the First Controller');
+                        }
+                      }}
+                      className="p-5 bg-white dark:bg-[#0a1628]/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-teal-400 hover:shadow-lg transition-all group relative overflow-hidden flex flex-col justify-between cursor-pointer"
+                    >
                       {/* Glow effect */}
                       <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 blur-3xl -z-10 group-hover:bg-teal-500/10 transition-colors" />
                       

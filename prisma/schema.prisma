@@ -607,3 +607,33 @@ model SystemConfig {
   updatedAt       DateTime @updatedAt
 }
 
+
+model GisLayer {
+  id          String       @id @default(cuid())
+  name        String
+  nameAr      String
+  type        String       @default("feature") // base, feature, heatmap
+  category    String       @default("custom") // custom, project, asset, reserve
+  color       String?      @default("#3388ff")
+  isVisible   Boolean      @default(true)
+  isLocked    Boolean      @default(false)
+  opacity     Float        @default(1.0)
+  order       Int          @default(1)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  features    GisFeature[]
+}
+
+model GisFeature {
+  id          String   @id @default(cuid())
+  layerId     String
+  type        String   // Point, LineString, Polygon
+  coordinates String   // JSON string of coordinates array
+  properties  String   // JSON string of properties
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  layer       GisLayer @relation(fields: [layerId], references: [id], onDelete: Cascade)
+}
+

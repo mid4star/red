@@ -86,45 +86,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
     }
   };
 
-  const triggerQuickLogin = async (empEmail: string, accessCode: string) => {
-    setEmail(empEmail);
-    setPassword(accessCode);
-    setError(null);
-    setLoading(true);
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: empEmail, password: accessCode }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Quick login failed');
-      }
-
-      const reserveInfo = reserves.find(r => r.id === selectedReserve) || reserves[0];
-      const sessionData = {
-        ...data.user,
-        reserveId: selectedReserve,
-        reserve: reserveInfo?.en,
-        reserveAr: reserveInfo?.ar,
-      };
-
-      localStorage.setItem('active_user_session', JSON.stringify(sessionData));
-      window.dispatchEvent(new Event('user-session-changed'));
-      
-      router.push(`/${params.lang}/staff`);
-    } catch (err: any) {
-      setError(err.message || 'Quick login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#050b14] flex items-center justify-center relative overflow-hidden transition-colors duration-300" dir={isAr ? 'rtl' : 'ltr'}>
@@ -342,32 +304,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
               </div>
             </form>
 
-            {/* Quick Login Section */}
-            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 space-y-3 relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 text-center">
-                {isAr ? 'تسجيل دخول سريع للفحص' : 'Developer Quick Access'}
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => triggerQuickLogin('ADMIN-01', 'admin')}
-                  disabled={loading}
-                  className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 dark:bg-white/[0.03] dark:border-white/10 hover:bg-teal-50 hover:border-teal-200 dark:hover:bg-teal-500/10 dark:hover:border-teal-500/30 text-[11.5px] font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
-                >
-                  <span>{isAr ? 'مسئول النظام' : 'System Admin'}</span>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">ADMIN-01 / admin</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => triggerQuickLogin('MON-102', 'password')}
-                  disabled={loading}
-                  className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 dark:bg-white/[0.03] dark:border-white/10 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-500/10 dark:hover:border-indigo-500/30 text-[11.5px] font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all flex flex-col items-center gap-0.5 cursor-pointer disabled:opacity-50"
-                >
-                  <span>{isAr ? 'مراقب ميداني' : 'Field Monitor'}</span>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">MON-102 / password</span>
-                </button>
-              </div>
-            </div>
+
 
             <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/10 text-center relative z-10">
                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">

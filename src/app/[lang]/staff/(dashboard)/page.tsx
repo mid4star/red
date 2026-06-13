@@ -2,6 +2,7 @@ import React from 'react';
 import { prisma } from '@/lib/prisma';
 import DashboardClient, { DashboardData, SmartInsight } from './DashboardClient';
 import { formatDistanceToNow } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import { cookies } from 'next/headers';
 import { verifyJwt } from '@/lib/auth-utils';
 
@@ -32,198 +33,266 @@ export default async function DashboardPage({ params }: { params: { lang: string
   ]);
 
   // 2. Fetch Recent Activities for Feed
-  const recentPatrols = await prisma.patrol.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { leader: true } });
-  const recentViolations = await prisma.violation.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { officer: true } });
-  const recentNews = await (prisma as any).newsArticle.findMany({ take: 3, orderBy: { date: 'desc' } });
-  
-  // Fetch EIA & Monitoring Data
-  const recentEiaAccidents = await (prisma as any).eiaAccident.findMany({ take: 3, orderBy: { date: 'desc' }, ...reserveFilter }).catch(() => []);
-  const recentStrandingsFeed = await (prisma as any).strandingCase.findMany({ take: 3, orderBy: { date: 'desc' }, ...reserveFilter }).catch(() => []);
-  const recentSurveys = await (prisma as any).survey.findMany({ take: 3, orderBy: { date: 'desc' }, ...reserveFilter }).catch(() => []);
+  const [
+    recentPatrols,
+    recentViolations,
+    recentNews,
+    recentEiaAccidents,
+    recentStrandingsFeed,
+    recentSurveys,
+    recentEiaInspections,
+    recentEiaViolations,
+    recentSightings,
+    recentGisLayers
+  ] = await Promise.all([
+    prisma.patrol.findMany({ where: reserveFilter, take: 8, orderBy: { date: 'desc' }, include: { leader: true } }),
+    prisma.violation.findMany({ where: reserveFilter, take: 8, orderBy: { date: 'desc' }, include: { officer: true } }),
+    (prisma as any).newsArticle.findMany({ take: 5, orderBy: { date: 'desc' } }).catch(() => []),
+    (prisma as any).eiaAccident.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' } }).catch(() => []),
+    (prisma as any).strandingCase.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' } }).catch(() => []),
+    prisma.survey.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' }, include: { observer: true } }),
+    (prisma as any).eiaInspection.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' } }).catch(() => []),
+    (prisma as any).eiaViolation.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' } }).catch(() => []),
+    (prisma as any).sighting.findMany({ where: reserveFilter, take: 5, orderBy: { date: 'desc' } }).catch(() => []),
+    (prisma as any).gisLayer.findMany({ take: 5, orderBy: { createdAt: 'desc' } }).catch(() => [])
+  ]);
 
 
   // 3. COMPREHENSIVE SMART INSIGHTS ENGINE
   const insights: SmartInsight[] = [];
 
   try {
-    // --- Correlation 1: Pollution-to-Mortality Link ---
-    // Check for recent strandings and environmental accidents
-    const recentStrandings = await (prisma as any).strandingCase.findMany({
-      where: { status: { in: ['DEAD', 'نافق'] }, ...reserveFilter },
-      orderBy: { date: 'desc' },
-      take: 2
-    });
-    
-    const recentPollution = await (prisma as any).eiaAccident.findMany({
+    // 1. --- Correlation 1: Pollution-to-Habitat Threat (POLLUTION) ---
+    const recentPollutions = await (prisma as any).eiaAccident.findMany({
       where: { type: { in: ['Oil Pollution', 'Chemical Spill', 'Grounding'] }, ...reserveFilter },
       orderBy: { date: 'desc' },
-      take: 1
-    });
+      take: 2
+    }).catch(() => []);
 
-    if (recentStrandings.length > 0 && recentPollution.length > 0) {
+    const lowHealthSurveys = await prisma.survey.findMany({
+      where: { healthScore: { lt: 75 }, ...reserveFilter },
+      orderBy: { date: 'desc' },
+      take: 2
+    }).catch(() => []);
+
+    if (recentPollutions.length > 0 && lowHealthSurveys.length > 0) {
+      const pAcc = recentPollutions[0] as any;
+      const srv = lowHealthSurveys[0] as any;
       insights.push({
-        id: 'insight-mortality',
-        type: 'MORTALITY_CORRELATION',
-        title: params.lang === 'ar' ? 'ارتباط محتمل: تلوث ونفوق' : 'Mortality-Pollution Correlation',
-        message: params.lang === 'ar' 
-          ? `رصدت الشبكة حادث تلوث (${recentPollution[0].type}) متزامن مع نفوق كائنات (${recentStrandings.map(s => s.species || s.speciesAr).join(' و ')}). مطلوب فحص فوري.`
-          : `Network detected ${recentPollution[0].type} accident coinciding with marine mortality (${recentStrandings[0].species}). Immediate investigation required.`,
+        id: 'insight-pollution-threat',
+        type: 'POLLUTION' as any,
+        title: params.lang === 'ar' ? 'تهديد التلوث للشعب المرجانية' : 'Pollution Habitat Threat',
+        message: params.lang === 'ar'
+          ? `رصد حادث تلوث (${pAcc.type === 'Grounding' ? 'جنوح سفينة' : pAcc.type === 'Oil Pollution' ? 'تلوث نفطي' : pAcc.type === 'Fires' ? 'حريق' : pAcc.type}) في ${pAcc.locationName} بالقرب من موقع مسح بيئي ذي صحة متدنية (${srv.healthScore}%). خطر تدمير الموائل المرجانية: حرج.`
+          : `Detected pollution (${pAcc.type}) at ${pAcc.locationName} near a vulnerable survey habitat (Health: ${srv.healthScore}%). Coral threat index: CRITICAL.`,
         severity: 'CRITICAL'
       });
-    } else if (recentStrandings.length > 0) {
+    } else if (recentPollutions.length > 0) {
+      const pAcc = recentPollutions[0] as any;
       insights.push({
-        id: 'insight-stranding',
-        type: 'MORTALITY_CORRELATION',
-        title: params.lang === 'ar' ? 'حالات نفوق مسجلة' : 'Marine Mortality',
+        id: 'insight-pollution-accident',
+        type: 'POLLUTION' as any,
+        title: params.lang === 'ar' ? 'حادث بيئي نشط' : 'Active Pollution Spill',
         message: params.lang === 'ar'
-          ? `تم رصد حالة نفوق (${recentStrandings[0].species || recentStrandings[0].speciesAr}) في منطقة ${recentStrandings[0].locationAr || recentStrandings[0].location}.`
-          : `Stranding (DEAD) recorded for ${recentStrandings[0].species} at ${recentStrandings[0].location}.`,
+          ? `بلاغ عن تسرب/حادث بيئي (${pAcc.type === 'Grounding' ? 'جنوح سفينة' : pAcc.type === 'Oil Pollution' ? 'تلوث نفطي' : pAcc.type === 'Fires' ? 'حريق' : pAcc.type}) في ${pAcc.locationName}. فرق الطوارئ في حالة تأهب.`
+          : `Spill report (${pAcc.type}) active at ${pAcc.locationName}. Emergency response units alerted.`,
         severity: 'HIGH'
       });
     }
 
-    // --- Correlation 2: Threat Vector Analysis ---
-    // Locations with high number of unresolved violations
-    const activeViolationsData = await prisma.violation.groupBy({
-      by: ['location'],
-      where: { status: 'NEW', location: { not: null, notIn: [''] }, ...reserveFilter },
-      _count: { location: true },
-      orderBy: { _count: { location: 'desc' } },
-      take: 1
+    // 2. --- Correlation 2: Patrol Vacuum / Uncovered Threat Zone (THREAT_VECTOR) ---
+    const recentViolationsList = await prisma.violation.findMany({
+      where: { status: 'NEW', ...reserveFilter },
+      orderBy: { date: 'desc' },
+      take: 5
     });
-
-    if (activeViolationsData.length > 0 && activeViolationsData[0]._count.location >= 2) {
-      insights.push({
-        id: 'insight-threat-vector',
-        type: 'THREAT_VECTOR',
-        title: params.lang === 'ar' ? 'ناقل تهديد عالي' : 'High Threat Vector',
-        message: params.lang === 'ar'
-          ? `منطقة (${activeViolationsData[0].location}) تشهد كثافة في المخالفات غير المحلولة (${activeViolationsData[0]._count.location} مخالفات). مؤشر الصحة البيئية في خطر.`
-          : `Location (${activeViolationsData[0].location}) shows high density of unresolved violations (${activeViolationsData[0]._count.location}). Ecological health at risk.`,
-        severity: 'HIGH'
-      });
-    }
-
-    // --- Correlation 3: Rare Species Heatmaps ---
-    // Recent sightings of specific animals
-    const rareSightings = await (prisma as any).sighting.findMany({
+    const recentPatrolsList = await prisma.patrol.findMany({
       where: reserveFilter,
       orderBy: { date: 'desc' },
-      take: 1
+      take: 10
     });
 
-    if (rareSightings.length > 0) {
+    const patrolZones = new Set(recentPatrolsList.map((p: any) => (p.zone || '').toLowerCase()));
+    const uncoveredViolation = recentViolationsList.find((v: any) => v.location && !patrolZones.has(v.location.toLowerCase())) as any;
+
+    if (uncoveredViolation) {
       insights.push({
-        id: 'insight-sighting',
-        type: 'BIODIVERSITY',
-        title: params.lang === 'ar' ? 'رصد كائنات حية' : 'Species Sighting',
+        id: 'insight-patrol-vacuum',
+        type: 'THREAT_VECTOR',
+        title: params.lang === 'ar' ? 'فجوة تغطية الدوريات' : 'Patrol Coverage Gap',
         message: params.lang === 'ar'
-          ? `رصد ميداني: تواجد لـ (${rareSightings[0].speciesAr || rareSightings[0].species}) بعدد ${rareSightings[0].count} في منطقة ${rareSightings[0].locationAr || rareSightings[0].location}.`
-          : `Field Sighting: ${rareSightings[0].count}x ${rareSightings[0].species} spotted at ${rareSightings[0].location}.`,
-        severity: 'LOW'
+          ? `منطقة (${uncoveredViolation.locationAr || uncoveredViolation.location}) تشهد بلاغات مخالفات نشطة دون تسجيل أي تغطية دورية مؤخراً. يوصى بإرسال وحدة استطلاع.`
+          : `Zone (${uncoveredViolation.location}) shows active violations with no registered patrol coverage. Tactical dispatch recommended.`,
+        severity: 'HIGH'
       });
-    }
-
-    // --- Correlation 4: Fleet Efficiency vs Coverage ---
-    const strugglingVessels = await prisma.vessel.findMany({
-      where: { healthScore: { lt: 70 }, status: 'ACTIVE' },
-      take: 1
-    });
-
-    if (strugglingVessels.length > 0) {
+    } else if (recentViolationsList.length >= 3) {
       insights.push({
-        id: 'insight-fleet',
-        type: 'FLEET_RISK',
-        title: params.lang === 'ar' ? 'تحذير كفاءة الأسطول' : 'Fleet Efficiency Warning',
+        id: 'insight-threat-vector-density',
+        type: 'THREAT_VECTOR',
+        title: params.lang === 'ar' ? 'ارتفاع مؤشر التهديد' : 'High Violation Density',
         message: params.lang === 'ar'
-          ? `المركب "${strugglingVessels[0].name}" يعاني من تدني درجة الصحة (${strugglingVessels[0].healthScore}%). قد يؤثر ذلك على كفاءة تغطية الدوريات.`
-          : `Vessel "${strugglingVessels[0].name}" has a low health score (${strugglingVessels[0].healthScore}%). Patrol coverage may be compromised.`,
+          ? `تم رصد تراكم للمخالفات النشطة (${recentViolationsList.length}) في نطاق المحميات. يرجى تكثيف الرصد الميداني.`
+          : `Spike in unresolved violations (${recentViolationsList.length}) detected within reserve borders. Intensified monitoring recommended.`,
         severity: 'MEDIUM'
       });
     }
 
-    // Include the legacy insights from the previous build if there is room
-    // For patrol observations, we can filter by joining patrol's reserveId if we can,
-    // but Prisma groupBy doesn't allow joining in where. We will fetch recent patrols instead if needed,
-    // or we skip reserve filter for observations if not easily possible via groupBy.
-    // We will just filter if possible, but actually we can't filter patrolObservation by reserveId directly
-    // since we didn't add reserveId to patrolObservation, only to Patrol.
-    const topSpeciesRaw = await prisma.patrolObservation.groupBy({
-      by: ['speciesName'],
-      _count: { speciesName: true },
-      orderBy: { _count: { speciesName: 'desc' } },
+    // 3. --- Correlation 3: Coastal Project Encroachment on Critical Habitat (EIA) ---
+    const activeEiaViols = await (prisma as any).eiaViolation?.findMany({
+      where: { isDeletePending: false, ...reserveFilter },
+      take: 2
+    }).catch(() => []);
+    
+    const recentSightingsList = await (prisma as any).sighting?.findMany({
+      where: reserveFilter,
+      orderBy: { date: 'desc' },
       take: 3
-    });
+    }).catch(() => []);
 
-    if (topSpeciesRaw.length > 0) {
-      const speciesNames = topSpeciesRaw.map(s => s.speciesName).join(', ');
+    if (activeEiaViols && activeEiaViols.length > 0 && recentSightingsList && recentSightingsList.length > 0) {
+      const eiaViol = activeEiaViols[0] as any;
+      const sighting = recentSightingsList[0] as any;
       insights.push({
-        id: 'insight-biodiv',
-        type: 'BIODIVERSITY',
-        title: params.lang === 'ar' ? 'بؤر التنوع البيولوجي' : 'Biodiversity Hotspots',
-        message: params.lang === 'ar' 
-          ? `أكثر الكائنات رصداً بواسطة الدوريات مؤخراً: ${speciesNames}`
-          : `Most tracked species by patrols recently: ${speciesNames}`,
-        severity: 'LOW'
+        id: 'insight-eia-encroachment',
+        type: 'EIA',
+        title: params.lang === 'ar' ? 'خطر البناء الساحلي على الحياة الفطرية' : 'Coastal Project Habitat Conflict',
+        message: params.lang === 'ar'
+          ? `مخالفة تقييم الأثر (${eiaViol.type}) للجهة (${eiaViol.entityName}) تهدد كائنات فطرية مرصودة حديثاً (${sighting.speciesAr || sighting.species}) في ${eiaViol.locationName}.`
+          : `EIA Violation (${eiaViol.type}) by (${eiaViol.entityName}) coincides with recent sighting of (${sighting.species}) at ${eiaViol.locationName}.`,
+        severity: 'CRITICAL'
+      });
+    } else if (activeEiaViols && activeEiaViols.length > 0) {
+      const eiaViol = activeEiaViols[0] as any;
+      insights.push({
+        id: 'insight-eia-compliance-alert',
+        type: 'EIA',
+        title: params.lang === 'ar' ? 'مخالفة تقييم الأثر البيئي' : 'EIA Non-Compliance',
+        message: params.lang === 'ar'
+          ? `رصد عدم التزام بالاشتراطات البيئية من قبل (${eiaViol.entityName}) لمشروع في ${eiaViol.locationName}.`
+          : `EIA non-compliance registered for (${eiaViol.entityName}) project at ${eiaViol.locationName}.`,
+        severity: 'HIGH'
       });
     }
 
+    // 4. --- Correlation 4: Fleet Overstretch Alert (FLEET_RISK) ---
+    const fleetStrugglingRatio = totalVessels > 0 ? vesselsReady / totalVessels : 1;
+    const lowHealthVessels = await prisma.vessel.findMany({
+      where: { healthScore: { lt: 80 }, status: 'ACTIVE' },
+      take: 1
+    });
+
+    if (fleetStrugglingRatio < 0.6 && activeViolations > 2) {
+      insights.push({
+        id: 'insight-fleet-overstretch',
+        type: 'FLEET_RISK',
+        title: params.lang === 'ar' ? 'عجز تغطية أسطول المراقبة' : 'Fleet Overstretch Alert',
+        message: params.lang === 'ar'
+          ? `نسبة جاهزية الأسطول منخفضة (${Math.floor(fleetStrugglingRatio * 100)}%) بالتزامن مع تزايد البلاغات المفتوحة (${activeViolations}). خطر التغطية الميدانية مرتفع.`
+          : `Fleet readiness is low (${Math.floor(fleetStrugglingRatio * 100)}%) while open violations are rising (${activeViolations}). Resource overstretch confirmed.`,
+        severity: 'HIGH'
+      });
+    } else if (lowHealthVessels.length > 0) {
+      const vsl = lowHealthVessels[0] as any;
+      insights.push({
+        id: 'insight-vessel-health',
+        type: 'FLEET_RISK',
+        title: params.lang === 'ar' ? 'فحص صيانة مجدول' : 'Vessel Maintenance Needed',
+        message: params.lang === 'ar'
+          ? `المركب الميداني (${vsl.nameAr || vsl.name}) يعاني من تدني كفاءة المحرك والصحة العامة (${vsl.healthScore}%). يوصى بالفحص الوقائي لضمان كفاءة الدورية.`
+          : `Vessel (${vsl.name}) reports compromised health score (${vsl.healthScore}%). Urgent mechanical diagnostic recommended.`,
+        severity: 'MEDIUM'
+      });
+    }
+
+    // 5. --- Correlation 5: Mortality and Beach Stranding Clustered (MORTALITY_CORRELATION) ---
+    const recentStrandingsList = await (prisma as any).strandingCase.findMany({
+      where: { status: { in: ['DEAD', 'nafaq', 'نافق'] }, ...reserveFilter },
+      orderBy: { date: 'desc' },
+      take: 4
+    }).catch(() => []);
+
+    if (recentStrandingsList.length >= 2) {
+      const speciesList = recentStrandingsList.map((s: any) => s.speciesAr || s.species).filter(Boolean);
+      const uniqueSpecies = Array.from(new Set(speciesList));
+      insights.push({
+        id: 'insight-mortality-cluster',
+        type: 'MORTALITY_CORRELATION',
+        title: params.lang === 'ar' ? 'عنقود نفوق بحري مقلق' : 'Marine Mortality Cluster',
+        message: params.lang === 'ar'
+          ? `رصد مؤشر نفوق متسارع: تسجيل ${recentStrandingsList.length} حالات نفوق لكائنات فطرية (${uniqueSpecies.join(' و ')}) مؤخراً. مؤشر تدهور جودة المياه مرتفع.`
+          : `High mortality cluster: ${recentStrandingsList.length} dead strandings of (${uniqueSpecies.join(', ')}) registered. Potential local water contamination.`,
+        severity: 'CRITICAL'
+      });
+    } else if (recentStrandingsList.length === 1) {
+      const s = recentStrandingsList[0] as any;
+      insights.push({
+        id: 'insight-stranding-single',
+        type: 'MORTALITY_CORRELATION',
+        title: params.lang === 'ar' ? 'حالة نفوق مسجلة' : 'Marine Stranding Incident',
+        message: params.lang === 'ar'
+          ? `تم رصد وتسجيل حالة نفوق لكائن (${s.speciesAr || s.species}) في منطقة ${s.locationAr || s.location || 'البحر الأحمر'}.`
+          : `Stranding case recorded for (${s.species}) at ${s.location}. Biological assessment pending.`,
+        severity: 'HIGH'
+      });
+    }
+
+    // 6. --- Correlation 6: Biodiversity Hotspot Spotting (BIODIVERSITY) ---
+    if (recentSightingsList && recentSightingsList.length > 0) {
+      const s = recentSightingsList[0] as any;
+      if (s.count >= 5) {
+        insights.push({
+          id: 'insight-biodiv-hotspot',
+          type: 'BIODIVERSITY',
+          title: params.lang === 'ar' ? 'بؤرة تجمع تنوع بيئي' : 'Biodiversity Hotspot',
+          message: params.lang === 'ar'
+            ? `تجمع حيوي مكثف: رصد عدد (${s.count}) من كائنات (${s.speciesAr || s.species}) في منطقة ${s.locationAr || s.location}. يوصى بفرض منطقة حماية مؤقتة.`
+            : `Dense ecological cluster: Spotted ${s.count}x (${s.species}) at ${s.location}. Temporary protection zone recommended.`,
+          severity: 'HIGH'
+        });
+      } else {
+        insights.push({
+          id: 'insight-biodiv-sighting',
+          type: 'BIODIVERSITY',
+          title: params.lang === 'ar' ? 'رصد كائن نادر' : 'Rare Species Sighting',
+          message: params.lang === 'ar'
+            ? `رصد ميداني ناجح: تواجد لـ (${s.speciesAr || s.species}) في ${s.locationAr || s.location}. البيانات الجغرافية تم إسقاطها على الخريطة.`
+            : `Successful field sighting: (${s.species}) spotted at ${s.location}. Spatial tracking coordinate registered.`,
+          severity: 'LOW'
+        });
+      }
+    }
+
+    // 7. --- Correlation 7: Repeat Violator Vessel (OFFENDER) ---
     const repeatOffendersRaw = await prisma.patrolViolation.groupBy({
       by: ['vesselName'],
       where: { vesselName: { not: null, notIn: [''] } },
       _count: { vesselName: true },
       orderBy: { _count: { vesselName: 'desc' } },
-      take: 1
+      take: 2
     });
 
     if (repeatOffendersRaw.length > 0 && repeatOffendersRaw[0]._count.vesselName > 1) {
+      const offender = repeatOffendersRaw[0] as any;
       insights.push({
-        id: 'insight-offender',
+        id: 'insight-repeat-offender',
         type: 'OFFENDER',
-        title: params.lang === 'ar' ? 'مراكب متكررة المخالفة' : 'Repeat Offenders',
+        title: params.lang === 'ar' ? 'سفينة متكررة المخالفة' : 'Habitual Offending Vessel',
         message: params.lang === 'ar'
-          ? `تحذير: المركب "${repeatOffendersRaw[0].vesselName}" ارتكب ${repeatOffendersRaw[0]._count.vesselName} مخالفات مؤخراً.`
-          : `Alert: Vessel "${repeatOffendersRaw[0].vesselName}" involved in ${repeatOffendersRaw[0]._count.vesselName} recent violations.`,
+          ? `سجل مرصود: السفينة/المركب (${offender.vesselName}) متورط في (${offender._count.vesselName}) مخالفات وقائع صيد أو دخول غير مصرح به مؤخراً.`
+          : `Tracking history: Vessel (${offender.vesselName}) has been flagged in (${offender._count.vesselName}) maritime violations recently.`,
         severity: 'HIGH'
       });
     }
 
-    // --- Correlation 5: EIA Compliance ---
-    const recentEiaViolations = await (prisma as any).eiaViolation?.findMany({
-      where: { status: 'OPEN', ...reserveFilter },
-      take: 1
-    }).catch(() => []);
-
-    if (recentEiaViolations && recentEiaViolations.length > 0) {
-      insights.push({
-        id: 'insight-eia-viol',
-        type: 'EIA',
-        title: params.lang === 'ar' ? 'خطر المشاريع الساحلية' : 'Coastal Project Risk',
-        message: params.lang === 'ar'
-          ? `رصد مخالفة للاشتراطات البيئية لمشروع "${recentEiaViolations[0].projectName}". يتطلب تدخل عاجل.`
-          : `EIA violation detected for project "${recentEiaViolations[0].projectName}". Urgent intervention required.`,
-        severity: 'CRITICAL'
-      });
-    }
-
-    // --- Fallbacks if No Critical Issues Found ---
+    // 8. --- Fallbacks if No Insights Generated ---
     if (insights.length === 0) {
       insights.push({
         id: 'insight-stable-eia',
         type: 'EIA',
         title: params.lang === 'ar' ? 'استقرار المؤشرات البيئية' : 'Stable Environmental Indicators',
         message: params.lang === 'ar'
-          ? 'توضح قواعد البيانات أنه لم يتم رصد أي حوادث تلوث أو نفوق غير طبيعي مؤخراً. المؤشرات البيئية في مستوياتها الطبيعية.'
-          : 'Databases confirm no recent pollution incidents or abnormal mortalities. Indicators are stable.',
-        severity: 'LOW'
-      });
-      insights.push({
-        id: 'insight-stable-fleet',
-        type: 'FLEET_RISK',
-        title: params.lang === 'ar' ? 'التغطية الميدانية نشطة' : 'Active Field Coverage',
-        message: params.lang === 'ar'
-          ? 'بيانات الأسطول والمراقبة تشير إلى عمل الدوريات البحرية بكفاءة وتغطية المناطق الحرجة بشكل جيد.'
-          : 'Fleet and monitoring data indicate patrol units are operating efficiently, covering critical zones.',
+          ? 'المقاييس البيئية تشير إلى استقرار تام في جودة المياه والتغطية الميدانية في محميات البحر الأحمر.'
+          : 'Ecological metrics indicate full stabilization of water parameters and patrol deployments.',
         severity: 'LOW'
       });
     }
@@ -236,11 +305,17 @@ export default async function DashboardPage({ params }: { params: { lang: string
   const rawFeed = [
     ...recentPatrols.map(p => ({ ...p, feedType: 'PATROL' as const, rawDate: p.date.getTime() })),
     ...recentViolations.map(v => ({ ...v, feedType: 'VIOLATION' as const, rawDate: v.date.getTime() })),
-    ...recentNews.map(n => ({ ...n, feedType: 'NEWS' as const, rawDate: n.date.getTime() })),
-    ...recentEiaAccidents.map(e => ({ ...e, feedType: 'EIA' as const, rawDate: e.date.getTime() })),
-    ...recentStrandingsFeed.map(s => ({ ...s, feedType: 'MONITORING' as const, rawDate: s.date.getTime() })),
-    ...recentSurveys.map(s => ({ ...s, feedType: 'MONITORING' as const, rawDate: s.date.getTime() }))
-  ].sort((a, b) => b.rawDate - a.rawDate).slice(0, 25);
+    ...recentNews.map((n: any) => ({ ...n, feedType: 'NEWS' as const, rawDate: n.date.getTime() })),
+    ...recentEiaAccidents.map((e: any) => ({ ...e, feedType: 'EIA_ACCIDENT' as const, rawDate: e.date.getTime() })),
+    ...recentEiaInspections.map((i: any) => ({ ...i, feedType: 'EIA_INSPECTION' as const, rawDate: i.date.getTime() })),
+    ...recentEiaViolations.map((ev: any) => ({ ...ev, feedType: 'EIA_VIOLATION' as const, rawDate: ev.date.getTime() })),
+    ...recentStrandingsFeed.map((s: any) => ({ ...s, feedType: 'STRANDING' as const, rawDate: s.date.getTime() })),
+    ...recentSurveys.map((s: any) => ({ ...s, feedType: 'SURVEY' as const, rawDate: s.date.getTime() })),
+    ...recentSightings.map((si: any) => ({ ...si, feedType: 'SIGHTING' as const, rawDate: si.date.getTime() })),
+    ...recentGisLayers.map((l: any) => ({ ...l, feedType: 'GIS_LAYER' as const, rawDate: new Date(l.createdAt).getTime() }))
+  ].sort((a, b) => b.rawDate - a.rawDate).slice(0, 30);
+
+  const distanceOpts = params.lang === 'ar' ? { locale: ar, addSuffix: true } : { addSuffix: true };
 
   const sortedFeed: DashboardData['feed'] = rawFeed.map(item => {
     if (item.feedType === 'PATROL') {
@@ -249,9 +324,9 @@ export default async function DashboardPage({ params }: { params: { lang: string
         id: `p-${p.id}`,
         type: 'PATROL',
         title: params.lang === 'ar' ? 'دورية جديدة' : 'New Patrol',
-        message: params.lang === 'ar' ? `دورية في منطقة ${p.zoneAr || p.zone}` : `Patrol in ${p.zone}`,
-        time: formatDistanceToNow(new Date(p.date), { addSuffix: true }),
-        user: p.leader?.nameAr || p.leader?.name || 'System'
+        message: params.lang === 'ar' ? `دورية في منطقة ${p.zoneAr || p.zone || 'غير محددة'}` : `Patrol in ${p.zone || 'unspecified'}`,
+        time: formatDistanceToNow(new Date(p.date), distanceOpts),
+        user: p.leader?.nameAr || p.leader?.name || (params.lang === 'ar' ? 'النظام' : 'System')
       };
     } else if (item.feedType === 'VIOLATION') {
       const v = item as any;
@@ -259,30 +334,101 @@ export default async function DashboardPage({ params }: { params: { lang: string
         id: `v-${v.id}`,
         type: 'VIOLATION',
         title: params.lang === 'ar' ? 'مخالفة مرصودة' : 'Violation Logged',
-        message: v.description || (params.lang === 'ar' ? `مخالفة في ${v.locationAr || v.location}` : `Violation in ${v.location}`),
-        time: formatDistanceToNow(new Date(v.date), { addSuffix: true }),
+        message: v.description || (params.lang === 'ar' ? `مخالفة في ${v.locationAr || v.location || 'موقع غير معروف'}` : `Violation in ${v.location || 'unknown location'}`),
+        time: formatDistanceToNow(new Date(v.date), distanceOpts),
         severity: v.severity,
-        user: v.officer?.nameAr || v.officer?.name || 'System'
+        user: v.officer?.nameAr || v.officer?.name || (params.lang === 'ar' ? 'النظام' : 'System')
       };
-    } else if (item.feedType === 'EIA') {
+    } else if (item.feedType === 'EIA_ACCIDENT') {
       const e = item as any;
-      return {
-        id: `e-${e.id}`,
-        type: 'EIA',
-        title: params.lang === 'ar' ? 'تحديث تقييم الأثر' : 'EIA Update',
-        message: params.lang === 'ar' ? (`حادث بيئي: ${e.typeAr || e.type} - ${e.locationAr || e.location}`) : (`EIA Accident: ${e.type} - ${e.location}`),
-        time: formatDistanceToNow(new Date(e.date), { addSuffix: true }),
-        user: 'System'
+      const typeArMap: Record<string, string> = {
+        'Grounding': 'جنوح سفينة',
+        'Oil Pollution': 'تلوث نفطي',
+        'Fires': 'حريق',
+        'Chemical Spill': 'تسرب كيميائي'
       };
-    } else if (item.feedType === 'MONITORING') {
-      const m = item as any;
       return {
-        id: `m-${m.id}`,
+        id: `e-acc-${e.id}`,
+        type: 'EIA',
+        title: params.lang === 'ar' ? 'حادث بيئي' : 'EIA Accident',
+        message: params.lang === 'ar'
+          ? `حادث بيئي: ${typeArMap[e.type] || e.type} في ${e.locationName}`
+          : `Environmental Accident: ${e.type} at ${e.locationName}`,
+        time: formatDistanceToNow(new Date(e.date), distanceOpts),
+        user: e.createdBy || (params.lang === 'ar' ? 'النظام' : 'System')
+      };
+    } else if (item.feedType === 'EIA_INSPECTION') {
+      const i = item as any;
+      return {
+        id: `e-ins-${i.id}`,
+        type: 'EIA',
+        title: params.lang === 'ar' ? 'معاينة بيئية' : 'EIA Inspection',
+        message: params.lang === 'ar'
+          ? `معاينة بيئية للموقع: ${i.locationName} بواسطة المفتش ${i.inspectorName || i.createdBy}`
+          : `EIA Inspection at ${i.locationName} by Inspector ${i.inspectorName || i.createdBy}`,
+        time: formatDistanceToNow(new Date(i.date), distanceOpts),
+        user: i.inspectorName || i.createdBy || (params.lang === 'ar' ? 'النظام' : 'System')
+      };
+    } else if (item.feedType === 'EIA_VIOLATION') {
+      const ev = item as any;
+      return {
+        id: `e-viol-${ev.id}`,
+        type: 'EIA',
+        title: params.lang === 'ar' ? 'مخالفة تقييم أثر' : 'EIA Violation',
+        message: params.lang === 'ar'
+          ? `مخالفة بيئية للجهة (${ev.entityName}): ${ev.type} في ${ev.locationName}`
+          : `EIA Violation for (${ev.entityName}): ${ev.type} at ${ev.locationName}`,
+        time: formatDistanceToNow(new Date(ev.date), distanceOpts),
+        user: ev.createdBy || (params.lang === 'ar' ? 'النظام' : 'System')
+      };
+    } else if (item.feedType === 'STRANDING') {
+      const s = item as any;
+      const isDead = s.status === 'DEAD' || s.status === 'نافق';
+      return {
+        id: `m-str-${s.id}`,
         type: 'MONITORING',
-        title: params.lang === 'ar' ? 'نشاط رصد' : 'Monitoring Activity',
-        message: m.species ? (params.lang === 'ar' ? `حالة نفوق: ${m.speciesAr || m.species}` : `Stranding: ${m.species}`) : (params.lang === 'ar' ? `مسح بيئي: ${m.typeAr || m.type}` : `Survey: ${m.type}`),
-        time: formatDistanceToNow(new Date(m.date), { addSuffix: true }),
-        user: 'System'
+        title: params.lang === 'ar' ? 'حالة جنوح / نفوق' : 'Stranding Case',
+        message: params.lang === 'ar'
+          ? `رصد حالة جنوح (${isDead ? 'نافق' : 'حي'}) لكائن: ${s.speciesAr || s.species || 'غير محدد'} في ${s.locationAr || s.location || 'موقع غير محدد'}`
+          : `Stranding (${isDead ? 'DEAD' : 'ALIVE'}) of ${s.species || 'unknown species'} at ${s.location}`,
+        time: formatDistanceToNow(new Date(s.date), distanceOpts),
+        user: params.lang === 'ar' ? 'النظام' : 'System'
+      };
+    } else if (item.feedType === 'SURVEY') {
+      const su = item as any;
+      return {
+        id: `m-srv-${su.id}`,
+        type: 'MONITORING',
+        title: params.lang === 'ar' ? 'مسح بيئي جديد' : 'New Eco Survey',
+        message: params.lang === 'ar'
+          ? `مسح بيئي لشعب مرجانية/كائنات من نوع ${su.type} في محمية ${su.reserveAr || su.reserve || 'غير محددة'}`
+          : `Eco survey of type ${su.type} in reserve ${su.reserve}`,
+        time: formatDistanceToNow(new Date(su.date), distanceOpts),
+        user: su.observer?.nameAr || su.observer?.name || (params.lang === 'ar' ? 'النظام' : 'System')
+      };
+    } else if (item.feedType === 'SIGHTING') {
+      const si = item as any;
+      return {
+        id: `m-sig-${si.id}`,
+        type: 'MONITORING',
+        title: params.lang === 'ar' ? 'مشاهدة كائنات' : 'Species Sighting',
+        message: params.lang === 'ar'
+          ? `رصد كائن: ${si.speciesAr || si.species} (العدد: ${si.count}) في ${si.locationAr || si.location}`
+          : `Spotted ${si.count}x ${si.species} at ${si.location}`,
+        time: formatDistanceToNow(new Date(si.date), distanceOpts),
+        user: si.observerName || (params.lang === 'ar' ? 'النظام' : 'System')
+      };
+    } else if (item.feedType === 'GIS_LAYER') {
+      const l = item as any;
+      return {
+        id: `g-lay-${l.id}`,
+        type: 'GIS',
+        title: params.lang === 'ar' ? 'طبقة خريطة جديدة' : 'New Map Layer',
+        message: params.lang === 'ar'
+          ? `تم إضافة طبقة خريطة جديدة: ${l.nameAr || l.name} (${l.category === 'custom' ? 'مخصصة' : l.category})`
+          : `Added new map layer: ${l.name} (${l.category})`,
+        time: formatDistanceToNow(new Date(l.createdAt), distanceOpts),
+        user: params.lang === 'ar' ? 'النظام' : 'System'
       };
     } else {
       const n = item as any;
@@ -290,9 +436,9 @@ export default async function DashboardPage({ params }: { params: { lang: string
         id: `n-${n.id}`,
         type: 'NEWS',
         title: params.lang === 'ar' ? 'إعلان إداري' : 'Announcement',
-        message: params.lang === 'ar' ? n.titleAr : n.title,
-        time: formatDistanceToNow(new Date(n.date), { addSuffix: true }),
-        user: n.authorName
+        message: params.lang === 'ar' ? n.titleAr || n.title : n.title,
+        time: formatDistanceToNow(new Date(n.date), distanceOpts),
+        user: n.authorName || (params.lang === 'ar' ? 'النظام' : 'System')
       };
     }
   });
