@@ -96,6 +96,11 @@ const getBadgeStyle = (badgeName: string) => {
 
 export default function ProfilePage({ params: { lang } }: { params: { lang: string } }) {
   const isArabic = lang === 'ar';
+  const isUserOnline = (lastActive: string | Date | null) => {
+    if (!lastActive) return false;
+    const lastActiveTime = new Date(lastActive).getTime();
+    return Date.now() - lastActiveTime < 5 * 60 * 1000;
+  };
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -952,13 +957,18 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                             setShowNewChatList(false);
                             fetchThread(u.id);
                           }}
-                          className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-left cursor-pointer group"
+                          className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-start cursor-pointer group"
                         >
-                          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center shrink-0">
-                            {u.profilePictureUrl ? (
-                              <img src={u.profilePictureUrl} alt={u.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <UserIcon size={18} className="text-slate-400" />
+                          <div className="relative shrink-0">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
+                              {u.profilePictureUrl ? (
+                                <img src={u.profilePictureUrl} alt={u.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <UserIcon size={18} className="text-slate-400" />
+                              )}
+                            </div>
+                            {isUserOnline(u.lastActive) && (
+                              <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#0c1b2a] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -992,7 +1002,7 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                               setActivePartnerId(conv.partnerId);
                               fetchThread(conv.partnerId);
                             }}
-                            className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all text-left cursor-pointer group ${
+                            className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all text-start cursor-pointer group ${
                               isSelected 
                                 ? 'bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20' 
                                 : 'hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
@@ -1006,6 +1016,9 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                                   <UserIcon size={18} className="text-slate-400" />
                                 )}
                               </div>
+                              {isUserOnline(conv.partner?.lastActive) && (
+                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#0c1b2a] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                              )}
                               {conv.unreadCount > 0 && (
                                 <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse shadow-md">
                                   {conv.unreadCount}
@@ -1055,22 +1068,41 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                         {/* Partner details */}
                         {(() => {
                           const partner = conversations.find(c => c.partnerId === activePartnerId)?.partner || allUsers.find(u => u.id === activePartnerId);
+                          const online = isUserOnline(partner?.lastActive);
                           return (
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
-                                {partner?.profilePictureUrl ? (
-                                  <img src={partner.profilePictureUrl} alt={partner.name} className="w-full h-full object-cover" />
-                                ) : (
-                                  <UserIcon size={18} className="text-slate-400" />
+                            <div className="flex items-center gap-3 text-start">
+                              <div className="relative shrink-0">
+                                <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
+                                  {partner?.profilePictureUrl ? (
+                                    <img src={partner.profilePictureUrl} alt={partner.name} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <UserIcon size={18} className="text-slate-400" />
+                                  )}
+                                </div>
+                                {online && (
+                                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#0c1b2a] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                                 )}
                               </div>
                               <div>
-                                <h3 className="font-bold text-slate-900 dark:text-white text-sm text-left">
+                                <h3 className="font-bold text-slate-900 dark:text-white text-sm text-start">
                                   {isArabic ? partner?.nameAr || partner?.name : partner?.name}
                                 </h3>
-                                <span className="text-[10px] font-semibold text-indigo-500 uppercase tracking-widest block text-left">
-                                  {partner?.role}
-                                </span>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-[10px] font-semibold text-indigo-500 uppercase tracking-widest block text-start">
+                                    {partner?.role}
+                                  </span>
+                                  <span className="text-[10px] text-slate-400">•</span>
+                                  {online ? (
+                                    <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                      {isArabic ? 'متصل الآن' : 'Online'}
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-medium text-slate-400">
+                                      {isArabic ? 'غير متصل' : 'Offline'}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           );
@@ -1101,7 +1133,7 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                                   ? 'dark bg-gradient-to-br from-indigo-500 to-blue-500 text-white rounded-br-none shadow-md shadow-indigo-500/10' 
                                   : 'bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-slate-100 rounded-bl-none border border-slate-200/50 dark:border-white/5'
                               }`}>
-                                <p className={`whitespace-pre-wrap leading-relaxed break-words text-left ${isMe ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>{msg.content}</p>
+                                <p className={`whitespace-pre-wrap leading-relaxed break-words text-start ${isMe ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>{msg.content}</p>
                               </div>
                               <div className="flex items-center gap-1.5 mt-1 px-1">
                                 <span className="text-[9px] text-slate-400 font-semibold">

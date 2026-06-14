@@ -36,8 +36,8 @@ export async function GET(request: Request) {
         },
         orderBy: { createdAt: 'asc' },
         include: {
-          sender: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true } },
-          receiver: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true } }
+          sender: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true, lastActive: true } },
+          receiver: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true, lastActive: true } }
         }
       });
       return NextResponse.json({ success: true, messages });
@@ -54,8 +54,8 @@ export async function GET(request: Request) {
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        sender: { select: { id: true, name: true, nameAr: true, employeeId: true, profilePictureUrl: true, role: true } },
-        receiver: { select: { id: true, name: true, nameAr: true, employeeId: true, profilePictureUrl: true, role: true } }
+        sender: { select: { id: true, name: true, nameAr: true, employeeId: true, profilePictureUrl: true, role: true, lastActive: true } },
+        receiver: { select: { id: true, name: true, nameAr: true, employeeId: true, profilePictureUrl: true, role: true, lastActive: true } }
       }
     });
 
@@ -117,8 +117,8 @@ export async function POST(request: Request) {
         content: content.trim()
       },
       include: {
-        sender: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true } },
-        receiver: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true } }
+        sender: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true, lastActive: true } },
+        receiver: { select: { id: true, name: true, nameAr: true, profilePictureUrl: true, lastActive: true } }
       }
     });
 
