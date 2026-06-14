@@ -126,7 +126,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
             {isArabic ? 'لوحة العمليات المركزية' : 'Central Command Center'}
           </h1>
           <p className="text-th-muted dark:text-slate-400 text-sm font-medium">
-             {isArabic ? 'إدارة البيانات المركزية المترابطة بالذكاء الاصطناعي' : 'AI-Correlated Centralized Data Management'}
+             {isArabic ? 'إدارة البيانات المركزية المترابطة بالذكاء الاصطناعي - عرض شامل لجميع المحميات' : 'AI-Correlated Centralized Data Management - Global Protectorates View'}
           </p>
         </div>
 

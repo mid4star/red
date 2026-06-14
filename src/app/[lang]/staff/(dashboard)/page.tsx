@@ -13,7 +13,7 @@ export default async function DashboardPage({ params }: { params: { lang: string
   const token = cookieStore.get('token')?.value;
   const auth = token ? verifyJwt(token) : null;
   
-  const reserveFilter = auth && auth.role !== 'ADMIN' ? { reserveId: auth.reserveId } : {};
+  const reserveFilter = {}; // Global filter showing data from all reserves together for all staff members
 
   // 1. Fetch Aggregated Stats
   const [
