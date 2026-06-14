@@ -433,7 +433,7 @@ export default function GISDashboard({ isArabic }: { isArabic: boolean }) {
         
         {/* Features list management (Left / 2 columns) */}
         <Card className="p-6 lg:col-span-2 bg-th-surface border-th-border shadow-sm flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-th-border">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-th-border">
             <div>
               <h3 className="text-lg font-black text-th-text flex items-center gap-2">
                 <Map size={18} className="text-teal-500" />
@@ -510,7 +510,7 @@ export default function GISDashboard({ isArabic }: { isArabic: boolean }) {
 
           {/* Bulk Actions Panel */}
           {selectedFeatureIds.length > 0 && (
-            <div className="bg-teal-500/10 border border-teal-500/35 rounded-xl p-3.5 flex flex-col md:flex-row items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-250">
+            <div className="bg-teal-500/10 border border-teal-500/35 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-250">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-teal-600 dark:text-teal-400">
                   {isArabic 

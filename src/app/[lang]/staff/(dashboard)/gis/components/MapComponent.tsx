@@ -90,7 +90,7 @@ function MapReference({ setMap }: { setMap: (map: L.Map) => void }) {
   return null;
 }
 
-function GeomanInit({ setDraftFeature }: { setDraftFeature: (data: any) => void }) {
+function GeomanInit({ setDraftFeature, privateMode }: { setDraftFeature: (data: any) => void, privateMode?: 'projects' | 'buoys' | 'diving' }) {
   const map = useMap();
   const { layers } = useGISStore();
 
@@ -130,7 +130,16 @@ function GeomanInit({ setDraftFeature }: { setDraftFeature: (data: any) => void 
           }
 
           const draft = useGISStore.getState().dashboardDraftFeature;
-          const targetLayerId = draft ? draft.layerId : (layers.length > 0 ? layers[0].id : 'default');
+          const currentLayers = privateMode ? layers.filter(l => l.category === (privateMode === 'projects' ? 'project' : privateMode)) : layers;
+          
+          let targetLayerId = 'default';
+          if (draft) {
+             targetLayerId = draft.layerId;
+          } else if (currentLayers.length > 0) {
+             // Find the first unlocked layer, or just use the first layer
+             const unlocked = currentLayers.find(l => !l.isLocked);
+             targetLayerId = unlocked ? unlocked.id : currentLayers[0].id;
+          }
           
           setDraftFeature({
             leafletLayer: layer,
@@ -151,7 +160,7 @@ function GeomanInit({ setDraftFeature }: { setDraftFeature: (data: any) => void 
         map.off('pm:create');
       }
     }
-  }, [map, setDraftFeature, layers]);
+  }, [map, setDraftFeature, layers, privateMode]);
 
   return null;
 }
@@ -211,7 +220,7 @@ function HeatmapOverlay({ layer, features }: { layer: any, features: any[] }) {
   return null;
 }
 
-export default function MapComponent({ isArabic }: { isArabic: boolean }) {
+export default function MapComponent({ isArabic, privateMode }: { isArabic: boolean, privateMode?: 'projects' | 'buoys' | 'diving' }) {
   const { 
     layers, 
     features, 
@@ -226,6 +235,12 @@ export default function MapComponent({ isArabic }: { isArabic: boolean }) {
     moveLayerDown
   } = useGISStore();
   
+  const displayedLayers = React.useMemo(() => {
+    if (!privateMode) return layers;
+    const cat = privateMode === 'projects' ? 'project' : privateMode;
+    return layers.filter(l => l.category === cat);
+  }, [layers, privateMode]);
+
   const [draftFeature, setDraftFeature] = React.useState<any>(null);
   const [isLayersOpen, setIsLayersOpen] = React.useState(true);
   const [showManager, setShowManager] = React.useState(false);
@@ -370,8 +385,8 @@ export default function MapComponent({ isArabic }: { isArabic: boolean }) {
         <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] bg-amber-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-3 border border-amber-400 animate-in slide-in-from-top-2 duration-300">
           <span>
             {isArabic 
-              ? `نمط الرسم نشط: الرجاء رسم ${dashboardDraftFeature.properties.geometryType === 'Point' ? 'نقطة' : dashboardDraftFeature.properties.geometryType === 'Polygon' ? 'منطقة' : 'مسار'} للطبقة "${layers.find(l => l.id === dashboardDraftFeature.layerId)?.nameAr || ''}"`
-              : `Drawing Mode Active: Please draw a ${dashboardDraftFeature.properties.geometryType} for layer "${layers.find(l => l.id === dashboardDraftFeature.layerId)?.name || ''}"`
+              ? `نمط الرسم نشط: الرجاء رسم ${dashboardDraftFeature.properties.geometryType === 'Point' ? 'نقطة' : dashboardDraftFeature.properties.geometryType === 'Polygon' ? 'منطقة' : 'مسار'} للطبقة "${displayedLayers.find(l => l.id === dashboardDraftFeature.layerId)?.nameAr || ''}"`
+              : `Drawing Mode Active: Please draw a ${dashboardDraftFeature.properties.geometryType} for layer "${displayedLayers.find(l => l.id === dashboardDraftFeature.layerId)?.name || ''}"`
             }
           </span>
           <button 
@@ -428,11 +443,11 @@ export default function MapComponent({ isArabic }: { isArabic: boolean }) {
         )}
         
         <MapReference setMap={setMapInstance} />
-        <GeomanInit setDraftFeature={setDraftFeature} />
+        <GeomanInit setDraftFeature={setDraftFeature} privateMode={privateMode} />
         <SearchHandler />
         
         {/* Render Features based on visible layers and timeline */}
-        {layers.filter(l => l.isVisible).map(layer => {
+        {displayedLayers.filter(l => l.isVisible).map(layer => {
           const layerFeatures = features.filter(f => {
              if (f.layerId !== layer.id) return false;
              if (timelineFilterDate) {
@@ -689,7 +704,7 @@ export default function MapComponent({ isArabic }: { isArabic: boolean }) {
           </div>
 
           <div className="space-y-2.5 overflow-y-auto pr-1 pl-1">
-            {layers.map((layer, index) => (
+            {displayedLayers.map((layer, index) => (
               <div key={layer.id} className="flex flex-col p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-150 dark:border-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 transition-colors text-xs">
                  <div className="flex items-center justify-between">
                    <div className="flex items-center gap-2">
@@ -708,7 +723,7 @@ export default function MapComponent({ isArabic }: { isArabic: boolean }) {
                        <button onClick={() => moveLayerDown(layer.id)} disabled={index === 0} className="hover:text-teal-500 disabled:opacity-30">
                          <ChevronUp size={11} />
                        </button>
-                       <button onClick={() => moveLayerUp(layer.id)} disabled={index === layers.length - 1} className="hover:text-teal-500 disabled:opacity-30">
+                       <button onClick={() => moveLayerUp(layer.id)} disabled={index === displayedLayers.length - 1} className="hover:text-teal-500 disabled:opacity-30">
                          <ChevronDown size={11} />
                        </button>
                      </div>

@@ -27,7 +27,12 @@ export default function FeatureFormModal({
         status: featureData.properties.status || 'active',
         progress: featureData.properties.progress || 0,
         images: featureData.properties.images || [],
-        readings: featureData.properties.readings || []
+        readings: featureData.properties.readings || [],
+        buoyNumber: featureData.properties.buoyNumber || '',
+        buoyType: featureData.properties.buoyType || '',
+        depth: featureData.properties.depth || '',
+        capacity: featureData.properties.capacity || '',
+        installedBy: featureData.properties.installedBy || 'محميات البحر الأحمر'
       };
     }
     return {
@@ -38,7 +43,12 @@ export default function FeatureFormModal({
       status: 'active',
       progress: 0,
       images: [] as string[],
-      readings: [] as { date: string, type: string, value: number, unit: string }[]
+      readings: [] as { date: string, type: string, value: number, unit: string }[],
+      buoyNumber: '',
+      buoyType: '',
+      depth: '',
+      capacity: '',
+      installedBy: 'محميات البحر الأحمر'
     };
   });
   
@@ -89,6 +99,11 @@ export default function FeatureFormModal({
     setProperties({ ...properties, readings: newReadings });
   };
 
+  const coords = featureData?.coordinates;
+  const coordsText = coords && coords.length === 2 && typeof coords[0] === 'number' 
+    ? `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}` 
+    : (isArabic ? 'متعدد الإحداثيات' : 'Multiple coordinates');
+
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="bg-th-surface w-full max-w-xl rounded-2xl border border-th-border shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" dir={isArabic ? 'rtl' : 'ltr'}>
@@ -119,6 +134,45 @@ export default function FeatureFormModal({
               ))}
             </select>
           </div>
+
+          {selectedLayerId === 'layer-marine-buoys' && (
+            <div className="p-4 border border-teal-500/30 rounded-xl bg-teal-500/5 space-y-4">
+              <h3 className="text-sm font-bold text-teal-600 mb-2">{isArabic ? 'بيانات الشمندورة' : 'Buoy Details'}</h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'رقم الشمندورة' : 'Buoy Number'}</label>
+                  <input type="text" value={properties.buoyNumber || ''} onChange={e => setProperties({...properties, buoyNumber: e.target.value})} className="w-full bg-th-surface border border-th-border rounded-lg px-3 py-2 text-sm text-th-text focus:outline-none focus:border-teal-500" placeholder={isArabic ? 'رقم الشمندورة' : 'Buoy Number'} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'نوع الشمندورة' : 'Buoy Type'}</label>
+                  <input type="text" value={properties.buoyType || ''} onChange={e => setProperties({...properties, buoyType: e.target.value})} className="w-full bg-th-surface border border-th-border rounded-lg px-3 py-2 text-sm text-th-text focus:outline-none focus:border-teal-500" placeholder={isArabic ? 'ربط، علامة...' : 'Mooring, Marker...'} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'العمق (متر)' : 'Depth (m)'}</label>
+                  <input type="number" value={properties.depth || ''} onChange={e => setProperties({...properties, depth: e.target.value})} className="w-full bg-th-surface border border-th-border rounded-lg px-3 py-2 text-sm text-th-text focus:outline-none focus:border-teal-500" placeholder="0" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'سعة المراكب' : 'Boat Capacity'}</label>
+                  <input type="number" value={properties.capacity || ''} onChange={e => setProperties({...properties, capacity: e.target.value})} className="w-full bg-th-surface border border-th-border rounded-lg px-3 py-2 text-sm text-th-text focus:outline-none focus:border-teal-500" placeholder="0" />
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'جهة التثبيت' : 'Installed By'}</label>
+                <select value={properties.installedBy || 'محميات البحر الأحمر'} onChange={e => setProperties({...properties, installedBy: e.target.value})} className="w-full bg-th-surface border border-th-border rounded-lg px-3 py-2 text-sm text-th-text focus:outline-none focus:border-teal-500">
+                  <option value="محميات البحر الأحمر">{isArabic ? 'محميات البحر الأحمر' : 'Red Sea Reserves'}</option>
+                  <option value="هيبكا">{isArabic ? 'جمعية هيبكا' : 'HEPCA'}</option>
+                  <option value="أخرى">{isArabic ? 'جهة أخرى' : 'Other'}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'الإحداثيات' : 'Coordinates'}</label>
+                <input type="text" readOnly value={coordsText} className="w-full bg-th-surface border border-th-border rounded-lg px-3 py-2 text-sm text-th-muted cursor-not-allowed opacity-70" />
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="text-xs font-medium text-th-muted mb-1 block">{isArabic ? 'الحالة' : 'Status'}</label>

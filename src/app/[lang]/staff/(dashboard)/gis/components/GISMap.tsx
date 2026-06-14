@@ -12,7 +12,7 @@ const MapComponent = dynamic(() => import('./MapComponent'), {
   ) 
 });
 
-export default function GISMap({ isArabic }: { isArabic: boolean }) {
+export default function GISMap({ isArabic, privateMode }: { isArabic: boolean, privateMode?: 'projects' | 'buoys' | 'diving' }) {
   return (
     <div className="w-full h-[calc(100vh-200px)] min-h-[600px] relative rounded-2xl overflow-hidden border border-th-border shadow-md animate-in fade-in duration-500 gis-map-container">
       <style dangerouslySetInnerHTML={{__html: `
@@ -23,7 +23,7 @@ export default function GISMap({ isArabic }: { isArabic: boolean }) {
           .leaflet-control-container, .print-hide { display: none !important; }
         }
       `}} />
-      <MapComponent isArabic={isArabic} />
+      <MapComponent isArabic={isArabic} privateMode={privateMode} />
     </div>
   );
 }

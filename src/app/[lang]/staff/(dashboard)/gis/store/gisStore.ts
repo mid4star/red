@@ -18,8 +18,11 @@ import {
 
 
 interface GISState {
-  activeTab: 'dashboard' | 'map' | 'analytics' | 'reports';
-  setActiveTab: (tab: 'dashboard' | 'map' | 'analytics' | 'reports') => void;
+  activeTab: 'dashboard' | 'map' | 'analytics' | 'reports' | 'private-maps';
+  setActiveTab: (tab: 'dashboard' | 'map' | 'analytics' | 'reports' | 'private-maps') => void;
+  
+  privateMapTab: 'projects' | 'buoys' | 'diving';
+  setPrivateMapTab: (tab: 'projects' | 'buoys' | 'diving') => void;
   
   layers: GISLayer[];
   features: GISFeature[];
@@ -62,6 +65,9 @@ interface GISState {
 export const useGISStore = create<GISState>((set, get) => ({
   activeTab: 'dashboard',
   setActiveTab: (tab) => set({ activeTab: tab }),
+
+  privateMapTab: 'projects',
+  setPrivateMapTab: (tab) => set({ privateMapTab: tab }),
   
   layers: [],
   features: [],
@@ -187,6 +193,47 @@ export const useGISStore = create<GISState>((set, get) => ({
         opacity: 1.0,
         order: 1007
       });
+
+      // Inject Private Map Categories if missing
+      if (!allLayers.find(l => l.category === 'project' && l.id === 'layer-projects')) {
+        allLayers.push({
+          id: 'layer-projects',
+          name: 'General Projects',
+          nameAr: 'المشاريع العامة',
+          category: 'project',
+          color: '#3b82f6',
+          isVisible: true,
+          isLocked: false,
+          opacity: 1.0,
+          order: 998
+        });
+      }
+      if (!allLayers.find(l => l.category === 'buoys')) {
+        allLayers.push({
+          id: 'layer-marine-buoys',
+          name: 'Marine Buoys',
+          nameAr: 'الشمندورات البحرية',
+          category: 'buoys',
+          color: '#6366f1',
+          isVisible: true,
+          isLocked: false,
+          opacity: 1.0,
+          order: 997
+        });
+      }
+      if (!allLayers.find(l => l.category === 'diving')) {
+        allLayers.push({
+          id: 'layer-diving-sites',
+          name: 'Diving & Snorkeling Sites',
+          nameAr: 'مواقع الغوص والسنوركلاينج',
+          category: 'diving',
+          color: '#06b6d4',
+          isVisible: true,
+          isLocked: false,
+          opacity: 1.0,
+          order: 996
+        });
+      }
 
       // Sort by order ascending (highest order goes on top in Leaflet, or we just render them in order)
       allLayers.sort((a, b) => a.order - b.order);

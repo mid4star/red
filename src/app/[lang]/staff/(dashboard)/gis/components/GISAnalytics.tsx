@@ -184,7 +184,7 @@ export default function GISAnalytics({ isArabic }: { isArabic: boolean }) {
     <div className="space-y-6 animate-in fade-in duration-500">
       
       {/* ── 1. Top Filter Controls & Refresh ── */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-th-surface p-4 rounded-2xl border border-th-border shadow-sm gap-4">
+      <div className="flex flex-wrap items-center justify-between bg-th-surface p-4 rounded-2xl border border-th-border shadow-sm gap-4">
         {/* Sub-Tab Navigation */}
         <div className="flex p-1 bg-th-surface2 border border-th-border rounded-xl">
           <button 

@@ -5,8 +5,55 @@ import { useGISStore } from '../store/gisStore';
 import { Card } from '@/components/ui/Card';
 import { 
   Download, FileText, Calendar, Sliders, CheckSquare, Square, 
-  Search, Printer, MapPin, Database, ChevronRight, LayoutList 
+  Search, Printer, MapPin, Database, ChevronRight, LayoutList, X
 } from 'lucide-react';
+
+const translateKey = (key: string, isArabic: boolean) => {
+  if (!isArabic) {
+    const mapEn: Record<string, string> = {
+      nameAr: 'Name (AR)',
+      name: 'Name (EN)',
+      descriptionAr: 'Description (AR)',
+      description: 'Description (EN)',
+      reportFileUrl: 'Report File',
+      studyFileUrl: 'Study File',
+      imageUrl: 'Image URL',
+      images: 'Images',
+    };
+    return mapEn[key] || key.replace(/([A-Z])/g, ' $1').trim().toUpperCase();
+  }
+  const mapAr: Record<string, string> = {
+    name: 'الاسم (إنجليزي)',
+    nameAr: 'الاسم (عربي)',
+    description: 'الوصف (إنجليزي)',
+    descriptionAr: 'الوصف (عربي)',
+    status: 'الحالة',
+    progress: 'نسبة الإنجاز',
+    priority: 'الأولوية',
+    date: 'التاريخ',
+    createdAt: 'تاريخ الإنشاء',
+    updatedAt: 'تاريخ التحديث',
+    type: 'النوع',
+    layerId: 'الطبقة',
+    layer: 'الطبقة',
+    id: 'المعرف',
+    notes: 'ملاحظات',
+    region: 'المنطقة',
+    area: 'المساحة',
+    length: 'الطول',
+    category: 'التصنيف',
+    severity: 'الخطورة',
+    condition: 'حالة العنصر',
+    reportFileUrl: 'ملف التقرير',
+    studyFileUrl: 'ملف الدراسة',
+    imageUrl: 'رابط الصورة',
+    images: 'الصور المرفقة',
+    tags: 'الوسوم (Tags)',
+    observer: 'اسم الراصد',
+    location: 'الموقع',
+  };
+  return mapAr[key] || key.replace(/([A-Z])/g, ' $1').trim().toUpperCase();
+};
 
 export default function GISReports({ isArabic }: { isArabic: boolean }) {
   const { features, layers } = useGISStore();
@@ -20,6 +67,9 @@ export default function GISReports({ isArabic }: { isArabic: boolean }) {
   const [minProgress, setMinProgress] = useState<number>(0);
   const [maxProgress, setMaxProgress] = useState<number>(100);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  
+  // ── 1.5 Selected Feature State (for Modal) ──
+  const [selectedFeature, setSelectedFeature] = useState<any>(null);
 
   // ── 2. Column Selection State ──
   const [selectedColumns, setSelectedColumns] = useState<{ [key: string]: boolean }>({
@@ -278,7 +328,7 @@ export default function GISReports({ isArabic }: { isArabic: boolean }) {
       
       {/* ── 1. Page Header ── */}
       <Card className="p-6 bg-th-surface border-th-border shadow-sm flex flex-col gap-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-th-border/40 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-th-border/40 pb-4">
           <div className="flex items-center gap-3">
              <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-500 shrink-0">
                <FileText size={20} />
@@ -472,7 +522,7 @@ export default function GISReports({ isArabic }: { isArabic: boolean }) {
 
         {/* ── 5. Detailed Table View ── */}
         <div className="overflow-x-auto rounded-xl border border-th-border">
-          <table className="w-full text-left border-collapse" dir={isArabic ? 'rtl' : 'ltr'}>
+          <table className="w-full text-start border-collapse" dir={isArabic ? 'rtl' : 'ltr'}>
             <thead>
               <tr className="border-b border-th-border bg-th-surface2">
                 {selectedColumns.name && <th className="p-3 text-xs font-bold text-th-muted uppercase tracking-wider">{isArabic ? 'الاسم' : 'Name'}</th>}
@@ -489,42 +539,55 @@ export default function GISReports({ isArabic }: { isArabic: boolean }) {
                 const layer = layers.find(l => l.id === f.layerId);
                 const layerName = layer ? (isArabic ? layer.nameAr : layer.name) : '';
                 return (
-                  <tr key={f.id} className="hover:bg-th-surface2/50 transition-colors">
+                  <tr 
+                    key={f.id} 
+                    onClick={() => setSelectedFeature(f)}
+                    className="hover:bg-th-surface2/80 transition-colors cursor-pointer"
+                  >
                     {selectedColumns.name && (
                       <td className="p-3">
-                        <div className="font-bold text-sm text-th-text">{isArabic ? f.properties.nameAr : f.properties.name}</div>
+                        <div className="font-bold text-base text-th-text">{isArabic ? f.properties.nameAr : f.properties.name}</div>
                         {selectedColumns.description && (
-                          <div className="text-[10px] text-th-muted line-clamp-1 max-w-[200px]">{isArabic ? f.properties.descriptionAr : f.properties.description}</div>
+                          <div className="text-xs text-th-muted line-clamp-1 max-w-[200px]">{isArabic ? f.properties.descriptionAr : f.properties.description}</div>
                         )}
                       </td>
                     )}
-                    {selectedColumns.layer && <td className="p-3 text-xs text-th-text">{layerName}</td>}
+                    {selectedColumns.layer && <td className="p-3 text-sm text-th-text">{layerName}</td>}
                     {selectedColumns.type && (
                       <td className="p-3">
-                        <span className="font-mono bg-th-surface border border-th-border px-1.5 py-0.5 rounded text-[10px]">
+                        <span className="font-mono bg-th-surface border border-th-border px-2 py-1 rounded text-xs">
                           {f.type}
                         </span>
                       </td>
                     )}
                     {selectedColumns.status && (
                       <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                        <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
                           f.properties.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' :
                           f.properties.status === 'critical' ? 'bg-red-500/10 text-red-650' :
                           'bg-th-muted/10 text-th-muted'
                         }`}>
-                          {f.properties.status || '-'}
+                          {isArabic ? (
+                            f.properties.status?.toLowerCase() === 'active' ? 'نشط' :
+                            f.properties.status?.toLowerCase() === 'pending' ? 'انتظار' :
+                            f.properties.status?.toLowerCase() === 'completed' ? 'مكتمل' :
+                            f.properties.status?.toLowerCase() === 'critical' ? 'حرج' :
+                            f.properties.status?.toLowerCase() === 'investigating' ? 'قيد التحقيق' :
+                            f.properties.status || '-'
+                          ) : (
+                            f.properties.status || '-'
+                          )}
                         </span>
                       </td>
                     )}
-                    {selectedColumns.progress && <td className="p-3 text-xs font-bold text-teal-500">{f.properties.progress || 0}%</td>}
+                    {selectedColumns.progress && <td className="p-3 text-sm font-bold text-teal-500">{f.properties.progress || 0}%</td>}
                     {selectedColumns.coords && (
-                      <td className="p-3 text-[10px] font-mono text-th-muted truncate max-w-[150px]" title={JSON.stringify(f.coordinates)}>
+                      <td className="p-3 text-xs font-mono text-th-muted truncate max-w-[150px]" title={JSON.stringify(f.coordinates)}>
                         {JSON.stringify(f.coordinates)}
                       </td>
                     )}
                     {selectedColumns.updatedAt && (
-                      <td className="p-3 text-xs text-th-muted">
+                      <td className="p-3 text-sm text-th-muted">
                         {f.updatedAt ? new Date(f.updatedAt).toLocaleDateString() : '-'}
                       </td>
                     )}
@@ -542,6 +605,100 @@ export default function GISReports({ isArabic }: { isArabic: boolean }) {
           </table>
         </div>
       </Card>
+
+      {/* ── 6. Feature Details Modal ── */}
+      {selectedFeature && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
+          <Card className="w-full max-w-2xl bg-th-surface border-th-border shadow-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-4 border-b border-th-border/50 bg-th-surface2">
+              <h3 className="font-bold text-lg text-th-text flex items-center gap-2">
+                <FileText size={18} className="text-teal-500" />
+                {isArabic ? 'تفاصيل السجل' : 'Record Details'}
+              </h3>
+              <button 
+                onClick={() => setSelectedFeature(null)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-th-surface border border-th-border text-th-muted hover:text-red-500 hover:border-red-500/50 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="p-5 overflow-y-auto space-y-6" dir={isArabic ? 'rtl' : 'ltr'}>
+              {/* Properties Grid */}
+              <div>
+                <h4 className="text-xs font-black text-th-text mb-3 uppercase tracking-wider flex items-center gap-2">
+                  <Database size={14} className="text-teal-500" />
+                  {isArabic ? 'البيانات الوصفية (Properties)' : 'Feature Properties'}
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                   {Object.entries(selectedFeature.properties).map(([key, value]) => {
+                      const isLongText = typeof value === 'string' && value.length > 50;
+                      const isDescription = key.toLowerCase().includes('description');
+                      const isUrl = typeof value === 'string' && (value.startsWith('http') || value.includes('/uploads/') || key.toLowerCase().includes('url'));
+                      const colSpan = (isLongText || isDescription || isUrl) ? 'sm:col-span-2' : '';
+
+                      return (
+                      <div key={key} className={`bg-th-surface p-3 rounded-xl border border-th-border/50 hover:border-teal-500/40 hover:shadow-sm transition-all group flex flex-col justify-center ${colSpan}`}>
+                        <div className="text-[10px] font-bold text-th-muted uppercase tracking-wider mb-1.5 group-hover:text-teal-600 transition-colors">{translateKey(key, isArabic)}</div>
+                        <div className={`text-sm font-medium text-th-text break-words ${key === 'status' ? 'capitalize font-bold text-teal-600' : ''}`}>
+                          {value === null || value === undefined || value === '' ? (
+                             <span className="text-th-muted italic">{isArabic ? 'لا يوجد' : 'N/A'}</span>
+                          ) : key === 'status' ? (
+                             isArabic ? (
+                                String(value).toLowerCase() === 'active' ? 'نشط' :
+                                String(value).toLowerCase() === 'pending' ? 'انتظار' :
+                                String(value).toLowerCase() === 'completed' ? 'مكتمل' :
+                                String(value).toLowerCase() === 'critical' ? 'حرج' :
+                                String(value).toLowerCase() === 'investigating' ? 'قيد التحقيق' :
+                                String(value)
+                             ) : String(value)
+                          ) : key === 'progress' ? `${value}%` : 
+                            isUrl ? (
+                              <div className="flex items-center gap-2">
+                                <FileText size={14} className="text-teal-500" />
+                                <a href={String(value)} target="_blank" rel="noopener noreferrer" className="text-teal-500 hover:text-teal-600 underline underline-offset-2 break-all text-xs font-bold">
+                                  {isArabic ? 'عرض المرفق / الرابط' : 'View Attachment / Link'}
+                                </a>
+                              </div>
+                            ) :
+                            Array.isArray(value) ? value.join(' ، ') : String(value)}
+                        </div>
+                      </div>
+                      )
+                   })}
+                </div>
+              </div>
+              
+              {/* Extra Info (Type, Coordinates, Meta) */}
+              <div>
+                <h4 className="text-xs font-black text-th-text mb-3 uppercase tracking-wider flex items-center gap-2">
+                  <MapPin size={14} className="text-blue-500" />
+                  {isArabic ? 'البيانات المكانية (Spatial Data)' : 'Spatial Data'}
+                </h4>
+                <div className="bg-blue-500/5 p-4 rounded-xl border border-blue-500/20 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-th-surface p-3 rounded-lg border border-th-border/50">
+                      <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1.5 uppercase tracking-wider">{isArabic ? 'نوع الشكل' : 'Geometry Type'}</div>
+                      <div className="font-mono text-sm font-bold text-th-text flex items-center gap-2">
+                        {selectedFeature.type}
+                      </div>
+                    </div>
+                    <div className="bg-th-surface p-3 rounded-lg border border-th-border/50">
+                      <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1.5 uppercase tracking-wider">{isArabic ? 'الطبقة الجغرافية' : 'Layer ID'}</div>
+                      <div className="font-mono text-sm font-bold text-th-text">{selectedFeature.layerId}</div>
+                    </div>
+                  </div>
+                  <div className="bg-th-surface p-3 rounded-lg border border-th-border/50">
+                    <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1.5 uppercase tracking-wider">{isArabic ? 'الإحداثيات الجغرافية' : 'Coordinates Array'}</div>
+                    <div className="font-mono text-xs break-all max-h-32 overflow-y-auto text-th-text/80 leading-relaxed">
+                      {JSON.stringify(selectedFeature.coordinates)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
