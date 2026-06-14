@@ -20,13 +20,15 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
   const [config, setConfig] = useState({
     locationKeywords: [] as string[],
     environmentKeywords: [] as string[],
-    negativeKeywords: [] as string[]
+    negativeKeywords: [] as string[],
+    urgencyKeywords: [] as string[]
   });
   
   // Local state for comma separated inputs in modal
   const [locInput, setLocInput] = useState('');
   const [envInput, setEnvInput] = useState('');
   const [negInput, setNegInput] = useState('');
+  const [urgInput, setUrgInput] = useState('');
 
   useEffect(() => {
     const raw = localStorage.getItem('active_user_session');
@@ -46,9 +48,10 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
       if (data.success) {
         setArticles(data.articles);
         setConfig(data.config);
-        setLocInput(data.config.locationKeywords.join(', '));
-        setEnvInput(data.config.environmentKeywords.join(', '));
-        setNegInput(data.config.negativeKeywords.join(', '));
+        setLocInput(data.config.locationKeywords?.join(', ') || '');
+        setEnvInput(data.config.environmentKeywords?.join(', ') || '');
+        setNegInput(data.config.negativeKeywords?.join(', ') || '');
+        setUrgInput(data.config.urgencyKeywords?.join(', ') || '');
         setLastRefreshed(new Date());
       }
     } catch (e) {
@@ -77,6 +80,7 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
         locationKeywords: locInput.split(',').map(s => s.trim()).filter(Boolean),
         environmentKeywords: envInput.split(',').map(s => s.trim()).filter(Boolean),
         negativeKeywords: negInput.split(',').map(s => s.trim()).filter(Boolean),
+        urgencyKeywords: urgInput.split(',').map(s => s.trim()).filter(Boolean),
       };
       const res = await fetch('/api/staff/news-radar', {
         method: 'POST',
@@ -201,10 +205,10 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.05, 0.5) }}
               >
-                <Card className="h-full flex flex-col bg-th-surface border border-th-border rounded-2xl overflow-hidden hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-500/5 transition-all group relative">
+                <Card className={`h-full flex flex-col bg-th-surface border ${article.isUrgent ? 'border-rose-500 shadow-rose-500/10 shadow-lg' : 'border-th-border hover:shadow-amber-500/5 hover:border-amber-500/40'} rounded-2xl overflow-hidden hover:shadow-lg transition-all group relative`}>
                   {/* Score Badge */}
-                  <div className={`absolute top-0 ${isAr ? 'left-0 rounded-br-2xl' : 'right-0 rounded-bl-2xl'} px-3 py-1.5 bg-gradient-to-r ${article.score >= 30 ? 'from-amber-500 to-orange-500' : 'from-emerald-500 to-teal-500'} text-white text-[10px] font-black tracking-widest uppercase z-10 shadow-sm flex items-center gap-1`}>
-                    {article.score >= 30 ? '🔥 ' : '✅ '}
+                  <div className={`absolute top-0 ${isAr ? 'left-0 rounded-br-2xl' : 'right-0 rounded-bl-2xl'} px-3 py-1.5 bg-gradient-to-r ${article.isUrgent ? 'from-rose-600 to-red-500 animate-pulse' : (article.score >= 30 ? 'from-amber-500 to-orange-500' : 'from-emerald-500 to-teal-500')} text-white text-[10px] font-black tracking-widest uppercase z-10 shadow-sm flex items-center gap-1`}>
+                    {article.isUrgent ? '🚨 عاجل ' : (article.score >= 30 ? '🔥 ' : '✅ ')}
                     {isAr ? 'صلة: ' : 'Score: '}{article.score}
                   </div>
 
@@ -220,7 +224,18 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
                       </span>
                     </div>
                     
-                    <h2 className="text-[13px] md:text-sm font-black text-th-text leading-loose group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-4" dir="auto">
+                    {/* Categories Badges */}
+                    {article.categories && article.categories.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {article.categories.map((cat: string, idx: number) => (
+                           <span key={idx} className="px-2 py-0.5 rounded text-[9px] font-black bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                             {cat}
+                           </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <h2 className={`text-[13px] md:text-sm font-black leading-loose transition-colors line-clamp-4 ${article.isUrgent ? 'text-rose-600 dark:text-rose-400' : 'text-th-text group-hover:text-amber-600 dark:group-hover:text-amber-400'}`} dir="auto">
                       {highlightKeywords(article.title)}
                     </h2>
                   </div>
@@ -303,6 +318,21 @@ export default function NewsRadarPage({ params }: { params: { lang: string } }) 
                   onChange={(e) => setEnvInput(e.target.value)}
                   className="w-full h-24 bg-th-surface2 border border-th-border rounded-xl p-3 text-sm text-th-text focus:outline-none focus:border-amber-500/50 resize-none custom-scrollbar"
                   placeholder="بيئة، محميات، تلوث، صيد..."
+                  dir="auto"
+                />
+              </div>
+
+              {/* Urgency Keywords */}
+              <div>
+                <label className="text-xs font-bold text-th-text uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  {isAr ? 'كلمات الطوارئ العاجلة (+40 نقطة وتنبيه)' : 'Urgent/Emergency Keywords (+40 pts)'}
+                </label>
+                <textarea 
+                  value={urgInput}
+                  onChange={(e) => setUrgInput(e.target.value)}
+                  className="w-full h-24 bg-rose-500/5 border border-rose-500/30 rounded-xl p-3 text-sm text-th-text focus:outline-none focus:border-rose-500/50 resize-none custom-scrollbar"
+                  placeholder="عاجل، تسرب، غرق، حريق، كارثة..."
                   dir="auto"
                 />
               </div>

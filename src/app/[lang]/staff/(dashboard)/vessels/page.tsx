@@ -97,7 +97,12 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
   const [centerY, setCenterY] = useState(26.4);
   const [zoom, setZoom] = useState(8);
   const [showNames, setShowNames] = useState(false);
-  const [showMenu, setShowMenu] = useState(true);
+  const [projectedCourse, setProjectedCourse] = useState(false);
+  const [enlargeIcons, setEnlargeIcons] = useState(false);
+  const [highlightNames, setHighlightNames] = useState(false);
+  const [showPorts, setShowPorts] = useState(false);
+  const [showLighthouses, setShowLighthouses] = useState(false);
+  const [showPhotos, setShowPhotos] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('full');
 
   // Sidebar tab inside traffic map section: 'locations' | 'patrols' | 'settings'
@@ -153,7 +158,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
       'fleet_id:',
       'vessel:0',
       'container:true',
-      `showmenu:${showMenu}`,
+      `showmenu:false`,
       'remember:false'
     ].join('/');
     return `${baseUrl}/${params}`;
@@ -379,7 +384,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 10 }}
-                      className="space-y-4"
+                      className="space-y-6 pb-4"
                     >
                       {/* Zoom setting slider */}
                       <div className="space-y-2">
@@ -397,33 +402,113 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                         />
                       </div>
 
-                      {/* Toggle vessel names */}
-                      <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs font-bold text-th-text">{isAr ? 'إظهار أسماء السفن' : 'Show Vessel Names'}</span>
-                          <span className="text-[9px] text-th-muted">{isAr ? 'يعرض الأسماء مباشرة' : 'Show names directly on map'}</span>
-                        </div>
-                        <input
-                          type="checkbox"
-                          checked={showNames}
-                          onChange={(e) => setShowNames(e.target.checked)}
-                          className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
-                        />
-                      </label>
+                      {/* Map Features Section */}
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-black text-th-text uppercase tracking-wider mb-2 flex items-center gap-2">
+                          <Settings size={14} className="text-sky-500" />
+                          {isAr ? 'خصائص الخريطة' : 'Map Features'}
+                        </h4>
+                        
+                        {/* Toggle vessel names */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'إظهار أسماء السفن' : 'Vessel Names'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={showNames}
+                            onChange={(e) => setShowNames(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
 
-                      {/* Toggle MarineTraffic menu */}
-                      <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs font-bold text-th-text">{isAr ? 'قائمة الملاحة التفاعلية' : 'Show Menu'}</span>
-                          <span className="text-[9px] text-th-muted">{isAr ? 'قائمة تحكم الخريطة الجانبية' : 'Expose the map side drawer'}</span>
-                        </div>
-                        <input
-                          type="checkbox"
-                          checked={showMenu}
-                          onChange={(e) => setShowMenu(e.target.checked)}
-                          className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
-                        />
-                      </label>
+                        {/* Projected Course */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'المسار المتوقع' : 'Projected Course'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={projectedCourse}
+                            onChange={(e) => setProjectedCourse(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
+
+                        {/* Enlarge Icons */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'تكبير أيقونات السفن' : 'Enlarge Vessel Icons'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={enlargeIcons}
+                            onChange={(e) => setEnlargeIcons(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
+
+                        {/* Highlight Names */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'تمييز أسماء السفن' : 'Highlight Vessel Names'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={highlightNames}
+                            onChange={(e) => setHighlightNames(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* Points of Interest Section */}
+                      <div className="space-y-3 pt-2">
+                        <h4 className="text-xs font-black text-th-text uppercase tracking-wider mb-2 flex items-center gap-2">
+                          <MapPin size={14} className="text-sky-500" />
+                          {isAr ? 'نقاط الاهتمام' : 'Points of Interest'}
+                        </h4>
+
+                        {/* Ports */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'الموانئ' : 'Ports'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={showPorts}
+                            onChange={(e) => setShowPorts(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
+
+                        {/* Lighthouses */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'المنارات والعلامات الملاحية' : 'Lighthouses & AtoN'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={showLighthouses}
+                            onChange={(e) => setShowLighthouses(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
+
+                        {/* Photos */}
+                        <label className="flex items-center justify-between p-3 bg-th-surface2 border border-th-border/50 rounded-xl cursor-pointer hover:bg-th-surface2/80 transition-all">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-bold text-th-text">{isAr ? 'الصور' : 'Photos'}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={showPhotos}
+                            onChange={(e) => setShowPhotos(e.target.checked)}
+                            className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
                     </motion.div>
                   )}
                 </AnimatePresence>
