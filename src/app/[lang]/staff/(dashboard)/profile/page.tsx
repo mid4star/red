@@ -1101,7 +1101,7 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                                   ? 'bg-gradient-to-br from-indigo-500 to-blue-500 text-white rounded-br-none shadow-md shadow-indigo-500/10' 
                                   : 'bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-slate-100 rounded-bl-none border border-slate-200/50 dark:border-white/5'
                               }`}>
-                                <p className="whitespace-pre-wrap leading-relaxed break-words text-left">{msg.content}</p>
+                                <p className={`whitespace-pre-wrap leading-relaxed break-words text-left ${isMe ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>{msg.content}</p>
                               </div>
                               <div className="flex items-center gap-1.5 mt-1 px-1">
                                 <span className="text-[9px] text-slate-400 font-semibold">
