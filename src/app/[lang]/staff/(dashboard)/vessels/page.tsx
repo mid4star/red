@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { 
-  Ship, Anchor, Navigation, Shield, Compass, Waves, 
-  MapPin, Settings, ExternalLink, RefreshCw, AlertTriangle, 
+import {
+  Ship, Anchor, Navigation, Shield, Compass, Waves,
+  MapPin, Settings, ExternalLink, RefreshCw, AlertTriangle,
   Search, ShieldAlert, Sliders, Play, Info, Eye, CheckCircle2,
   Video, Camera, ArrowLeftRight, Grid
 } from 'lucide-react';
@@ -25,109 +25,57 @@ const LOCATIONS = [
 
 // Coastline webcams (Windy integration)
 const WEBCAMS = [
-  { 
-    id: 'gamsha', 
-    windyId: '1666358459', 
-    name: 'El Gamsha Bay Webcam', 
-    nameAr: 'كاميرا خليج جمشة', 
-    lat: 27.439, 
-    lng: 33.656, 
+  {
+    id: 'gamsha',
+    windyId: '1666358459',
+    name: 'El Gamsha Bay Webcam',
+    nameAr: 'كاميرا خليج جمشة',
+    lat: 27.439,
+    lng: 33.656,
     region: 'hurghada',
-    status: 'ONLINE', 
+    status: 'ONLINE',
     statusAr: 'متصل مباشر',
-    desc: 'Monitoring Gamsha northern bay and shoreline', 
-    descAr: 'مراقبة شواطئ وخليج جمشة الشمالي' 
+    desc: 'Monitoring Gamsha northern bay and shoreline',
+    descAr: 'مراقبة شواطئ وخليج جمشة الشمالي'
   },
-  { 
-    id: 'tiger_kite', 
-    windyId: '1171048192', 
-    name: 'Tiger Kite & Surf School - Hurghada', 
-    nameAr: 'مدرسة تايجر للكايت سيرف بالغردقة', 
-    lat: 27.109, 
-    lng: 33.831, 
+  {
+    id: 'tiger_kite',
+    windyId: '1171048192',
+    name: 'Tiger Kite & Surf School - Hurghada',
+    nameAr: 'مدرسة تايجر للكايت سيرف بالغردقة',
+    lat: 27.109,
+    lng: 33.831,
     region: 'hurghada',
-    status: 'ONLINE', 
+    status: 'ONLINE',
     statusAr: 'متصل مباشر',
-    desc: 'Live surveillance of Hurghada southern windsurfing coast', 
-    descAr: 'رصد مباشر لساحل ركوب الأمواج الجنوبي بالغردقة' 
+    desc: 'Live surveillance of Hurghada southern windsurfing coast',
+    descAr: 'رصد مباشر لساحل ركوب الأمواج الجنوبي بالغردقة'
   },
-  { 
-    id: 'hadaba_nass', 
-    windyId: '1665854708', 
-    name: 'Al Hadaba Harry Nass Hurghada Center', 
-    nameAr: 'مركز هاري ناس بالهضبة - الغردقة', 
-    lat: 27.133, 
-    lng: 33.830, 
+  {
+    id: 'hadaba_nass',
+    windyId: '1665854708',
+    name: 'Al Hadaba Harry Nass Hurghada Center',
+    nameAr: 'مركز هاري ناس بالهضبة - الغردقة',
+    lat: 27.133,
+    lng: 33.830,
     region: 'hurghada',
-    status: 'ONLINE', 
+    status: 'ONLINE',
     statusAr: 'متصل مباشر',
-    desc: 'Surveillance of Al Hadaba coastline and watersports area', 
-    descAr: 'مراقبة الشواطئ ومنطقة الألعاب المائية بالهضبة' 
+    desc: 'Surveillance of Al Hadaba coastline and watersports area',
+    descAr: 'مراقبة الشواطئ ومنطقة الألعاب المائية بالهضبة'
   },
-  { 
-    id: 'soma_bay', 
-    windyId: '1587654321', 
-    name: 'Soma Bay Surf Coast', 
-    nameAr: 'ساحل ركوب الأمواج بسوما باي', 
-    lat: 26.845, 
-    lng: 33.990, 
-    region: 'south',
-    status: 'ONLINE', 
-    statusAr: 'متصل مباشر',
-    desc: 'Beach watersports and reef line monitoring', 
-    descAr: 'مراقبة الرياضات المائية وخط الحيد المرجاني' 
-  },
-  { 
-    id: 'marsa_alam', 
-    windyId: '1610444392', 
-    name: 'Marsa Alam Beachfront Resort', 
-    nameAr: 'شاطئ منتجع مرسى علم', 
-    lat: 25.064, 
-    lng: 34.892, 
-    region: 'south',
-    status: 'ONLINE', 
-    statusAr: 'متصل مباشر',
-    desc: 'Coastal bays and dugong seagrass habitats surveillance', 
-    descAr: 'رصد شواطئ مرسى علم ومراعي أعشاب الأطوم البحرية' 
-  },
-  { 
-    id: 'ras_mohammed', 
-    windyId: '1555624831', 
-    name: 'Ras Mohammed (Marsa Bareika)', 
-    nameAr: 'رأس محمد (مرسى بريكة)', 
-    lat: 27.750, 
-    lng: 34.220, 
+  {
+    id: 'dahab_lagoon',
+    windyId: '1702557519',
+    name: 'Dahab Na Lagunu',
+    nameAr: 'منطقة اللاغونا في دهب',
+    lat: 28.477,
+    lng: 34.485,
     region: 'sinai',
-    status: 'STANDBY', 
-    statusAr: 'جاري الاتصال',
-    desc: 'Sinai diving zones and marine reserve surveillance', 
-    descAr: 'رصد مناطق الغوص ومحمية رأس محمد في سيناء' 
-  },
-  { 
-    id: 'dahab_lagoon', 
-    windyId: '1702557519', 
-    name: 'Dahab Na Lagunu', 
-    nameAr: 'منطقة اللاغونا في دهب', 
-    lat: 28.477, 
-    lng: 34.485, 
-    region: 'sinai',
-    status: 'ONLINE', 
+    status: 'ONLINE',
     statusAr: 'متصل مباشر',
-    desc: 'Live view of Dahab Lagoon windsurfing bay and beach', 
-    descAr: 'رصد حي لمنطقة اللاغونا المائية والشاطئ في دهب' 
-  },
-  { 
-    id: 'suez', 
-    windyId: '1691234568', 
-    name: 'Suez Port (Tawfiq Harbor)', 
-    nameAr: 'ميناء بورتوفيق - السويس', 
-    lat: 29.930, 
-    lng: 32.565, 
-    region: 'north',
-    status: 'ONLINE', 
-    statusAr: 'متصل مباشر',
-    desc: 'Entrance surveillance and canal transit queue', 
-    descAr: 'رصد مدخل قناة السويس وتجمع السفن الشمالي' 
+    desc: 'Live view of Dahab Lagoon windsurfing bay and beach',
+    descAr: 'رصد حي لمنطقة اللاغونا المائية والشاطئ في دهب'
   }
 ];
 
@@ -140,10 +88,10 @@ const PATROL_FLEET = [
 
 export default function VesselMonitoringPage({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
-  
+
   // Dashboard Section Tabs: 'traffic' | 'cameras'
   const [activeTab, setActiveTab] = useState<'traffic' | 'cameras'>('traffic');
-  
+
   // Traffic Map coordinates state
   const [centerX, setCenterX] = useState(35.7);
   const [centerY, setCenterY] = useState(26.4);
@@ -151,13 +99,13 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
   const [showNames, setShowNames] = useState(false);
   const [showMenu, setShowMenu] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState('full');
-  
+
   // Sidebar tab inside traffic map section: 'locations' | 'patrols' | 'settings'
   const [mapSidebarTab, setMapSidebarTab] = useState<'locations' | 'patrols' | 'settings'>('locations');
-  
+
   // Camera filter state
   const [cameraRegion, setCameraRegion] = useState<string>('all');
-  
+
   // Global iframe refresh key
   const [iframeKey, setIframeKey] = useState(0);
 
@@ -234,7 +182,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-700" dir={isAr ? 'rtl' : 'ltr'}>
-      
+
       {/* ── HEADER SECTION ───────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between bg-th-surface2 p-4 md:p-6 rounded-2xl border border-th-border shadow-sm gap-4">
         <div className="flex items-center gap-4">
@@ -254,7 +202,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
         {/* Sync & Refresh Button */}
         <div className="flex items-center gap-3 shrink-0">
-          <Button 
+          <Button
             onClick={handleRefresh}
             className="bg-th-surface border border-th-border text-th-text hover:bg-th-surface2 hover:text-sky-500 shadow-sm px-4 rounded-xl h-11 flex items-center gap-2 transition-all"
           >
@@ -262,9 +210,9 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
             <span className="font-bold hidden sm:inline">{isAr ? 'تحديث الإشارة' : 'Sync Signal'}</span>
           </Button>
 
-          <a 
-            href={activeTab === 'traffic' ? getDirectUrl() : 'https://www.windy.com/webcams'} 
-            target="_blank" 
+          <a
+            href={activeTab === 'traffic' ? getDirectUrl() : 'https://www.windy.com/webcams'}
+            target="_blank"
             rel="noopener noreferrer"
             className="no-underline"
           >
@@ -280,11 +228,10 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
       <div className="flex border-b border-th-border bg-th-surface2/60 p-1.5 rounded-2xl border gap-2">
         <button
           onClick={() => setActiveTab('traffic')}
-          className={`flex items-center gap-2 px-6 py-3.5 text-sm font-black rounded-xl transition-all uppercase tracking-wide cursor-pointer ${
-            activeTab === 'traffic' 
-              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/10' 
-              : 'text-th-muted hover:text-th-text hover:bg-th-surface/50'
-          }`}
+          className={`flex items-center gap-2 px-6 py-3.5 text-sm font-black rounded-xl transition-all uppercase tracking-wide cursor-pointer ${activeTab === 'traffic'
+            ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/10'
+            : 'text-th-muted hover:text-th-text hover:bg-th-surface/50'
+            }`}
         >
           <Ship size={18} />
           <span>{isAr ? 'حركة الملاحة وتتبع السفن (AIS)' : 'Marine Traffic & AIS'}</span>
@@ -292,11 +239,10 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
         <button
           onClick={() => setActiveTab('cameras')}
-          className={`flex items-center gap-2 px-6 py-3.5 text-sm font-black rounded-xl transition-all uppercase tracking-wide cursor-pointer ${
-            activeTab === 'cameras' 
-              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/10' 
-              : 'text-th-muted hover:text-th-text hover:bg-th-surface/50'
-          }`}
+          className={`flex items-center gap-2 px-6 py-3.5 text-sm font-black rounded-xl transition-all uppercase tracking-wide cursor-pointer ${activeTab === 'cameras'
+            ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/10'
+            : 'text-th-muted hover:text-th-text hover:bg-th-surface/50'
+            }`}
         >
           <Video size={18} />
           <span>{isAr ? 'شبكة كاميرات مراقبة الشواطئ' : 'Coastal Surveillance Webcams'}</span>
@@ -305,10 +251,10 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
       {/* ── SECTION CONTENTS ─────────────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
-        
+
         {/* ── SECTION 1: MARINE TRAFFIC (AIS MAP + HUD SIDEBAR) ────────────────── */}
         {activeTab === 'traffic' && (
-          <motion.div 
+          <motion.div
             key="traffic"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -318,22 +264,22 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
           >
             {/* Sidebar Controls (3 cols) */}
             <Card className="lg:col-span-3 bg-th-surface border border-th-border rounded-3xl p-5 flex flex-col gap-4 h-[700px]">
-              
+
               {/* Sidebar Tabs */}
               <div className="flex bg-th-surface2 rounded-xl p-1 border border-th-border shrink-0 text-[10px]">
-                <button 
+                <button
                   onClick={() => setMapSidebarTab('locations')}
                   className={`flex-1 py-1.5 font-bold rounded-lg transition-all ${mapSidebarTab === 'locations' ? 'bg-sky-500 text-white shadow' : 'text-th-muted hover:text-th-text'}`}
                 >
                   {isAr ? 'الممرات الاستراتيجية' : 'Key Zones'}
                 </button>
-                <button 
+                <button
                   onClick={() => setMapSidebarTab('patrols')}
                   className={`flex-1 py-1.5 font-bold rounded-lg transition-all ${mapSidebarTab === 'patrols' ? 'bg-sky-500 text-white shadow' : 'text-th-muted hover:text-th-text'}`}
                 >
                   {isAr ? 'الأسطول الميداني' : 'Patrol Fleet'}
                 </button>
-                <button 
+                <button
                   onClick={() => setMapSidebarTab('settings')}
                   className={`flex-1 py-1.5 font-bold rounded-lg transition-all ${mapSidebarTab === 'settings' ? 'bg-sky-500 text-white shadow' : 'text-th-muted hover:text-th-text'}`}
                 >
@@ -344,27 +290,26 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
               {/* Sidebar Content Area */}
               <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1">
                 <AnimatePresence mode="wait">
-                  
+
                   {/* Locations List */}
                   {mapSidebarTab === 'locations' && (
-                    <motion.div 
+                    <motion.div
                       key="locations-tab"
-                      initial={{ opacity: 0, x: -10 }} 
-                      animate={{ opacity: 1, x: 0 }} 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 10 }}
                       className="space-y-2.5"
                     >
                       {LOCATIONS.map((loc) => {
                         const active = selectedLocation === loc.id;
                         return (
-                          <div 
+                          <div
                             key={loc.id}
                             onClick={() => handleFocusLocation(loc)}
-                            className={`group p-3 rounded-xl border transition-all cursor-pointer flex flex-col gap-1 ${
-                              active 
-                                ? 'bg-sky-500/10 border-sky-500/40 text-sky-500' 
-                                : 'bg-th-surface2 border-th-border/40 text-th-text hover:bg-th-surface2/80 hover:border-sky-500/20'
-                            }`}
+                            className={`group p-3 rounded-xl border transition-all cursor-pointer flex flex-col gap-1 ${active
+                              ? 'bg-sky-500/10 border-sky-500/40 text-sky-500'
+                              : 'bg-th-surface2 border-th-border/40 text-th-text hover:bg-th-surface2/80 hover:border-sky-500/20'
+                              }`}
                           >
                             <div className={`flex items-center justify-between ${isAr ? 'flex-row-reverse' : 'flex-row'}`}>
                               <div className="flex items-center gap-2">
@@ -386,15 +331,15 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
                   {/* Fleet List */}
                   {mapSidebarTab === 'patrols' && (
-                    <motion.div 
+                    <motion.div
                       key="fleet-tab"
-                      initial={{ opacity: 0, x: -10 }} 
-                      animate={{ opacity: 1, x: 0 }} 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 10 }}
                       className="space-y-2.5"
                     >
                       {PATROL_FLEET.map((vessel) => (
-                        <div 
+                        <div
                           key={vessel.id}
                           onClick={() => handleFocusVessel(vessel)}
                           className="group p-3 bg-th-surface2 border border-th-border/40 hover:border-sky-500/30 hover:bg-th-surface2/80 rounded-xl transition-all cursor-pointer flex flex-col gap-2"
@@ -429,10 +374,10 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
                   {/* Settings Preferences */}
                   {mapSidebarTab === 'settings' && (
-                    <motion.div 
+                    <motion.div
                       key="settings-tab"
-                      initial={{ opacity: 0, x: -10 }} 
-                      animate={{ opacity: 1, x: 0 }} 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 10 }}
                       className="space-y-4"
                     >
@@ -442,11 +387,11 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                           <span>{isAr ? 'مستوى التقريب (Zoom)' : 'Zoom Level'}</span>
                           <span className="font-mono text-sky-500">{zoom}</span>
                         </div>
-                        <input 
-                          type="range" 
-                          min="4" 
-                          max="16" 
-                          value={zoom} 
+                        <input
+                          type="range"
+                          min="4"
+                          max="16"
+                          value={zoom}
                           onChange={(e) => setZoom(parseInt(e.target.value))}
                           className="w-full accent-sky-500 bg-th-surface2 border border-th-border rounded-lg h-2 cursor-pointer"
                         />
@@ -458,9 +403,9 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                           <span className="text-xs font-bold text-th-text">{isAr ? 'إظهار أسماء السفن' : 'Show Vessel Names'}</span>
                           <span className="text-[9px] text-th-muted">{isAr ? 'يعرض الأسماء مباشرة' : 'Show names directly on map'}</span>
                         </div>
-                        <input 
-                          type="checkbox" 
-                          checked={showNames} 
+                        <input
+                          type="checkbox"
+                          checked={showNames}
                           onChange={(e) => setShowNames(e.target.checked)}
                           className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
                         />
@@ -472,9 +417,9 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                           <span className="text-xs font-bold text-th-text">{isAr ? 'قائمة الملاحة التفاعلية' : 'Show Menu'}</span>
                           <span className="text-[9px] text-th-muted">{isAr ? 'قائمة تحكم الخريطة الجانبية' : 'Expose the map side drawer'}</span>
                         </div>
-                        <input 
-                          type="checkbox" 
-                          checked={showMenu} 
+                        <input
+                          type="checkbox"
+                          checked={showMenu}
                           onChange={(e) => setShowMenu(e.target.checked)}
                           className="accent-sky-500 w-4 h-4 rounded border-th-border cursor-pointer"
                         />
@@ -488,7 +433,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
               <div className="p-3 bg-sky-500/5 border border-sky-500/10 rounded-2xl flex gap-2 items-center text-sky-600 dark:text-sky-400 text-[9px] font-bold shrink-0">
                 <Shield size={14} className="shrink-0" />
                 <span>
-                  {isAr 
+                  {isAr
                     ? 'رصد نشط: يتم تحديث بيانات السفن والملاحة تلقائياً عبر الأقمار الصناعية.'
                     : 'Active Tracking: Shipping signals are synced live via satellite feeds.'}
                 </span>
@@ -518,7 +463,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                 >
                   Browser not compatible.
                 </iframe>
-                
+
                 {/* Fallback Loader */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/20 pointer-events-none -z-10 text-white">
                   <RefreshCw className="animate-spin text-sky-500 mb-2" size={28} />
@@ -531,7 +476,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
 
         {/* ── SECTION 2: SURVEILLANCE CAMERAS GRID ─────────────────────────────── */}
         {activeTab === 'cameras' && (
-          <motion.div 
+          <motion.div
             key="cameras"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -544,7 +489,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
               <span className="text-xs font-black text-th-text uppercase tracking-widest px-2">
                 {isAr ? 'تصفية المناطق:' : 'Filter Region:'}
               </span>
-              
+
               <div className="flex flex-wrap gap-1.5">
                 {[
                   { id: 'all', name: 'All Cams', nameAr: 'كل الكاميرات' },
@@ -556,11 +501,10 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                   <button
                     key={reg.id}
                     onClick={() => setCameraRegion(reg.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                      cameraRegion === reg.id
-                        ? 'bg-sky-500 text-white shadow'
-                        : 'bg-th-surface2 text-th-muted hover:text-th-text hover:bg-th-surface2/80 border border-th-border/30'
-                    }`}
+                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${cameraRegion === reg.id
+                      ? 'bg-sky-500 text-white shadow'
+                      : 'bg-th-surface2 text-th-muted hover:text-th-text hover:bg-th-surface2/80 border border-th-border/30'
+                      }`}
                   >
                     {isAr ? reg.nameAr : reg.name}
                   </button>
@@ -580,7 +524,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredWebcams.map((cam) => (
                   <Card key={cam.id} className="bg-th-surface border border-th-border rounded-3xl overflow-hidden hover:shadow-xl hover:border-sky-500/30 transition-all flex flex-col justify-between group h-[380px]">
-                    
+
                     {/* Webcam Header */}
                     <div className="p-3.5 bg-th-surface2 border-b border-th-border/40 flex items-center justify-between">
                       <div className="min-w-0">
@@ -591,11 +535,10 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                           Lat: {cam.lat} • Lng: {cam.lng}
                         </span>
                       </div>
-                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md shrink-0 ${
-                        cam.status === 'ONLINE' 
-                          ? 'bg-emerald-500/10 text-emerald-500' 
-                          : 'bg-amber-500/10 text-amber-500'
-                      }`}>
+                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md shrink-0 ${cam.status === 'ONLINE'
+                        ? 'bg-emerald-500/10 text-emerald-500'
+                        : 'bg-amber-500/10 text-amber-500'
+                        }`}>
                         {isAr ? cam.statusAr : cam.status}
                       </span>
                     </div>
@@ -632,9 +575,9 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
                           <MapPin size={12} />
                           <span>{isAr ? 'عرض بالخريطة' : 'Show on Map'}</span>
                         </button>
-                        
+
                         {/* Direct Windy link */}
-                        <a 
+                        <a
                           href={getDirectWebcamUrl(cam.windyId)}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -654,7 +597,7 @@ export default function VesselMonitoringPage({ params }: { params: { lang: strin
           </motion.div>
         )}
       </AnimatePresence>
-      
+
     </div>
   );
 }

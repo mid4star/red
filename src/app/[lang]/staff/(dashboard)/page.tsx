@@ -301,6 +301,9 @@ export default async function DashboardPage({ params }: { params: { lang: string
     console.error("Failed to generate comprehensive insights", err);
   }
 
+  // Fetch reserve profiles to resolve Arabic/English reserve names in the feed
+  const reserveProfiles = await prisma.reserveProfile.findMany().catch(() => []);
+
   // Normalize Feed
   const rawFeed = [
     ...recentPatrols.map(p => ({ ...p, feedType: 'PATROL' as const, rawDate: p.date.getTime() })),
@@ -317,6 +320,31 @@ export default async function DashboardPage({ params }: { params: { lang: string
 
   const distanceOpts = params.lang === 'ar' ? { locale: ar, addSuffix: true } : { addSuffix: true };
 
+  const getReserveName = (reserveId: string | null | undefined, fallbackName?: string | null) => {
+    if (!reserveId) {
+      if (fallbackName) {
+        const found = reserveProfiles.find(r => r.id === fallbackName || r.name.toLowerCase() === fallbackName.toLowerCase());
+        if (found) {
+          return params.lang === 'ar' ? found.nameAr : found.name;
+        }
+        return fallbackName;
+      }
+      return '';
+    }
+    const found = reserveProfiles.find(r => r.id === reserveId || r.name.toLowerCase() === reserveId.toLowerCase());
+    if (found) {
+      return params.lang === 'ar' ? found.nameAr : found.name;
+    }
+    if (fallbackName) {
+      const foundFallback = reserveProfiles.find(r => r.id === fallbackName || r.name.toLowerCase() === fallbackName.toLowerCase());
+      if (foundFallback) {
+        return params.lang === 'ar' ? foundFallback.nameAr : foundFallback.name;
+      }
+      return fallbackName;
+    }
+    return '';
+  };
+
   const sortedFeed: DashboardData['feed'] = rawFeed.map(item => {
     if (item.feedType === 'PATROL') {
       const p = item as any;
@@ -326,7 +354,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
         title: params.lang === 'ar' ? 'دورية جديدة' : 'New Patrol',
         message: params.lang === 'ar' ? `دورية في منطقة ${p.zoneAr || p.zone || 'غير محددة'}` : `Patrol in ${p.zone || 'unspecified'}`,
         time: formatDistanceToNow(new Date(p.date), distanceOpts),
-        user: p.leader?.nameAr || p.leader?.name || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: p.leader?.nameAr || p.leader?.name || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(p.reserveId || p.leader?.reserveId, p.reserve || (params.lang === 'ar' ? p.leader?.reserveAr : p.leader?.reserve))
       };
     } else if (item.feedType === 'VIOLATION') {
       const v = item as any;
@@ -337,7 +366,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
         message: v.description || (params.lang === 'ar' ? `مخالفة في ${v.locationAr || v.location || 'موقع غير معروف'}` : `Violation in ${v.location || 'unknown location'}`),
         time: formatDistanceToNow(new Date(v.date), distanceOpts),
         severity: v.severity,
-        user: v.officer?.nameAr || v.officer?.name || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: v.officer?.nameAr || v.officer?.name || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(v.reserveId || v.officer?.reserveId, v.reserve || (params.lang === 'ar' ? v.officer?.reserveAr : v.officer?.reserve))
       };
     } else if (item.feedType === 'EIA_ACCIDENT') {
       const e = item as any;
@@ -355,7 +385,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
           ? `حادث بيئي: ${typeArMap[e.type] || e.type} في ${e.locationName}`
           : `Environmental Accident: ${e.type} at ${e.locationName}`,
         time: formatDistanceToNow(new Date(e.date), distanceOpts),
-        user: e.createdBy || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: e.createdBy || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(e.reserveId, e.reserve)
       };
     } else if (item.feedType === 'EIA_INSPECTION') {
       const i = item as any;
@@ -367,7 +398,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
           ? `معاينة بيئية للموقع: ${i.locationName} بواسطة المفتش ${i.inspectorName || i.createdBy}`
           : `EIA Inspection at ${i.locationName} by Inspector ${i.inspectorName || i.createdBy}`,
         time: formatDistanceToNow(new Date(i.date), distanceOpts),
-        user: i.inspectorName || i.createdBy || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: i.inspectorName || i.createdBy || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(i.reserveId, i.reserve)
       };
     } else if (item.feedType === 'EIA_VIOLATION') {
       const ev = item as any;
@@ -379,7 +411,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
           ? `مخالفة بيئية للجهة (${ev.entityName}): ${ev.type} في ${ev.locationName}`
           : `EIA Violation for (${ev.entityName}): ${ev.type} at ${ev.locationName}`,
         time: formatDistanceToNow(new Date(ev.date), distanceOpts),
-        user: ev.createdBy || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: ev.createdBy || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(ev.reserveId, ev.reserve)
       };
     } else if (item.feedType === 'STRANDING') {
       const s = item as any;
@@ -389,10 +422,11 @@ export default async function DashboardPage({ params }: { params: { lang: string
         type: 'MONITORING',
         title: params.lang === 'ar' ? 'حالة جنوح / نفوق' : 'Stranding Case',
         message: params.lang === 'ar'
-          ? `رصد حالة جنوح (${isDead ? 'نافق' : 'حي'}) لكائن: ${s.speciesAr || s.species || 'غير محدد'} في ${s.locationAr || s.location || 'موقع غير محدد'}`
+          ? `رصد حالة جنوح (${isDead ? 'نافق' : 'حي'}) لكائن: ${s.speciesAr || s.species || 'غير محدد'} في ${s.locationAr || s.location || 'موقع غير حدد'}`
           : `Stranding (${isDead ? 'DEAD' : 'ALIVE'}) of ${s.species || 'unknown species'} at ${s.location}`,
         time: formatDistanceToNow(new Date(s.date), distanceOpts),
-        user: params.lang === 'ar' ? 'النظام' : 'System'
+        user: params.lang === 'ar' ? 'النظام' : 'System',
+        reserveName: getReserveName(s.reserveId, s.reserve)
       };
     } else if (item.feedType === 'SURVEY') {
       const su = item as any;
@@ -404,7 +438,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
           ? `مسح بيئي لشعب مرجانية/كائنات من نوع ${su.type} في محمية ${su.reserveAr || su.reserve || 'غير محددة'}`
           : `Eco survey of type ${su.type} in reserve ${su.reserve}`,
         time: formatDistanceToNow(new Date(su.date), distanceOpts),
-        user: su.observer?.nameAr || su.observer?.name || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: su.observer?.nameAr || su.observer?.name || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(su.reserveId || su.observer?.reserveId, su.reserve || (params.lang === 'ar' ? su.observer?.reserveAr : su.observer?.reserve))
       };
     } else if (item.feedType === 'SIGHTING') {
       const si = item as any;
@@ -416,7 +451,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
           ? `رصد كائن: ${si.speciesAr || si.species} (العدد: ${si.count}) في ${si.locationAr || si.location}`
           : `Spotted ${si.count}x ${si.species} at ${si.location}`,
         time: formatDistanceToNow(new Date(si.date), distanceOpts),
-        user: si.observerName || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: si.observerName || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: getReserveName(si.reserveId, si.reserve)
       };
     } else if (item.feedType === 'GIS_LAYER') {
       const l = item as any;
@@ -428,7 +464,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
           ? `تم إضافة طبقة خريطة جديدة: ${l.nameAr || l.name} (${l.category === 'custom' ? 'مخصصة' : l.category})`
           : `Added new map layer: ${l.name} (${l.category})`,
         time: formatDistanceToNow(new Date(l.createdAt), distanceOpts),
-        user: params.lang === 'ar' ? 'النظام' : 'System'
+        user: params.lang === 'ar' ? 'النظام' : 'System',
+        reserveName: ''
       };
     } else {
       const n = item as any;
@@ -438,7 +475,8 @@ export default async function DashboardPage({ params }: { params: { lang: string
         title: params.lang === 'ar' ? 'إعلان إداري' : 'Announcement',
         message: params.lang === 'ar' ? n.titleAr || n.title : n.title,
         time: formatDistanceToNow(new Date(n.date), distanceOpts),
-        user: n.authorName || (params.lang === 'ar' ? 'النظام' : 'System')
+        user: n.authorName || (params.lang === 'ar' ? 'النظام' : 'System'),
+        reserveName: ''
       };
     }
   });

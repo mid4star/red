@@ -56,6 +56,7 @@ export interface DashboardData {
     time: string;
     severity?: string;
     user?: string;
+    reserveName?: string;
   }>;
   chartData: Array<{
     name: string;
@@ -482,11 +483,18 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
                            <p className="text-[12px] font-medium text-th-text leading-snug line-clamp-2">
                               {item.message}
                            </p>
-                           {item.user && (
-                             <p className="text-[10px] text-th-muted mt-1 font-semibold opacity-70">
-                                {isArabic ? 'بواسطة: ' : 'By: '}{item.user}
-                             </p>
-                           )}
+                           <div className="flex flex-wrap items-center gap-2 mt-1">
+                              {item.user && (
+                                <span className="text-[10px] text-th-muted font-semibold opacity-70">
+                                   {isArabic ? 'بواسطة: ' : 'By: '}{item.user}
+                                </span>
+                              )}
+                              {item.reserveName && (
+                                <span className="text-[9px] px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400 font-bold border border-teal-500/10 dark:border-teal-500/20">
+                                  {item.reserveName}
+                                </span>
+                              )}
+                           </div>
                          </div>
                        </motion.div>
                      );
