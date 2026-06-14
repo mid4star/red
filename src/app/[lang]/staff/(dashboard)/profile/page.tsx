@@ -6,7 +6,7 @@ import {
   ShieldCheck, User as UserIcon, Mail, MapPin, Calendar, CheckCircle2, 
   AlertTriangle, Waves, Microscope, Activity, LayoutDashboard, Anchor, 
   Megaphone, Clock, Award, Key, Target, Camera, Loader2, Map,
-  Settings, Ship, ClipboardList, UserPlus, Radio
+  Settings, Ship, ClipboardList, UserPlus, Radio, MessageSquare, Send, X, Inbox, ChevronLeft
 } from 'lucide-react';
 import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
@@ -107,6 +107,114 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+
+  // Messaging & Inbox State
+  const [showInbox, setShowInbox] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [conversationsLoading, setConversationsLoading] = useState(false);
+  const [activePartnerId, setActivePartnerId] = useState<string | null>(null);
+  const [thread, setThread] = useState<any[]>([]);
+  const [threadLoading, setThreadLoading] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [showNewChatList, setShowNewChatList] = useState(false);
+
+  // Poll unread message count
+  useEffect(() => {
+    const fetchUnread = () => {
+      fetch('/api/staff/messages?countOnly=true')
+        .then(r => r.json())
+        .then(d => { if (d.success) setUnreadCount(d.unreadCount || 0); })
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchConversations = async () => {
+    setConversationsLoading(true);
+    try {
+      const res = await fetch('/api/staff/messages');
+      if (res.ok) {
+        const data = await res.json();
+        setConversations(data.conversations || []);
+      }
+    } catch (err) {
+      console.error('Error fetching conversations:', err);
+    } finally {
+      setConversationsLoading(false);
+    }
+  };
+
+  const fetchThread = async (partnerId: string) => {
+    setThreadLoading(true);
+    try {
+      const res = await fetch(`/api/staff/messages?partnerId=${partnerId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setThread(data.messages || []);
+        
+        // Mark as read
+        await fetch('/api/staff/messages', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ partnerId })
+        });
+        
+        // Refresh unread count and conversations list
+        fetchConversations();
+        fetch('/api/staff/messages?countOnly=true')
+          .then(r => r.json())
+          .then(d => { if (d.success) setUnreadCount(d.unreadCount || 0); })
+          .catch(() => {});
+        
+        // Dispatch event to update sidebar count
+        window.dispatchEvent(new Event('user-session-changed'));
+      }
+    } catch (err) {
+      console.error('Error fetching thread:', err);
+    } finally {
+      setThreadLoading(false);
+    }
+  };
+
+  const handleSendReply = async () => {
+    if (!replyText.trim() || !activePartnerId || sendingReply) return;
+    setSendingReply(true);
+    try {
+      const res = await fetch('/api/staff/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ receiverId: activePartnerId, content: replyText.trim() })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setThread(prev => [...prev, data.message]);
+        setReplyText('');
+        fetchConversations();
+      }
+    } catch (err) {
+      console.error('Error sending reply:', err);
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  const fetchAllUsers = async () => {
+    if (!profile?.id) return;
+    try {
+      const res = await fetch('/api/staff/query?collection=users');
+      if (res.ok) {
+        const data = await res.json();
+        setAllUsers((data.data || []).filter((u: any) => u.id !== profile.id));
+      }
+    } catch (err) {
+      console.error('Error fetching users:', err);
+    }
+  };
 
   useEffect(() => {
     fetch('/api/staff/profile')
@@ -273,7 +381,24 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
               )}
             </div>
             
-            {/* Action buttons could go here on the right/left */}
+            <div className="z-10 pb-2">
+              <button
+                onClick={() => {
+                  setShowInbox(true);
+                  fetchConversations();
+                  fetchAllUsers();
+                }}
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 cursor-pointer"
+              >
+                <MessageSquare size={18} />
+                {isArabic ? 'صندوق البريد' : 'Mailbox'}
+                {unreadCount > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center animate-pulse shadow-md">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Name & Title */}
@@ -679,6 +804,287 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
           </Card>
         </div>
       </div>
+
+      {showInbox && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#0c1b2a] border border-slate-200 dark:border-white/5 rounded-3xl w-full max-w-5xl h-[80vh] md:h-[650px] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#0a1628]/80 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                  <MessageSquare size={20} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-slate-900 dark:text-white">
+                    {isArabic ? 'صندوق البريد والمحادثات' : 'Mailbox & Conversations'}
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {isArabic ? 'تواصل مع أعضاء الفريق والزملاء بالمنصة' : 'Chat with team members and colleagues'}
+                  </p>
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => setShowInbox(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+              
+              {/* Left Panel: Conversations / New Chat */}
+              <div className={`w-full md:w-80 border-r border-slate-200 dark:border-white/5 flex flex-col overflow-hidden bg-slate-50/50 dark:bg-[#060e18]/40 ${activePartnerId ? 'hidden md:flex' : 'flex'}`}>
+                
+                {/* Search / Toggle Actions */}
+                <div className="p-4 border-b border-slate-200 dark:border-white/5 space-y-2 shrink-0">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                      {showNewChatList 
+                        ? (isArabic ? 'بدء محادثة جديدة' : 'Start New Chat')
+                        : (isArabic ? 'المحادثات الأخيرة' : 'Recent Chats')
+                      }
+                    </span>
+                    <button
+                      onClick={() => setShowNewChatList(!showNewChatList)}
+                      className="text-xs font-black text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer"
+                    >
+                      {showNewChatList 
+                        ? (isArabic ? 'رجوع للمحادثات' : 'Back to Chats')
+                        : (isArabic ? 'محادثة جديدة' : 'New Chat')
+                      }
+                    </button>
+                  </div>
+                </div>
+
+                {/* List Container */}
+                <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+                  {showNewChatList ? (
+                    // New Chat List (All Users)
+                    allUsers.length === 0 ? (
+                      <div className="text-center py-8 text-slate-500 text-xs font-bold uppercase italic">
+                        {isArabic ? 'لا يوجد مستخدمون آخرون' : 'No other users found'}
+                      </div>
+                    ) : (
+                      allUsers.map((u: any) => (
+                        <button
+                          key={u.id}
+                          onClick={() => {
+                            setActivePartnerId(u.id);
+                            setShowNewChatList(false);
+                            fetchThread(u.id);
+                          }}
+                          className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-left cursor-pointer group"
+                        >
+                          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center shrink-0">
+                            {u.profilePictureUrl ? (
+                              <img src={u.profilePictureUrl} alt={u.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <UserIcon size={18} className="text-slate-400" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-bold text-slate-900 dark:text-white text-sm truncate group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">
+                              {isArabic ? u.nameAr || u.name : u.name}
+                            </h4>
+                            <span className="text-[10px] font-semibold text-slate-500 block truncate uppercase tracking-wider mt-0.5">
+                              {u.role}
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    )
+                  ) : (
+                    // Recent Conversations List
+                    conversationsLoading ? (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <Loader2 className="animate-spin text-indigo-500" size={24} />
+                      </div>
+                    ) : conversations.length === 0 ? (
+                      <div className="text-center py-16 text-slate-500 text-xs font-bold uppercase italic">
+                        {isArabic ? 'لا توجد محادثات سابقة' : 'No recent conversations'}
+                      </div>
+                    ) : (
+                      conversations.map((conv: any) => {
+                        const isSelected = activePartnerId === conv.partnerId;
+                        return (
+                          <button
+                            key={conv.partnerId}
+                            onClick={() => {
+                              setActivePartnerId(conv.partnerId);
+                              fetchThread(conv.partnerId);
+                            }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all text-left cursor-pointer group ${
+                              isSelected 
+                                ? 'bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20' 
+                                : 'hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
+                            }`}
+                          >
+                            <div className="relative shrink-0">
+                              <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
+                                {conv.partner?.profilePictureUrl ? (
+                                  <img src={conv.partner.profilePictureUrl} alt={conv.partner.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <UserIcon size={18} className="text-slate-400" />
+                                )}
+                              </div>
+                              {conv.unreadCount > 0 && (
+                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse shadow-md">
+                                  {conv.unreadCount}
+                                </div>
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <h4 className={`font-bold text-sm truncate transition-colors ${
+                                  isSelected 
+                                    ? 'text-indigo-500 dark:text-indigo-400' 
+                                    : 'text-slate-900 dark:text-white group-hover:text-indigo-500 dark:group-hover:text-indigo-400'
+                                }`}>
+                                  {isArabic ? conv.partner?.nameAr || conv.partner?.name : conv.partner?.name}
+                                </h4>
+                                <span className="text-[9px] text-slate-400 shrink-0 font-medium">
+                                  {new Date(conv.lastMessageAt).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <p className={`text-xs truncate mt-0.5 ${conv.unreadCount > 0 ? 'font-bold text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
+                                {conv.lastMessageByMe && (isArabic ? 'أنت: ' : 'You: ')}
+                                {conv.lastMessage}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* Right Panel: Chat Thread */}
+              <div className={`flex-1 flex flex-col overflow-hidden bg-white dark:bg-[#0c1b2a] ${!activePartnerId ? 'hidden md:flex' : 'flex'}`}>
+                {activePartnerId ? (
+                  <>
+                    {/* Chat Header */}
+                    <div className="px-6 py-4 border-b border-slate-200 dark:border-white/5 flex items-center justify-between bg-slate-50/50 dark:bg-[#060e18]/20 shrink-0">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setActivePartnerId(null)}
+                          className="md:hidden p-2 -ml-2 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
+                        >
+                          <ChevronLeft size={20} />
+                        </button>
+                        
+                        {/* Partner details */}
+                        {(() => {
+                          const partner = conversations.find(c => c.partnerId === activePartnerId)?.partner || allUsers.find(u => u.id === activePartnerId);
+                          return (
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-center">
+                                {partner?.profilePictureUrl ? (
+                                  <img src={partner.profilePictureUrl} alt={partner.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <UserIcon size={18} className="text-slate-400" />
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-slate-900 dark:text-white text-sm text-left">
+                                  {isArabic ? partner?.nameAr || partner?.name : partner?.name}
+                                </h3>
+                                <span className="text-[10px] font-semibold text-indigo-500 uppercase tracking-widest block text-left">
+                                  {partner?.role}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Messages Body */}
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar flex flex-col">
+                      {threadLoading ? (
+                        <div className="flex-1 flex items-center justify-center">
+                          <Loader2 className="animate-spin text-indigo-500" size={28} />
+                        </div>
+                      ) : thread.length === 0 ? (
+                        <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-xs italic font-bold uppercase">
+                          {isArabic ? 'اكتب رسالة للبدء بالدردشة' : 'Write a message to start chatting'}
+                        </div>
+                      ) : (
+                        thread.map((msg: any) => {
+                          const isMe = msg.senderId === profile.id;
+                          return (
+                            <div
+                              key={msg.id}
+                              className={`flex flex-col max-w-[75%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}
+                            >
+                              <div className={`p-3.5 rounded-2xl text-sm ${
+                                isMe 
+                                  ? 'bg-gradient-to-br from-indigo-500 to-blue-500 text-white rounded-br-none shadow-md shadow-indigo-500/10' 
+                                  : 'bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-slate-100 rounded-bl-none border border-slate-200/50 dark:border-white/5'
+                              }`}>
+                                <p className="whitespace-pre-wrap leading-relaxed break-words text-left">{msg.content}</p>
+                              </div>
+                              <span className="text-[9px] text-slate-400 font-semibold mt-1 px-1">
+                                {new Date(msg.createdAt).toLocaleTimeString(isArabic ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    {/* Reply Form */}
+                    <div className="p-4 border-t border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-[#060e18]/20 shrink-0">
+                      <div className="flex items-end gap-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-2 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition-all">
+                        <textarea
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder={isArabic ? 'اكتب رسالة...' : 'Type a message...'}
+                          className="flex-1 max-h-24 min-h-[40px] h-10 bg-transparent border-none outline-none text-slate-900 dark:text-white placeholder-slate-400 text-sm py-2 px-2 resize-none custom-scrollbar"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handleSendReply();
+                            }
+                          }}
+                        />
+                        <button
+                          onClick={handleSendReply}
+                          disabled={!replyText.trim() || sendingReply}
+                          className="w-10 h-10 rounded-xl bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 text-white flex items-center justify-center transition-all cursor-pointer shadow-md shadow-indigo-500/15 shrink-0"
+                        >
+                          {sendingReply ? (
+                            <Loader2 className="animate-spin" size={16} />
+                          ) : (
+                            <Send size={16} className={isArabic ? 'rotate-180' : ''} />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 p-8 text-center">
+                    <MessageSquare size={64} className="mb-4 opacity-20" />
+                    <h3 className="font-black text-sm uppercase tracking-widest mb-1">
+                      {isArabic ? 'لم يتم اختيار محادثة' : 'No conversation selected'}
+                    </h3>
+                    <p className="text-xs font-semibold text-slate-500 max-w-xs">
+                      {isArabic ? 'اختر مستخدماً من القائمة الجانبية لبدء المحادثة أو الدردشة' : 'Select a user from the sidebar list to view the conversation or start chatting'}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

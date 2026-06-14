@@ -24,7 +24,8 @@ import {
   Map,
   Mail,
   Radio,
-  Ship
+  Ship,
+  MessageSquare
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
@@ -62,6 +63,7 @@ export function StaffSidebar({ lang }: { lang: string }) {
   const [screenMode, setScreenMode] = useState<ScreenMode>('desktop');
   const [moreDrawerOpen, setMoreDrawerOpen] = useState(false);
   const [tabletExpanded, setTabletExpanded] = useState(false);
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
 
   // Screen size detection
   const updateScreenMode = useCallback(() => {
@@ -140,6 +142,20 @@ export function StaffSidebar({ lang }: { lang: string }) {
       document.body.style.overflow = '';
     };
   }, [moreDrawerOpen]);
+
+  // Poll for unread messages
+  useEffect(() => {
+    if (!session) return;
+    const fetchUnread = () => {
+      fetch('/api/staff/messages?countOnly=true')
+        .then(r => r.json())
+        .then(d => { if (d.success) setUnreadMsgCount(d.unreadCount || 0); })
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [session]);
 
   const allNavItems: NavItem[] = [
     { name: 'Dashboard', nameAr: 'لوحة التحكم', href: `/${lang}/staff`, icon: LayoutDashboard, sectionKey: '' },
@@ -339,6 +355,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
                           {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
                         </p>
                       </div>
+                      {unreadMsgCount > 0 && (
+                        <div className="w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse shadow-lg shadow-rose-500/40 shrink-0">
+                          {unreadMsgCount > 9 ? '9+' : unreadMsgCount}
+                        </div>
+                      )}
                       <button 
                         onClick={(e) => { e.preventDefault(); handleLogout(); }} 
                         className="text-slate-500 hover:text-red-400 transition-colors p-2 cursor-pointer z-10"
@@ -482,6 +503,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
                     {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع' : 'Site Manager')}
                   </p>
                 </motion.div>
+                {unreadMsgCount > 0 && (
+                  <div className="w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse shadow-lg shadow-rose-500/40 shrink-0">
+                    {unreadMsgCount > 9 ? '9+' : unreadMsgCount}
+                  </div>
+                )}
                 <button 
                   onClick={(e) => { e.preventDefault(); handleLogout(); }} 
                   className="text-slate-500 hover:text-red-400 transition-colors p-1 cursor-pointer shrink-0 z-10"
@@ -617,6 +643,11 @@ export function StaffSidebar({ lang }: { lang: string }) {
               {session ? (isArabic ? (session.role === 'ADMIN' ? 'مسئول الموقع' : session.role) : session.role) : (isArabic ? 'مسئول الموقع ' : 'Site Manager')}
             </p>
           </div>
+          {unreadMsgCount > 0 && (
+            <div className="w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse shadow-lg shadow-rose-500/40 shrink-0">
+              {unreadMsgCount > 9 ? '9+' : unreadMsgCount}
+            </div>
+          )}
           <button 
             onClick={(e) => { e.preventDefault(); handleLogout(); }} 
             className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer z-10 p-2"

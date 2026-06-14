@@ -10,7 +10,7 @@ import {
   Users, ShieldAlert, Plus, Search, CheckCircle2, Loader2, Lock, Check, X, Shield, UserPlus, Trash2, Edit3,
   Waves, Microscope, ClipboardList, AlertTriangle, Anchor, Megaphone, Settings, ShieldCheck, ArrowRight,
   Camera, Mail, Tag, UserCheck, User as UserIcon, Map, Ship, Copy, ExternalLink, Briefcase, Award, Info, Calendar, BadgeCheck,
-  Radio
+  Radio, MessageSquare, Send
 } from 'lucide-react';
 import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
@@ -221,6 +221,40 @@ export default function UserManagementPage({ params }: { params: { lang: string 
   const [isEmailManuallyEdited, setIsEmailManuallyEdited] = useState(false);
   const [selectedUserForDetail, setSelectedUserForDetail] = useState<User | null>(null);
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+
+  // Messaging state
+  const [showCompose, setShowCompose] = useState(false);
+  const [composeText, setComposeText] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
+
+  const handleSendMessage = async (receiverId: string) => {
+    if (!composeText.trim() || sendingMessage) return;
+    setSendingMessage(true);
+    try {
+      const res = await fetch('/api/staff/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ receiverId, content: composeText.trim() })
+      });
+      if (res.ok) {
+        setMessageSent(true);
+        setComposeText('');
+        setTimeout(() => {
+          setMessageSent(false);
+          setShowCompose(false);
+        }, 2000);
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to send message');
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(isArabic ? 'حدث خطأ أثناء الإرسال' : 'Error sending message');
+    } finally {
+      setSendingMessage(false);
+    }
+  };
 
   const selectedBadges = badgesText
     ? badgesText.split(',').map(s => s.trim()).filter(Boolean)
@@ -1404,6 +1438,56 @@ export default function UserManagementPage({ params }: { params: { lang: string 
                 </div>
               ) : (
                 <p className="text-xs text-slate-400 dark:text-slate-500 italic">{isArabic ? 'لا توجد صلاحيات أقسام معينة' : 'No sections authorized'}</p>
+              )}
+            </div>
+
+            {/* Send Message Section */}
+            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-white/5">
+              {!showCompose ? (
+                <button
+                  onClick={() => { setShowCompose(true); setMessageSent(false); setComposeText(''); }}
+                  className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+                >
+                  <MessageSquare size={18} />
+                  {isArabic ? 'إرسال رسالة' : 'Send Message'}
+                </button>
+              ) : (
+                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                      <MessageSquare size={14} className="text-indigo-500" />
+                      {isArabic ? 'رسالة جديدة' : 'New Message'}
+                    </h4>
+                    <button onClick={() => setShowCompose(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors p-1">
+                      <X size={16} />
+                    </button>
+                  </div>
+                  {messageSent ? (
+                    <div className="flex items-center justify-center gap-2 py-6 text-emerald-500">
+                      <CheckCircle2 size={24} />
+                      <span className="font-bold text-sm">{isArabic ? 'تم إرسال الرسالة بنجاح!' : 'Message sent successfully!'}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <textarea
+                        value={composeText}
+                        onChange={(e) => setComposeText(e.target.value)}
+                        placeholder={isArabic ? `اكتب رسالتك إلى ${selectedUserForDetail.nameAr}...` : `Write your message to ${selectedUserForDetail.name}...`}
+                        className="w-full h-28 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none custom-scrollbar transition-all"
+                        dir="auto"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => selectedUserForDetail.id && handleSendMessage(selectedUserForDetail.id)}
+                        disabled={!composeText.trim() || sendingMessage}
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                      >
+                        {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                        {sendingMessage ? (isArabic ? 'جاري الإرسال...' : 'Sending...') : (isArabic ? 'إرسال' : 'Send')}
+                      </button>
+                    </>
+                  )}
+                </div>
               )}
             </div>
 
