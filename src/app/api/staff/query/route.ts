@@ -40,7 +40,7 @@ export async function GET(request: Request) {
 
     switch (collectionName) {
       case 'users':
-        data = await prisma.user.findMany({ orderBy: { name: 'asc' }, where: reserveFilter });
+        data = await prisma.user.findMany({ orderBy: { name: 'asc' } });
         // Convert string fields back to arrays for frontend compatibility
         data = data.map((u: any) => ({
           ...u,

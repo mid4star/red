@@ -164,9 +164,45 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'collectionName and action are required' }, { status: 400 });
     }
 
-    // Role-based authorization check: Only ADMIN can modify users or system configuration
-    if ((collectionName === 'users' || collectionName === 'system_config') && auth.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    // Role-based authorization check: Only ADMIN or users with manage-users permission can modify users
+    if (collectionName === 'users' || collectionName === 'system_config') {
+      const dbUser = await prisma.user.findUnique({ where: { id: auth.id } });
+      const allowedSections = dbUser?.allowedSections ? JSON.parse(dbUser.allowedSections) : [];
+      const hasManageUsers = auth.role === 'ADMIN' || allowedSections.includes('manage-users');
+      
+      if (collectionName === 'users') {
+        if (!hasManageUsers) {
+          return NextResponse.json({ error: 'Forbidden: Admin or Manage Users permission required' }, { status: 403 });
+        }
+        
+        // Check if requester is Mostafa Layaq
+        const requesterName = dbUser?.name || '';
+        const requesterNameAr = dbUser?.nameAr || '';
+        const requesterEmail = dbUser?.customDomainEmail || '';
+        const isMostafaLayaq = 
+          requesterName.toLowerCase().includes('layaq') || 
+          requesterName.toLowerCase().includes('layek') || 
+          requesterNameAr.includes('لايق') ||
+          requesterEmail.toLowerCase().startsWith('m.layaq') ||
+          requesterEmail.toLowerCase().startsWith('mostafa.layaq');
+
+        // Rule 1: Cannot modify an existing ADMIN user unless requester is Mostafa Layaq
+        if (action === 'UPDATE' || action === 'DELETE') {
+          const targetUser = await prisma.user.findUnique({ where: { id } });
+          if (targetUser && targetUser.role === 'ADMIN' && !isMostafaLayaq) {
+            return NextResponse.json({ error: 'Forbidden: Only Mostafa Layaq can modify Admin users' }, { status: 403 });
+          }
+        }
+
+        // Rule 2: Cannot set role to ADMIN in ADD or UPDATE unless requester is Mostafa Layaq
+        if ((action === 'ADD' || action === 'UPDATE') && data && data.role === 'ADMIN' && !isMostafaLayaq) {
+          return NextResponse.json({ error: 'Forbidden: Only Mostafa Layaq can assign the Admin role' }, { status: 403 });
+        }
+      }
+      
+      if (collectionName === 'system_config' && auth.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+      }
     }
 
     const dbDelegate = getModelDelegate(collectionName);

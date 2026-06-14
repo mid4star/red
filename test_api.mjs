@@ -7,10 +7,11 @@ async function testIsolation() {
   let adminRes = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ employeeId: 'ADMIN-01', password: 'admin' })
+    body: JSON.stringify({ employeeId: 'ADMIN-01', password: 'admin', reserveId: 'northern-islands' })
   });
-  let adminCookieStr = adminRes.headers.get('set-cookie');
   console.log('--- ADMIN LOGIN ---');
+  console.log('Admin login status:', adminRes.status);
+  let adminCookieStr = adminRes.headers.get('set-cookie');
 
   // Fetch Patrols as Admin
   let adminPatrolsRes = await fetch(`${baseUrl}/staff/query?collection=patrols`, {
@@ -23,10 +24,11 @@ async function testIsolation() {
   let monRes = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ employeeId: 'MON-102', password: 'password' })
+    body: JSON.stringify({ employeeId: 'MON-102', password: 'password', reserveId: 'wadi-el-gemal' })
   });
-  let monCookieStr = monRes.headers.get('set-cookie');
   console.log('\n--- MONITOR LOGIN ---');
+  console.log('Monitor login status:', monRes.status);
+  let monCookieStr = monRes.headers.get('set-cookie');
 
   // Fetch Patrols as Monitor
   let monPatrolsRes = await fetch(`${baseUrl}/staff/query?collection=patrols`, {

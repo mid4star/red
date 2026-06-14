@@ -5,10 +5,21 @@ import { verifyPassword, signJwt } from '@/lib/auth-utils';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const email = body.email || body.employeeId;
+    const { password, lang } = body;
+    const reserveId = body.reserveId || body.selectedReserve;
+    const isAr = lang === 'ar';
 
     if (!email || !password) {
-      return NextResponse.json({ error: "Email and Password are required" }, { status: 400 });
+      return NextResponse.json({ 
+        error: isAr ? "يرجى إدخال البريد الإلكتروني أو رقم الموظف وكلمة المرور" : "Email/Employee ID and Password are required" 
+      }, { status: 400 });
+    }
+
+    if (!reserveId) {
+      return NextResponse.json({ 
+        error: isAr ? "يرجى تحديد المحمية التابع لها" : "Assigned reserve selection is required" 
+      }, { status: 400 });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -25,7 +36,9 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 401 });
+      return NextResponse.json({ 
+        error: isAr ? "بيانات الاعتماد غير صالحة" : "Invalid credentials" 
+      }, { status: 401 });
     }
 
     // Verification check supporting both PBKDF2 hashes and plaintext fallback
@@ -40,7 +53,34 @@ export async function POST(request: Request) {
     }
 
     if (!isValid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json({ 
+        error: isAr ? "بيانات الاعتماد غير صالحة" : "Invalid credentials" 
+      }, { status: 401 });
+    }
+
+    // Enforce matching reserve selection unless user has ADMIN role
+    let finalReserveId = user.reserveId;
+    let finalReserve = user.reserve;
+    let finalReserveAr = user.reserveAr;
+
+    if (user.role === 'ADMIN') {
+      finalReserveId = reserveId;
+      // Fetch details of selected reserve to set in session
+      const selectedRes = await prisma.reserveProfile.findUnique({
+        where: { id: reserveId }
+      });
+      if (selectedRes) {
+        finalReserve = selectedRes.name;
+        finalReserveAr = selectedRes.nameAr;
+      }
+    } else {
+      if (user.reserveId && user.reserveId !== reserveId) {
+        return NextResponse.json({ 
+          error: isAr 
+            ? "المحمية المحددة غير مطابقة للمحمية المعين بها" 
+            : "The selected reserve does not match your assigned reserve" 
+        }, { status: 401 });
+      }
     }
 
     // Sign a secure JWT token containing user details
@@ -48,9 +88,9 @@ export async function POST(request: Request) {
       id: user.id,
       employeeId: user.employeeId,
       role: user.role,
-      reserveId: user.reserveId,
-      reserve: user.reserve,
-      reserveAr: user.reserveAr
+      reserveId: finalReserveId,
+      reserve: finalReserve,
+      reserveAr: finalReserveAr
     });
 
     // Create JSON response
@@ -62,9 +102,9 @@ export async function POST(request: Request) {
         role: user.role,
         name: user.name,
         nameAr: user.nameAr,
-        reserveId: user.reserveId,
-        reserve: user.reserve,
-        reserveAr: user.reserveAr,
+        reserveId: finalReserveId,
+        reserve: finalReserve,
+        reserveAr: finalReserveAr,
         profilePictureUrl: user.profilePictureUrl,
         allowedSections: user.allowedSections ? JSON.parse(user.allowedSections) : []
       }

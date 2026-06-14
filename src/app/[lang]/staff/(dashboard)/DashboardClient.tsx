@@ -70,6 +70,7 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'ALL' | 'PATROLS' | 'VIOLATIONS' | 'EIA' | 'MONITORING' | 'NEWS' | 'GIS'>('ALL');
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [session, setSession] = useState<{ role: string; allowedSections: string[] } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -79,7 +80,17 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
     if (mainContent) {
       mainContent.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    const raw = localStorage.getItem('active_user_session');
+    if (raw) {
+      try {
+        setSession(JSON.parse(raw));
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }, []);
+
+  const hasRadarAccess = !mounted || session?.role === 'ADMIN' || (session?.allowedSections?.includes('radar') ?? false);
 
   const stats = [
     { label: 'إجمالي الدوريات', labelEn: 'Total Patrols', value: data.stats.totalPatrols, icon: Waves, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
@@ -492,9 +503,11 @@ export default function DashboardClient({ lang, data }: { lang: string, data: Da
       </div>
 
       {/* ── News Radar Widget ────────────────────────────────────────────── */}
-      <motion.div variants={itemVariants}>
-        <NewsRadarWidget lang={lang} />
-      </motion.div>
+      {hasRadarAccess && (
+        <motion.div variants={itemVariants}>
+          <NewsRadarWidget lang={lang} />
+        </motion.div>
+      )}
 
       {/* ── Unified AI Assistant ────────────────────────────────────────────── */}
       <motion.div variants={itemVariants} className="pt-4">

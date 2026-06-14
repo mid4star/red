@@ -56,7 +56,7 @@ export default function LoginPage({ params }: { params: { lang: string } }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, reserveId: selectedReserve, lang: params.lang }),
       });
 
       const data = await response.json();

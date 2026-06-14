@@ -58,7 +58,7 @@ async function seedReserves() {
   let adminRes = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: 'ADMIN-01', password: 'admin' }) // Now this works because of my previous fix!
+    body: JSON.stringify({ email: 'ADMIN-01', password: 'admin', reserveId: 'northern-islands' }) // Now this works because of my previous fix!
   });
   
   if (!adminRes.ok) {

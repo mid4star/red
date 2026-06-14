@@ -101,6 +101,7 @@ export default function StaffLayout({ children, params }: { children: React.Reac
       vessels: { nameEn: 'Vessel Monitoring', nameAr: 'مراقبة السفن' },
       gis: { nameEn: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية' },
       media: { nameEn: 'Media Center', nameAr: 'المركز الإعلامي' },
+      radar: { nameEn: 'News Radar', nameAr: 'الرادار الإخباري' },
       users: { nameEn: 'User Management', nameAr: 'إدارة المستخدمين' },
       settings: { nameEn: 'System Settings', nameAr: 'إعدادات النظام' },
       profile: { nameEn: 'User Profile', nameAr: 'الملف الشخصي' },
@@ -119,9 +120,10 @@ export default function StaffLayout({ children, params }: { children: React.Reac
   const { isDashboard, key, nameEn, nameAr } = getSectionInfo(pathname);
 
   let hasAccess = true;
-  if (!isDashboard && key !== 'settings' && key !== 'profile') {
+  if (!isDashboard && key !== 'profile') {
     if (key === 'users') {
-      hasAccess = session?.role === 'ADMIN';
+      // Allow all authenticated staff to access users page (component renders read-only directory for non-admins)
+      hasAccess = true;
     } else {
       hasAccess = session?.role === 'ADMIN' || (session?.allowedSections?.includes(key) ?? false);
     }

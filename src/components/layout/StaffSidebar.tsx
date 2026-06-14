@@ -150,19 +150,22 @@ export function StaffSidebar({ lang }: { lang: string }) {
     { name: 'Fleet & Equipment', nameAr: 'الأسطول والمعدات', href: `/${lang}/staff/fleet`, icon: Anchor, sectionKey: 'fleet' },
     { name: 'Vessel Monitoring', nameAr: 'مراقبة السفن', href: `/${lang}/staff/vessels`, icon: Ship, sectionKey: 'vessels' },
     { name: 'GIS & Maps', nameAr: 'نظم المعلومات الجغرافية', href: `/${lang}/staff/gis`, icon: Map, sectionKey: 'gis' },
-    { name: 'User Management', nameAr: 'إدارة المستخدمين', href: `/${lang}/staff/users`, icon: Users, sectionKey: 'users' },
+    { 
+      name: (session?.role === 'ADMIN' || session?.allowedSections?.includes('manage-users')) ? 'User Management' : 'Team Directory', 
+      nameAr: (session?.role === 'ADMIN' || session?.allowedSections?.includes('manage-users')) ? 'إدارة المستخدمين' : 'دليل الموظفين', 
+      href: `/${lang}/staff/users`, 
+      icon: Users, 
+      sectionKey: 'users' 
+    },
     { name: 'Email Routing', nameAr: 'توجيه البريد', href: `/${lang}/staff/email-routing`, icon: Mail, sectionKey: 'email-routing' },
     { name: 'Media Center', nameAr: 'المركز الإعلامي', href: `/${lang}/staff/media`, icon: Megaphone, sectionKey: 'media' },
-    { name: 'News Radar', nameAr: 'الرادار الإخباري', href: `/${lang}/staff/radar`, icon: Radio, sectionKey: 'media' },
+    { name: 'News Radar', nameAr: 'الرادار الإخباري', href: `/${lang}/staff/radar`, icon: Radio, sectionKey: 'radar' },
     { name: 'System Settings', nameAr: 'إعدادات النظام', href: `/${lang}/staff/settings`, icon: Settings, sectionKey: 'settings' },
   ];
 
   const filteredNavItems = allNavItems.filter((item) => {
     if (item.href === `/${lang}/staff`) return true;
-    if (item.sectionKey === 'users') {
-      return session?.role === 'ADMIN';
-    }
-    if (item.sectionKey === 'settings') return true;
+    if (item.sectionKey === 'users') return true;
 
     if (session?.role === 'ADMIN') return true;
     return session?.allowedSections?.includes(item.sectionKey);

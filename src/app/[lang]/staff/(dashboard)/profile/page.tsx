@@ -5,20 +5,92 @@ import { Card } from '@/components/ui/Card';
 import { 
   ShieldCheck, User as UserIcon, Mail, MapPin, Calendar, CheckCircle2, 
   AlertTriangle, Waves, Microscope, Activity, LayoutDashboard, Anchor, 
-  Megaphone, Clock, Award, Key, Target, Camera, Loader2, Map
+  Megaphone, Clock, Award, Key, Target, Camera, Loader2, Map,
+  Settings, Ship, ClipboardList, UserPlus, Radio
 } from 'lucide-react';
 import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
 
 const SECTIONS_METADATA: Record<string, { icon: any, label: string, labelAr: string }> = {
   dashboard: { icon: LayoutDashboard, label: 'Dashboard', labelAr: 'لوحة التحكم' },
-  patrols: { icon: Waves, label: 'Patrols', labelAr: 'الدوريات البحرية' },
-  eia: { icon: Target, label: 'EIA', labelAr: 'تقييم الأثر البيئي' },
-  monitoring: { icon: Microscope, label: 'Monitoring', labelAr: 'الرصد البيئي' },
-  violations: { icon: AlertTriangle, label: 'Violations', labelAr: 'المخالفات' },
-  fleet: { icon: Anchor, label: 'Fleet', labelAr: 'الأسطول' },
-  gis: { icon: Map, label: 'GIS', labelAr: 'الخرائط الجغرافية' },
-  media: { icon: Megaphone, label: 'Media', labelAr: 'الإعلام' }
+  patrols: { icon: Waves, label: 'Marine Patrols', labelAr: 'الدوريات البحرية' },
+  eia: { icon: ClipboardList, label: 'Environmental Assessment', labelAr: 'تقييم الأثر البيئي' },
+  monitoring: { icon: Microscope, label: 'Environmental Monitoring', labelAr: 'الرصد البيئي' },
+  violations: { icon: AlertTriangle, label: 'Violations Log', labelAr: 'سجل المخالفات' },
+  fleet: { icon: Anchor, label: 'Fleet & Equipment', labelAr: 'الأسطول والمعدات' },
+  vessels: { icon: Ship, label: 'Vessel Monitoring', labelAr: 'مراقبة السفن' },
+  gis: { icon: Map, label: 'GIS & Maps', labelAr: 'نظم المعلومات الجغرافية' },
+  media: { icon: Megaphone, label: 'Media Center', labelAr: 'المركز الإعلامي' },
+  radar: { icon: Radio, label: 'News Radar', labelAr: 'الرادار الإخباري' },
+  settings: { icon: Settings, label: 'System Settings', labelAr: 'إعدادات النظام' },
+  'email-routing': { icon: Mail, label: 'Email Routing', labelAr: 'توجيه البريد' },
+  'manage-users': { icon: UserPlus, label: 'Manage Users (CRUD)', labelAr: 'تعديل وإضافة الموظفين' }
+};
+
+const PREDEFINED_BADGES = [
+  { en: 'Veterinary Doctor', ar: 'دكتور بيطري', color: 'bg-rose-500/10 text-rose-500 border-rose-500/20 dark:bg-rose-500/5' },
+  { en: 'GIS Specialist', ar: 'مختص GIS', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20 dark:bg-cyan-500/5' },
+  { en: 'Reserve Manager', ar: 'مدير محمية', color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20 dark:bg-indigo-500/5' },
+  { en: 'Media Spokesperson', ar: 'متحدث إعلامي', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20 dark:bg-amber-500/5' },
+  { en: 'Legal Advisor', ar: 'مستشار قانوني', color: 'bg-violet-500/10 text-violet-500 border-violet-500/20 dark:bg-violet-500/5' },
+  { en: 'Administrator', ar: 'إداري', color: 'bg-slate-500/10 text-slate-500 border-slate-500/20 dark:bg-slate-500/5' },
+  { en: 'Systems Developer', ar: 'مطور نظم', color: 'bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-500/20 dark:bg-fuchsia-500/5' },
+  { en: 'Marine Biology Researcher', ar: 'باحث أحياء بحرية', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 dark:bg-emerald-500/5' },
+  { en: 'Botany Researcher', ar: 'باحث نبات', color: 'bg-teal-500/10 text-teal-500 border-teal-500/20 dark:bg-teal-500/5' },
+  { en: 'Professional Diver', ar: 'غواص محترف', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20 dark:bg-blue-500/5' },
+  { en: 'Patrol Leader', ar: 'قائد دورية', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20 dark:bg-orange-500/5' },
+  { en: 'Ranger', ar: 'حارس بيئي', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 dark:bg-emerald-500/5' },
+  { en: 'First Responder', ar: 'مسعف أولي', color: 'bg-rose-500/10 text-rose-500 border-rose-500/20 dark:bg-rose-500/5' },
+];
+
+const getBadgeStyle = (badgeName: string) => {
+  const nameClean = badgeName.trim().toLowerCase();
+  const match = PREDEFINED_BADGES.find(item => 
+    item.en.toLowerCase() === nameClean || 
+    item.ar.toLowerCase() === nameClean
+  );
+  if (match) return match.color;
+  
+  // Default keyword-based styles
+  if (nameClean.includes('باحث') || nameClean.includes('researcher') || nameClean.includes('بيئي') || nameClean.includes('environment')) {
+    return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 dark:bg-emerald-500/5';
+  }
+  if (nameClean.includes('طبيب') || nameClean.includes('دكتور') || nameClean.includes('doctor') || nameClean.includes('vet') || nameClean.includes('مسعف')) {
+    return 'bg-rose-500/10 text-rose-500 border-rose-500/20 dark:bg-rose-500/5';
+  }
+  if (nameClean.includes('مدير') || nameClean.includes('manager') || nameClean.includes('مستشار') || nameClean.includes('advisor') || nameClean.includes('قانون')) {
+    return 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20 dark:bg-indigo-500/5';
+  }
+  if (nameClean.includes('مختص') || nameClean.includes('specialist') || nameClean.includes('gis') || nameClean.includes('مطور') || nameClean.includes('developer') || nameClean.includes('نظم')) {
+    return 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20 dark:bg-cyan-500/5';
+  }
+  if (nameClean.includes('إعلام') || nameClean.includes('media') || nameClean.includes('متحدث') || nameClean.includes('spokesperson')) {
+    return 'bg-amber-500/10 text-amber-500 border-amber-500/20 dark:bg-amber-500/5';
+  }
+  if (nameClean.includes('غواص') || nameClean.includes('diver') || nameClean.includes('بحر') || nameClean.includes('marine')) {
+    return 'bg-blue-500/10 text-blue-500 border-blue-500/20 dark:bg-blue-500/5';
+  }
+  if (nameClean.includes('إداري') || nameClean.includes('admin') || nameClean.includes('مكتب')) {
+    return 'bg-slate-500/10 text-slate-500 border-slate-500/20 dark:bg-slate-500/5';
+  }
+  
+  // Hash function for random but deterministic color for other custom badges
+  const colors = [
+    'bg-indigo-500/10 text-indigo-500 border-indigo-500/20 dark:bg-indigo-500/5',
+    'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 dark:bg-emerald-500/5',
+    'bg-cyan-500/10 text-cyan-500 border-cyan-500/20 dark:bg-cyan-500/5',
+    'bg-amber-500/10 text-amber-500 border-amber-500/20 dark:bg-amber-500/5',
+    'bg-rose-500/10 text-rose-500 border-rose-500/20 dark:bg-rose-500/5',
+    'bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-500/20 dark:bg-fuchsia-500/5',
+    'bg-sky-500/10 text-sky-500 border-sky-500/20 dark:bg-sky-500/5',
+    'bg-teal-500/10 text-teal-500 border-teal-500/20 dark:bg-teal-500/5',
+  ];
+  let hash = 0;
+  for (let i = 0; i < badgeName.length; i++) {
+    hash = badgeName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
 };
 
 export default function ProfilePage({ params: { lang } }: { params: { lang: string } }) {
@@ -241,12 +313,15 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
             {/* Badges on the side */}
             {badgesArray.length > 0 && (
               <div className="flex flex-wrap md:justify-end gap-2 shrink-0 md:max-w-[300px]">
-                {badgesArray.map((badge: string, i: number) => (
-                  <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-br from-teal-50 dark:from-teal-900/30 to-emerald-50 dark:to-emerald-900/30 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 text-xs font-black uppercase tracking-wider shadow-sm">
-                    <Award size={14} className="opacity-70" />
-                    {badge}
-                  </div>
-                ))}
+                {badgesArray.map((badge: string, i: number) => {
+                  const badgeColor = getBadgeStyle(badge);
+                  return (
+                    <div key={i} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-black uppercase tracking-wider shadow-sm ${badgeColor}`}>
+                      <Award size={14} className="opacity-70" />
+                      {badge}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
