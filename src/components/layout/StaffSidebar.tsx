@@ -28,8 +28,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
-
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface NavItem {
   name: string;
@@ -143,19 +142,55 @@ export function StaffSidebar({ lang }: { lang: string }) {
     };
   }, [moreDrawerOpen]);
 
+  const playNotificationSound = () => {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const playChime = (time: number, freq: number, duration: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+        gain.gain.setValueAtTime(0.15, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(time);
+        osc.stop(time + duration);
+      };
+      const now = ctx.currentTime;
+      playChime(now, 523.25, 0.3);
+      playChime(now + 0.12, 783.99, 0.4);
+    } catch (e) {
+      console.error('Web Audio play failed:', e);
+    }
+  };
+
   // Poll for unread messages
+  const isInitialLoad = useRef(true);
+
   useEffect(() => {
     if (!session) return;
     const fetchUnread = () => {
       fetch('/api/staff/messages?countOnly=true')
         .then(r => r.json())
-        .then(d => { if (d.success) setUnreadMsgCount(d.unreadCount || 0); })
+        .then(d => { 
+          if (d.success) {
+            const count = d.unreadCount || 0;
+            if (!isInitialLoad.current && count > unreadMsgCount) {
+              playNotificationSound();
+            }
+            setUnreadMsgCount(count);
+            isInitialLoad.current = false;
+          }
+        })
         .catch(() => {});
     };
     fetchUnread();
     const interval = setInterval(fetchUnread, 30000);
     return () => clearInterval(interval);
-  }, [session]);
+  }, [session, unreadMsgCount]);
 
   const allNavItems: NavItem[] = [
     { name: 'Dashboard', nameAr: 'لوحة التحكم', href: `/${lang}/staff`, icon: LayoutDashboard, sectionKey: '' },

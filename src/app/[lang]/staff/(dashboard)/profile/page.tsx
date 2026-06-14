@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/Card';
 import { 
   ShieldCheck, User as UserIcon, Mail, MapPin, Calendar, CheckCircle2, 
   AlertTriangle, Waves, Microscope, Activity, LayoutDashboard, Anchor, 
   Megaphone, Clock, Award, Key, Target, Camera, Loader2, Map,
-  Settings, Ship, ClipboardList, UserPlus, Radio, MessageSquare, Send, X, Inbox, ChevronLeft
+  Settings, Ship, ClipboardList, UserPlus, Radio, MessageSquare, Send, X, Inbox, ChevronLeft,
+  Check, CheckCheck
 } from 'lucide-react';
 import { uploadFiles } from '@/utils/uploadthing';
 import Image from 'next/image';
@@ -215,6 +216,80 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
       console.error('Error fetching users:', err);
     }
   };
+
+  const playNotificationSound = () => {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const playChime = (time: number, freq: number, duration: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+        gain.gain.setValueAtTime(0.15, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(time);
+        osc.stop(time + duration);
+      };
+      const now = ctx.currentTime;
+      playChime(now, 523.25, 0.3);
+      playChime(now + 0.12, 783.99, 0.4);
+    } catch (e) {
+      console.error('Web Audio play failed:', e);
+    }
+  };
+
+  // Poll conversations & active thread when inbox is open
+  useEffect(() => {
+    if (!showInbox) return;
+    
+    const pollInterval = setInterval(() => {
+      // Refresh conversations list in background
+      fetch('/api/staff/messages')
+        .then(r => r.json())
+        .then(d => {
+          if (d.success) {
+            setConversations(d.conversations || []);
+          }
+        })
+        .catch(() => {});
+
+      // Refresh active thread if a conversation is open
+      if (activePartnerId) {
+        fetch(`/api/staff/messages?partnerId=${activePartnerId}`)
+          .then(r => r.json())
+          .then(d => {
+            if (d.success) {
+              const newMessages = d.messages || [];
+              
+              // Check if we received new messages
+              if (newMessages.length > thread.length) {
+                const lastMsg = newMessages[newMessages.length - 1];
+                if (lastMsg && lastMsg.senderId !== profile?.id) {
+                  playNotificationSound();
+                }
+                setThread(newMessages);
+                
+                // Mark them as read on the backend
+                fetch('/api/staff/messages', {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ partnerId: activePartnerId })
+                }).catch(() => {});
+              } else {
+                setThread(newMessages);
+              }
+            }
+          })
+          .catch(() => {});
+      }
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [showInbox, activePartnerId, thread.length, profile?.id]);
 
   useEffect(() => {
     fetch('/api/staff/profile')
@@ -1028,9 +1103,18 @@ export default function ProfilePage({ params: { lang } }: { params: { lang: stri
                               }`}>
                                 <p className="whitespace-pre-wrap leading-relaxed break-words text-left">{msg.content}</p>
                               </div>
-                              <span className="text-[9px] text-slate-400 font-semibold mt-1 px-1">
-                                {new Date(msg.createdAt).toLocaleTimeString(isArabic ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
-                              </span>
+                              <div className="flex items-center gap-1.5 mt-1 px-1">
+                                <span className="text-[9px] text-slate-400 font-semibold">
+                                  {new Date(msg.createdAt).toLocaleTimeString(isArabic ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                                {isMe && (
+                                  msg.isRead ? (
+                                    <CheckCheck size={12} className="text-sky-400 shrink-0" />
+                                  ) : (
+                                    <Check size={12} className="text-slate-400/50 shrink-0" />
+                                  )
+                                )}
+                              </div>
                             </div>
                           );
                         })
