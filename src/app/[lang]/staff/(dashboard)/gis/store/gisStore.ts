@@ -21,8 +21,8 @@ interface GISState {
   activeTab: 'dashboard' | 'map' | 'analytics' | 'reports' | 'private-maps';
   setActiveTab: (tab: 'dashboard' | 'map' | 'analytics' | 'reports' | 'private-maps') => void;
   
-  privateMapTab: 'projects' | 'buoys' | 'diving';
-  setPrivateMapTab: (tab: 'projects' | 'buoys' | 'diving') => void;
+  privateMapTab: 'projects' | 'buoys' | 'diving' | 'reserves-boundaries';
+  setPrivateMapTab: (tab: 'projects' | 'buoys' | 'diving' | 'reserves-boundaries') => void;
   
   layers: GISLayer[];
   features: GISFeature[];
@@ -31,7 +31,6 @@ interface GISState {
   fetchData: () => Promise<void>;
   
   toggleLayerVisibility: (id: string) => void;
-  setLayerOpacity: (id: string, opacity: number) => void;
   
   selectedFeatureId: string | null;
   setSelectedFeatureId: (id: string | null) => void;
@@ -424,7 +423,7 @@ export const useGISStore = create<GISState>((set, get) => ({
     const res = await updateGisLayer(id, data);
     if (res.success && res.data) {
       set(state => ({
-        layers: state.layers.map(l => l.id === id ? { ...l, ...res.data } : l)
+        layers: state.layers.map(l => l.id === id ? ({ ...l, ...res.data } as GISLayer) : l)
       }));
       return { success: true };
     }
